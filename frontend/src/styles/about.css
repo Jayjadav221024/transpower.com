@@ -1,0 +1,313 @@
+/* About Page Styling */
+.about-hero {
+  position: relative;
+  min-height: 50vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 100px 20px;
+  background: linear-gradient(rgba(10, 14, 21, 0.75), rgba(10, 14, 21, 0.75)), 
+              url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1600&q=80');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  color: #ffffff;
+  margin-top: 72px;
+}
+
+.about-hero-content {
+  max-width: 850px;
+  margin: 0 auto;
+}
+
+.about-hero h1 {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+  color: #ffffff;
+}
+
+.about-hero p {
+  font-size: clamp(0.95rem, 1.2vw, 1.15rem);
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 500;
+}
+
+/* Leadership section */
+.leadership-section {
+  padding: 80px 0;
+  background: var(--bg-primary);
+}
+
+.leadership-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  margin-top: 3rem;
+}
+
+@media (max-width: 868px) {
+  .leadership-grid {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+}
+
+.leadership-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 3rem 2.5rem;
+  box-shadow: var(--shadow-lift);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1.5rem;
+  transition: transform 0.3s ease;
+}
+
+.leadership-card:hover {
+  transform: translateY(-4px);
+}
+
+.leader-photo {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid var(--accent-orange-tint);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.leader-info h3 {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 0.25rem;
+}
+
+.leader-info .role {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--accent-orange);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.leader-quote {
+  font-style: italic;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+/* Timeline section */
+.timeline-section {
+  padding: 80px 0;
+  background: var(--bg-card);
+}
+
+.timeline-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 2.5rem;
+  margin-top: 3.5rem;
+}
+
+.timeline-card {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 2rem;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.timeline-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--accent-orange);
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.timeline-card:hover::before {
+  opacity: 1;
+}
+
+.timeline-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-card);
+  border-color: rgba(217, 101, 59, 0.2);
+}
+
+.timeline-year {
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: var(--accent-orange);
+  margin-bottom: 0.5rem;
+  line-height: 1;
+}
+
+.timeline-logo-name {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-main);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.timeline-desc {
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+/* Achievements Section */
+.achievements-section {
+  padding: 80px 0;
+  background: var(--bg-primary);
+  text-align: center;
+}
+
+.achievements-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3rem;
+  margin-top: 3.5rem;
+}
+
+@media (max-width: 868px) {
+  .achievements-grid {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+}
+
+.achievement-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  box-shadow: var(--shadow-lift);
+}
+
+.achievement-icon {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: var(--accent-orange-tint);
+  color: var(--accent-orange-deep);
+  display: grid;
+  place-items: center;
+  font-size: 2rem;
+}
+
+.achievement-card h3 {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.achievement-card p {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* Brands Section */
+.brands-section {
+  padding: 80px 0;
+  background: var(--bg-card);
+  text-align: center;
+}
+
+.brands-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
+  margin-top: 3rem;
+}
+
+@media (max-width: 768px) {
+  .brands-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.brand-card {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 900;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+  transition: all 0.3s ease;
+}
+
+.brand-card:hover {
+  background: var(--accent-orange-tint);
+  color: var(--accent-orange-deep);
+  border-color: rgba(217, 101, 59, 0.2);
+}
+
+/* Testimonial */
+.testimonial-section {
+  padding: 80px 0;
+  background: var(--bg-primary);
+  text-align: center;
+}
+
+.testimonial-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.quote-bubble {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 3rem;
+  box-shadow: var(--shadow-lift);
+  position: relative;
+}
+
+.quote-bubble p {
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: var(--text-main);
+  font-style: italic;
+  margin-bottom: 1.5rem;
+}
+
+.quote-author {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--accent-orange);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}

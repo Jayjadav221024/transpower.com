@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.env
+.env.local
+*.log
+
+# Uploaded content — back this up, don't commit it
+backend/uploads/*
+!backend/uploads/.gitkeep
