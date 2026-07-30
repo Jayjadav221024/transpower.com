@@ -1,4 +1,4 @@
-# Transpower Technologies — MERN Application
+# Transpower Technologies —  Application
 
 Company website, technical blog, and an admin panel for publishing posts,
 managing images and handling RFQ inquiries.
