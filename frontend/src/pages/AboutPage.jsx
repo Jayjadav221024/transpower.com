@@ -35,7 +35,15 @@ const DEFAULT_ABOUT = {
     { name: 'SHREE RAJ', desc: 'Transpower Group of Companies' },
     { name: 'TECHNO', desc: 'Techno Sales Agency' },
     { name: 'TRANSPOWER Exports', desc: 'International Trade Division' }
-  ]
+  ],
+  leaderImg1: '/assets/images/hemant_patel.png',
+  leaderName1: 'Mr. Hemant Patel',
+  leaderRole1: 'Director',
+  leaderQuote1: '"Transpower\'s success is rooted in our unwavering commitment to excellence, innovation and customer satisfaction. With a dedicated workforce and cutting-edge technology, we continue to lead the Electro-Mechanical industry globally. Our goal is to provide an exceptional experience for our customers, ensuring joy and satisfaction in every interaction."',
+  leaderImg2: '/assets/images/kiran_parekh.png',
+  leaderName2: 'Mr. Kiran Parekh',
+  leaderRole2: 'General Manager',
+  leaderQuote2: '"As a General Manager, I am honored to lead a professional team that is dedicated to the company\'s vision & mission. Our commitment to excellence drives everything we do, from delivering outstanding products and services to providing exceptional customer support. We believe in fostering a culture of integrity, teamwork, innovation & excellence within our organization."'
 };
 
 export default function AboutPage() {
@@ -45,7 +53,7 @@ export default function AboutPage() {
     publicApi.getPageContent('aboutpage')
       .then(res => {
         if (res && res.content) {
-          setData(res.content);
+          setData(prev => ({ ...prev, ...res.content }));
         }
       })
       .catch(() => {
@@ -81,32 +89,36 @@ export default function AboutPage() {
             {/* Words from Director */}
             <div className="leadership-card">
               <img 
-                src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=300&q=80" 
-                alt="Mr. Hemant Patel" 
+                data-edit-page="aboutpage"
+                data-edit-key="leaderImg1"
+                src={data.leaderImg1 || '/assets/images/hemant_patel.png'} 
+                alt={data.leaderName1} 
                 className="leader-photo"
               />
               <div className="leader-info">
-                <h3>Mr. Hemant Patel</h3>
-                <span className="role">Director</span>
+                <h3 data-edit-page="aboutpage" data-edit-key="leaderName1">{data.leaderName1}</h3>
+                <span data-edit-page="aboutpage" data-edit-key="leaderRole1" className="role">{data.leaderRole1}</span>
               </div>
-              <p className="leader-quote">
-                "Transpower's success is rooted in our unwavering commitment to excellence, innovation and customer satisfaction. With a dedicated workforce and cutting-edge technology, we continue to lead the Electro-Mechanical industry globally. Our goal is to provide an exceptional experience for our customers, ensuring joy and satisfaction in every interaction."
+              <p data-edit-page="aboutpage" data-edit-key="leaderQuote1" className="leader-quote">
+                {data.leaderQuote1}
               </p>
             </div>
 
             {/* General Manager */}
             <div className="leadership-card">
               <img 
-                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=300&q=80" 
-                alt="Mr. Kiran Parekh" 
+                data-edit-page="aboutpage"
+                data-edit-key="leaderImg2"
+                src={data.leaderImg2 || '/assets/images/kiran_parekh.png'} 
+                alt={data.leaderName2} 
                 className="leader-photo"
               />
               <div className="leader-info">
-                <h3>Mr. Kiran Parekh</h3>
-                <span className="role">General Manager</span>
+                <h3 data-edit-page="aboutpage" data-edit-key="leaderName2">{data.leaderName2}</h3>
+                <span data-edit-page="aboutpage" data-edit-key="leaderRole2" className="role">{data.leaderRole2}</span>
               </div>
-              <p className="leader-quote">
-                "As a General Manager, I am honored to lead a professional team that is dedicated to the company's vision & mission. Our commitment to excellence drives everything we do, from delivering outstanding products and services to providing exceptional customer support. We believe in fostering a culture of integrity, teamwork, innovation & excellence within our organization."
+              <p data-edit-page="aboutpage" data-edit-key="leaderQuote2" className="leader-quote">
+                {data.leaderQuote2}
               </p>
             </div>
           </div>
