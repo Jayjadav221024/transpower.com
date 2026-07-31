@@ -60,8 +60,9 @@ export default function App() {
   useEffect(() => {
     const pageKey = getPageKey(location.pathname);
     let overrides = null;
+    const apiBase = import.meta.env.VITE_API_URL || '';
 
-    fetch(`/api/pages/${pageKey}`)
+    fetch(`${apiBase}/api/pages/${pageKey}`)
       .then(r => r.json())
       .then(res => {
         if (res && res.content) {
