@@ -153,58 +153,61 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* ── Group Companies Section (Dynamically Loaded) ── */}
-      <section className="timeline-section" style={{ background: 'var(--bg-primary)', borderTop: '1px solid var(--border-color)' }}>
+      {/* ── Group Companies Section (High-Fidelity Dark Industrial Banner) ── */}
+      <section 
+        className="group-companies-banner" 
+        style={{ 
+          background: "linear-gradient(rgba(14, 26, 43, 0.93), rgba(14, 26, 43, 0.93)), url('https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1200&q=80') center/cover no-repeat", 
+          padding: '4.5rem 1.5rem', 
+          borderTop: '1px solid #1e293b',
+          borderBottom: '1px solid #1e293b'
+        }}
+      >
         <div className="container">
-          <div className="section-header text-center" style={{ marginBottom: '3rem' }}>
-            <div className="badge-tag">Group Profile</div>
-            <h2 className="section-title">Our Group of Companies</h2>
+          <div style={{ marginBottom: '2.5rem' }}>
+            <h2 style={{ fontSize: '1rem', fontWeight: 800, textTransform: 'uppercase', color: '#cbd5e1', letterSpacing: '0.15em', margin: 0 }}>
+              OUR GROUP OF COMPANY
+            </h2>
           </div>
 
-          <div className="timeline-grid">
-            {(data.groupCompanies || []).map((comp) => (
-              <div className="timeline-card" key={comp.name} style={{ textAlign: 'center', background: 'var(--bg-card)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                {comp.logo ? (
-                  <div style={{ background: '#fff', padding: '0.5rem', borderRadius: '8px', marginBottom: '0.8rem', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '70px', width: '100%', border: '1px solid #e2e8f0' }}>
-                    <img src={comp.logo} alt={comp.name} style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }} />
-                  </div>
-                ) : (
-                  <div className="timeline-year" style={{ fontSize: '1.5rem', marginBottom: '0.2rem' }}>
-                    {comp.name}
-                  </div>
-                )}
-                <p className="timeline-desc" style={{ fontSize: '0.82rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--accent-orange)', margin: 0 }}>
-                  {comp.desc}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Achievements Section ── */}
-      <section className="achievements-section">
-        <div className="container">
-          <div className="section-header text-center" style={{ marginBottom: '4rem' }}>
-            <div className="badge-tag">Recognition</div>
-            <h2 className="section-title">Our Achievements</h2>
-          </div>
-
-          <div className="achievements-grid">
-            <div className="achievement-card">
-              <div className="achievement-icon">🏆</div>
-              <h3>Siemens Champions Club</h3>
-              <p>Awarded to Transpower Technologies Pvt. Ltd. in 2019 for technical innovation and sales leadership.</p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '2.5rem', alignItems: 'center', justifyContent: 'center' }}>
+            {/* Apidel */}
+            <div style={{ textAlign: 'center' }}>
+              <img 
+                src="/assets/images/logo_apidel.jpg" 
+                alt="Apidel" 
+                style={{ maxHeight: '50px', maxWidth: '85%', objectFit: 'contain', filter: 'brightness(0) invert(1)', opacity: 0.9 }} 
+              />
             </div>
-            <div className="achievement-card">
-              <div className="achievement-icon">🤝</div>
-              <h3>Outstanding Performance</h3>
-              <p>Recognized for consistently delivering high-quality low-voltage electrical engineering projects.</p>
+            
+            {/* Shree Raj */}
+            <div style={{ textAlign: 'center' }}>
+              <img 
+                src="/assets/images/logo_shree_raj.jpg" 
+                alt="Shree Raj" 
+                style={{ maxHeight: '50px', maxWidth: '85%', objectFit: 'contain', filter: 'brightness(0) invert(1)', opacity: 0.9 }} 
+              />
             </div>
-            <div className="achievement-card">
-              <div className="achievement-icon">🏅</div>
-              <h3>50 Years of Partnership</h3>
-              <p>Celebrating over five decades of successful, trusted distribution and engineering relationship with Siemens.</p>
+
+            {/* Techno */}
+            <div style={{ textAlign: 'center' }}>
+              <img 
+                src="/assets/images/logo_techno.jpg" 
+                alt="Techno" 
+                style={{ maxHeight: '50px', maxWidth: '85%', objectFit: 'contain', filter: 'brightness(0) invert(1)', opacity: 0.9 }} 
+              />
+            </div>
+
+            {/* Transpower Exports */}
+            <div style={{ textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem' }}>
+              <img 
+                src="/assets/images/logo_transpower.png" 
+                alt="Transpower Exports" 
+                style={{ maxHeight: '42px', objectFit: 'contain', filter: 'brightness(0) invert(1)', opacity: 0.9 }} 
+              />
+              <span style={{ fontSize: '1.25rem', fontWeight: 900, color: '#fff', letterSpacing: '0.04em', fontFamily: "system-ui, -apple-system, sans-serif" }}>
+                TRANSPOWER Exports
+              </span>
             </div>
           </div>
         </div>
