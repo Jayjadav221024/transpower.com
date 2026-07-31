@@ -46,112 +46,80 @@ export default function SiteFooter() {
       <div className="container">
         {/* Top Footer Section */}
         <div className="footer-top-grid">
-          {/* Col 1: Brand Info */}
+          {/* Col 1: About Us Text */}
           <div className="footer-brand-col">
-            <Link to="/" className="brand-logo-new" style={{ color: 'var(--text-main)', marginBottom: '1rem' }}>
-              <svg className="logo-3d-svg" width="40" height="40" viewBox="10 10 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                  <linearGradient id="grey-face-1" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#d1d5db" />
-                    <stop offset="100%" stopColor="#9ca3af" />
-                  </linearGradient>
-                  <linearGradient id="grey-face-2" x1="0" y1="0" x2="1" y2="0">
-                    <stop offset="0%" stopColor="#9ca3af" />
-                    <stop offset="100%" stopColor="#4b5563" />
-                  </linearGradient>
-                  <linearGradient id="orange-face-1" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#ff9f67" />
-                    <stop offset="100%" stopColor="#ea580c" />
-                  </linearGradient>
-                  <linearGradient id="orange-face-2" x1="0" y1="0" x2="1" y2="0">
-                    <stop offset="0%" stopColor="#f97316" />
-                    <stop offset="100%" stopColor="#b91c1c" />
-                  </linearGradient>
-                </defs>
-
-                {/* Left/Back Grey 3D Block */}
-                <g className="block-grey">
-                  {/* Top Face */}
-                  <path d="M22 38 L38 28 L54 38 L38 48 Z" fill="#e5e7eb" />
-                  {/* Left Face */}
-                  <path d="M22 38 L38 48 L38 78 L22 68 Z" fill="url(#grey-face-1)" />
-                  {/* Right Face */}
-                  <path d="M38 48 L54 38 L54 68 L38 78 Z" fill="url(#grey-face-2)" />
-                  {/* Bending extension top */}
-                  <path d="M38 28 L54 18 L70 28 L54 38 Z" fill="#f3f4f6" />
-                  {/* Bending extension right face */}
-                  <path d="M54 38 L70 28 L70 58 L54 68 Z" fill="url(#grey-face-2)" />
-                </g>
-
-                {/* Right/Front Orange 3D Block */}
-                <g className="block-orange">
-                  {/* Top Face */}
-                  <path d="M42 58 L58 48 L74 58 L58 68 Z" fill="#ffedd5" />
-                  {/* Left Face */}
-                  <path d="M42 58 L58 68 L58 98 L42 88 Z" fill="url(#orange-face-1)" />
-                  {/* Right Face */}
-                  <path d="M58 68 L74 58 L74 88 L58 98 Z" fill="url(#orange-face-2)" />
-                  {/* Bending extension top */}
-                  <path d="M58 48 L74 38 L90 48 L74 58 Z" fill="#ffedd5" />
-                  {/* Bending extension right face */}
-                  <path d="M74 58 L90 48 L90 78 L74 88 Z" fill="url(#orange-face-2)" />
-                </g>
-              </svg>
-              <div className="logo-text-wrapper">
-                <span className="logo-text-new">TRANSPOWER</span>
-                <span className="logo-subtext-new">Technologies Pvt. Ltd.</span>
-              </div>
-            </Link>
-            <p className="footer-description">
-              Transpower Technologies Pvt. Ltd. is a pioneer in manufacturing high-strength Fiberglass Reinforced Polymer (FRP/GRP) composite products, Industrial Gear Boxes, and Power Switchgears.
+            <h4 style={{ color: '#fff', fontSize: '0.9rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '1.2rem' }}>ABOUT US</h4>
+            <p className="footer-description" style={{ fontSize: '0.85rem', lineHeight: '1.6', color: '#cbd5e1' }}>
+              "Transpower" is a Globally Leading Group and is amongst the few leading names in Electro-Mechanical Industry. With a presence of more than 7 decades, Transpower has achieved a consistent growth and a reputed clientele. The constant zest to learn, lead and innovate has earned the company a strong position in the Electro-Mechanical Industry.
             </p>
           </div>
 
-          {/* Col 2: Social & Contacts */}
+          {/* Col 2: Contact Info & Socials */}
           <div className="footer-contact-col">
-            <h4>Social &amp; Contact</h4>
-            <div className="footer-social-icons">
-              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="social-icon">in</a>
-              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="social-icon">f</a>
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="social-icon">ig</a>
+            <h4 style={{ color: '#fff', fontSize: '0.9rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '1.2rem' }}>CONTACT US</h4>
+            <div className="footer-contact-details-list" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: '0.85rem', color: '#cbd5e1' }}>
+              <div>
+                <strong>Phone:</strong> <span style={{ marginLeft: '0.5rem' }}>+91 98255 07517 / 37</span>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <strong>Email:</strong>
+                <span style={{ paddingLeft: '0.5rem', fontSize: '0.82rem' }}>baroda@transpower.net.in</span>
+                <span style={{ paddingLeft: '0.5rem', fontSize: '0.82rem' }}>sales@transpower.com</span>
+                <span style={{ paddingLeft: '0.5rem', fontSize: '0.82rem' }}>frp@transpower.net.in</span>
+              </div>
+              <div>
+                <strong>Address:</strong> <span style={{ marginLeft: '0.5rem' }}>346 GIDC, Makarpura, Vadodara - 390010, Gujarat (India)</span>
+              </div>
             </div>
             
-            <div className="footer-contact-details-list">
-              <div>
-                <strong>📞 Phone / WhatsApp</strong>
-                <span>+91 98765 43210</span>
-              </div>
-              <div>
-                <strong>✉️ Email Address</strong>
-                <span>sales@transpower.co.in</span>
-              </div>
-              <div>
-                <strong>📍 Factory Address</strong>
-                <span>Plot No. 302, GIDC Estate, Makarpura, Vadodara, Gujarat 390010</span>
-              </div>
+            <div className="footer-social-icons" style={{ display: 'flex', gap: '0.75rem', marginTop: '1.2rem' }}>
+              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="social-icon">f</a>
+              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="social-icon">ig</a>
+              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="social-icon">in</a>
+              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="social-icon">tw</a>
+              <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="social-icon">yt</a>
             </div>
           </div>
 
-          {/* Col 3: Frameworks & Corporate Profiles */}
-          <div className="footer-frameworks-col">
-            <h4>Verification &amp; Standards</h4>
-            <a 
-              href="https://www.zaubacorp.com/company/TRANSPOWER-TECHNOLOGIES-PRIVATE-LIMITED/U74900MH2012PTC236681" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="zauba-badge-link"
-            >
-              <div className="zauba-badge">
-                <span className="badge-org">ZaubaCorp</span>
-                <span className="badge-status">Verified Listing</span>
+          {/* Col 3: Our Group of Company */}
+          <div className="footer-frameworks-col" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <h4 style={{ color: '#fff', fontSize: '0.9rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '1.2rem' }}>OUR GROUP OF COMPANY</h4>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', alignItems: 'center' }}>
+              {/* Apidel */}
+              <div>
+                <img 
+                  src="/assets/images/logo_apidel.jpg" 
+                  alt="Apidel" 
+                  style={{ maxHeight: '35px', maxWidth: '90%', objectFit: 'contain', filter: 'brightness(0) invert(1)', opacity: 0.85 }} 
+                />
               </div>
-            </a>
-            <p className="framework-text">
-              Registered under Ministry of Corporate Affairs (MCA), Government of India. CIN: U74900MH2012PTC236681.
-            </p>
-            <div className="certification-stamp">
-              <span>ISO 9001</span>
-              <span>ASTM E84 Class 1</span>
+              {/* Shree Raj */}
+              <div>
+                <img 
+                  src="/assets/images/logo_shree_raj.jpg" 
+                  alt="Shree Raj" 
+                  style={{ maxHeight: '35px', maxWidth: '90%', objectFit: 'contain', filter: 'brightness(0) invert(1)', opacity: 0.85 }} 
+                />
+              </div>
+              {/* Techno */}
+              <div>
+                <img 
+                  src="/assets/images/logo_techno.jpg" 
+                  alt="Techno" 
+                  style={{ maxHeight: '35px', maxWidth: '90%', objectFit: 'contain', filter: 'brightness(0) invert(1)', opacity: 0.85 }} 
+                />
+              </div>
+              {/* Transpower Exports */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.2rem' }}>
+                <img 
+                  src="/assets/images/logo_transpower.png" 
+                  alt="Transpower" 
+                  style={{ maxHeight: '28px', objectFit: 'contain', filter: 'brightness(0) invert(1)', opacity: 0.85 }} 
+                />
+                <span style={{ fontSize: '0.85rem', fontWeight: 900, color: '#fff', letterSpacing: '0.02em', fontFamily: 'system-ui, sans-serif' }}>
+                  TRANSPOWER Exports
+                </span>
+              </div>
             </div>
           </div>
 
