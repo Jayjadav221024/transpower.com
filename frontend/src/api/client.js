@@ -2,7 +2,19 @@
    Thin fetch wrapper. Requests are same-origin in production and proxied by
    Vite in dev, so the httpOnly session cookie rides along either way.
    ========================================================================== */
-const BASE = import.meta.env.VITE_API_URL || '';
+const getApiBase = () => {
+  if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL;
+  const origin = window.location.origin;
+  if (origin.includes('localhost') || origin.includes('127.0.0.1')) {
+    return '';
+  }
+  if (origin.includes('-1.onrender.com')) {
+    return origin.replace('-1.onrender.com', '.onrender.com');
+  }
+  return '';
+};
+
+const BASE = getApiBase();
 
 export class ApiError extends Error {
   constructor(message, status) {

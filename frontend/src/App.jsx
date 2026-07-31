@@ -30,9 +30,21 @@ const getPageKey = (path) => {
   return clean ? `${clean}page` : 'homepage';
 };
 
+const getApiBase = () => {
+  if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL;
+  const origin = window.location.origin;
+  if (origin.includes('localhost') || origin.includes('127.0.0.1')) {
+    return '';
+  }
+  if (origin.includes('-1.onrender.com')) {
+    return origin.replace('-1.onrender.com', '.onrender.com');
+  }
+  return '';
+};
+
 const applyPageOverrides = (overrides) => {
   if (!overrides) return;
-  const apiBase = import.meta.env.VITE_API_URL || '';
+  const apiBase = getApiBase();
   Object.entries(overrides).forEach(([selector, value]) => {
     try {
       const elements = document.querySelectorAll(selector);
@@ -62,7 +74,7 @@ export default function App() {
   useEffect(() => {
     const pageKey = getPageKey(location.pathname);
     let overrides = null;
-    const apiBase = import.meta.env.VITE_API_URL || '';
+    const apiBase = getApiBase();
 
     fetch(`${apiBase}/api/pages/${pageKey}`)
       .then(r => r.json())
