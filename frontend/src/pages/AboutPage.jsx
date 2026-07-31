@@ -43,7 +43,7 @@ const DEFAULT_ABOUT = {
   leaderImg2: '/assets/images/kiran_parekh.png',
   leaderName2: 'Mr. Kiran Parekh',
   leaderRole2: 'General Manager',
-  leaderQuote2: '"As a General Manager, I am honored to lead a professional team that is dedicated to the company\'s vision & mission. Our commitment to excellence drives everything we do, from delivering outstanding products and services to providing exceptional customer support. We believe in fostering a culture of integrity, teamwork, innovation & excellence within our organization."'
+  leaderQuote2: '"As a General Manager, I am honored to lead a professional team that is dedicated to the company\'s vision & mission. Our commitment to excellence drives everything we do, from delivering outstanding products and services to providing exceptional customer support. We believe in fostering a culture of integrity, teamwork, innovation & excellence within our organization. This culture not only empowers our employees but also ensures that we consistently exceed our customers\' expectations. Thank you for your interest in our organization. We look forward to the opportunity to serve you better."'
 };
 
 export default function AboutPage() {
