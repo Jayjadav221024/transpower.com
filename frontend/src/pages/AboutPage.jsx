@@ -5,13 +5,13 @@ import '../styles/about.css';
 
 const TIMELINE = [
   { year: '1998', name: 'Desai Brothers', desc: 'Acquired Desai Brothers and Company.' },
-  { year: '2005', name: 'Transpower Tech', desc: 'Renamed to Transpower Technologies Pvt Ltd.' },
+  { year: '2005', name: 'Transpower Tech', desc: 'Renamed to Transpower Technologies Pvt Ltd.', logo: '/assets/images/logo_transpower.png' },
   { year: '2008', name: 'Yash High Voltage', desc: 'Acquired Yash High Voltage.', logo: '/assets/images/logo_yash.png' },
   { year: '2010', name: 'Kaival Poultry', desc: 'Launched Livebird and ventured into farming.', logo: '/assets/images/logo_kaival_poultry.png' },
   { year: '2012', name: 'Apidel Tech', desc: 'Established Apidel Technologies.', logo: '/assets/images/logo_apidel.jpg' },
   { year: '2013', name: 'ShreeRaj Traders', desc: 'Acquired ShreeRaj Traders.', logo: '/assets/images/logo_shree_raj.jpg' },
   { year: '2017', name: 'Techno Sales', desc: 'Acquired Techno Sales Agency.', logo: '/assets/images/logo_techno.jpg' },
-  { year: '2018', name: 'Transpower Composites', desc: 'Expanded into the FRP composites industry.' },
+  { year: '2018', name: 'Transpower Composites', desc: 'Expanded into the FRP composites industry.', logo: '/assets/images/logo_transpower.png' },
 ];
 
 const BRANDS = [
