@@ -32,14 +32,16 @@ const getPageKey = (path) => {
 
 const applyPageOverrides = (overrides) => {
   if (!overrides) return;
+  const apiBase = import.meta.env.VITE_API_URL || '';
   Object.entries(overrides).forEach(([selector, value]) => {
     try {
       const elements = document.querySelectorAll(selector);
       elements.forEach(el => {
         if (el) {
           if (el.tagName === 'IMG') {
-            if (el.src !== value && !el.src.endsWith(value)) {
-              el.src = value;
+            const fullUrl = (value.startsWith('http') || value.startsWith('data:')) ? value : `${apiBase}${value}`;
+            if (el.src !== fullUrl) {
+              el.src = fullUrl;
             }
           } else {
             if (el.innerText !== value) {

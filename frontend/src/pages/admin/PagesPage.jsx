@@ -21,6 +21,15 @@ function getUniqueSelector(el) {
   return parts.join(' > ');
 }
 
+const getFullImageUrl = (path) => {
+  if (!path) return '';
+  if (path.startsWith('http://') || path.startsWith('https://') || path.startsWith('data:')) {
+    return path;
+  }
+  const apiBase = import.meta.env.VITE_API_URL || '';
+  return `${apiBase}${path}`;
+};
+
 export default function PagesPage() {
   const [activeTab, setActiveTab] = useState('homepage');
   const [editorMode, setEditorMode] = useState('visual'); // 'visual' or 'form'
@@ -196,7 +205,7 @@ export default function PagesPage() {
         const el = iframeDoc.querySelector(selector);
         if (el) {
           if (el.tagName === 'IMG') {
-            el.src = value;
+            el.src = getFullImageUrl(value);
           } else {
             el.innerText = value;
           }
@@ -534,7 +543,7 @@ export default function PagesPage() {
                           <div style={{ border: '1px solid var(--border)', borderRadius: '8px', overflow: 'hidden', background: '#f8fafc', padding: '0.5rem', textAlign: 'center' }}>
                             <span style={{ fontSize: '0.62rem', display: 'block', color: 'var(--muted)', marginBottom: '0.3rem' }}>Current Selection Preview:</span>
                             {activeValue ? (
-                              <img src={activeValue} alt="Preview" style={{ maxWidth: '100%', maxHeight: '120px', objectFit: 'contain', borderRadius: '4px' }} />
+                              <img src={getFullImageUrl(activeValue)} alt="Preview" style={{ maxWidth: '100%', maxHeight: '120px', objectFit: 'contain', borderRadius: '4px' }} />
                             ) : (
                               <span style={{ fontSize: '0.8rem', color: 'var(--faint)' }}>No image</span>
                             )}
@@ -578,7 +587,7 @@ export default function PagesPage() {
                                     transition: 'all 0.15s'
                                   }}
                                 >
-                                  <img src={m.url} alt={m.alt || ''} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                  <img src={getFullImageUrl(m.url)} alt={m.alt || ''} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                 </div>
                               ))}
                             </div>
