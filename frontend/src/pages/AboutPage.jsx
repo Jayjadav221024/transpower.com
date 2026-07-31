@@ -153,100 +153,58 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* ── Group Companies Section (High-Fidelity Dark Industrial Banner) ── */}
-      <section 
-        className="group-companies-banner" 
-        style={{ 
-          background: "linear-gradient(rgba(14, 26, 43, 0.93), rgba(14, 26, 43, 0.93)), url('https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1200&q=80') center/cover no-repeat", 
-          padding: '4.5rem 1.5rem', 
-          borderTop: '1px solid #1e293b',
-          borderBottom: '1px solid #1e293b'
-        }}
-      >
+      {/* ── Group Companies Section (Dynamically Loaded) ── */}
+      <section className="timeline-section" style={{ background: 'var(--bg-primary)', borderTop: '1px solid var(--border-color)' }}>
         <div className="container">
-          <div style={{ marginBottom: '2.5rem' }}>
-            <h2 style={{ fontSize: '1rem', fontWeight: 800, textTransform: 'uppercase', color: '#cbd5e1', letterSpacing: '0.15em', margin: 0 }}>
-              OUR GROUP OF COMPANY
-            </h2>
+          <div className="section-header text-center" style={{ marginBottom: '3rem' }}>
+            <div className="badge-tag">Group Profile</div>
+            <h2 className="section-title">Our Group of Companies</h2>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '2.5rem', alignItems: 'center', justifyContent: 'center' }}>
-            {/* Apidel */}
-            <div style={{ textAlign: 'center' }}>
-              <img 
-                src="/assets/images/logo_apidel.jpg" 
-                alt="Apidel" 
-                style={{ maxHeight: '50px', maxWidth: '85%', objectFit: 'contain', filter: 'brightness(0) invert(1)', opacity: 0.9 }} 
-              />
-            </div>
-            
-            {/* Shree Raj */}
-            <div style={{ textAlign: 'center' }}>
-              <img 
-                src="/assets/images/logo_shree_raj.jpg" 
-                alt="Shree Raj" 
-                style={{ maxHeight: '50px', maxWidth: '85%', objectFit: 'contain', filter: 'brightness(0) invert(1)', opacity: 0.9 }} 
-              />
-            </div>
-
-            {/* Techno */}
-            <div style={{ textAlign: 'center' }}>
-              <img 
-                src="/assets/images/logo_techno.jpg" 
-                alt="Techno" 
-                style={{ maxHeight: '50px', maxWidth: '85%', objectFit: 'contain', filter: 'brightness(0) invert(1)', opacity: 0.9 }} 
-              />
-            </div>
-
-            {/* Transpower Exports */}
-            <div style={{ textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem' }}>
-              <img 
-                src="/assets/images/logo_transpower.png" 
-                alt="Transpower Exports" 
-                style={{ maxHeight: '42px', objectFit: 'contain', filter: 'brightness(0) invert(1)', opacity: 0.9 }} 
-              />
-              <span style={{ fontSize: '1.25rem', fontWeight: 900, color: '#fff', letterSpacing: '0.04em', fontFamily: "system-ui, -apple-system, sans-serif" }}>
-                TRANSPOWER Exports
-              </span>
-            </div>
+          <div className="timeline-grid">
+            {(data.groupCompanies || []).map((comp) => (
+              <div className="timeline-card" key={comp.name} style={{ textAlign: 'center', background: 'var(--bg-card)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                {comp.logo ? (
+                  <div style={{ background: '#fff', padding: '0.5rem', borderRadius: '8px', marginBottom: '0.8rem', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '70px', width: '100%', border: '1px solid #e2e8f0' }}>
+                    <img src={comp.logo} alt={comp.name} style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }} />
+                  </div>
+                ) : (
+                  <div className="timeline-year" style={{ fontSize: '1.5rem', marginBottom: '0.2rem' }}>
+                    {comp.name}
+                  </div>
+                )}
+                <p className="timeline-desc" style={{ fontSize: '0.82rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--accent-orange)', margin: 0 }}>
+                  {comp.desc}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* ── Verification & Standards Section ── */}
-      <section className="verification-section" style={{ background: '#f8fafc', padding: '5rem 0', borderBottom: '1px solid #e2e8f0' }}>
-        <div className="container" style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
-          <div className="section-header" style={{ marginBottom: '2.5rem' }}>
-            <div className="badge-tag">Compliance</div>
-            <h2 className="section-title" style={{ fontSize: '2rem', fontWeight: 800 }}>Verification &amp; Standards</h2>
+      {/* ── Achievements Section ── */}
+      <section className="achievements-section">
+        <div className="container">
+          <div className="section-header text-center" style={{ marginBottom: '4rem' }}>
+            <div className="badge-tag">Recognition</div>
+            <h2 className="section-title">Our Achievements</h2>
           </div>
-          
-          <div style={{ background: '#fff', padding: '2.5rem', borderRadius: '16px', boxShadow: '0 10px 30px rgba(0, 0, 0, 0.03)', border: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.5rem' }}>
-            {/* ZaubaCorp Badge */}
-            <a 
-              href="https://www.zaubacorp.com/company/TRANSPOWER-TECHNOLOGIES-PRIVATE-LIMITED/U74900MH2012PTC236681" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              style={{ display: 'inline-flex', borderRadius: '8px', overflow: 'hidden', textDecoration: 'none', border: '1px solid #e2e8f0' }}
-            >
-              <span style={{ background: '#0f172a', color: '#fff', padding: '0.6rem 1.2rem', fontWeight: 800, fontSize: '0.95rem' }}>ZaubaCorp</span>
-              <span style={{ background: '#10b981', color: '#fff', padding: '0.6rem 1.2rem', fontWeight: 800, fontSize: '0.95rem' }}>Verified Listing</span>
-            </a>
 
-            {/* Registration Text */}
-            <p style={{ fontSize: '1.05rem', color: '#475569', lineHeight: 1.6, margin: '0.5rem 0', maxWidth: '600px' }}>
-              Registered under Ministry of Corporate Affairs (MCA), Government of India. <br />
-              <strong>CIN: U74900MH2012PTC236681</strong>
-            </p>
-
-            {/* Certification Badges */}
-            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', marginTop: '0.5rem' }}>
-              <span style={{ border: '1px solid #f97316', background: '#fff7ed', color: '#ea580c', padding: '0.5rem 1.2rem', borderRadius: '6px', fontWeight: 700, fontSize: '0.85rem' }}>
-                ISO 9001
-              </span>
-              <span style={{ border: '1px solid #f97316', background: '#fff7ed', color: '#ea580c', padding: '0.5rem 1.2rem', borderRadius: '6px', fontWeight: 700, fontSize: '0.85rem' }}>
-                ASTM E84 CLASS 1
-              </span>
+          <div className="achievements-grid">
+            <div className="achievement-card">
+              <div className="achievement-icon">🏆</div>
+              <h3>Siemens Champions Club</h3>
+              <p>Awarded to Transpower Technologies Pvt. Ltd. in 2019 for technical innovation and sales leadership.</p>
+            </div>
+            <div className="achievement-card">
+              <div className="achievement-icon">🤝</div>
+              <h3>Outstanding Performance</h3>
+              <p>Recognized for consistently delivering high-quality low-voltage electrical engineering projects.</p>
+            </div>
+            <div className="achievement-card">
+              <div className="achievement-icon">🏅</div>
+              <h3>50 Years of Partnership</h3>
+              <p>Celebrating over five decades of successful, trusted distribution and engineering relationship with Siemens.</p>
             </div>
           </div>
         </div>
