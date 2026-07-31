@@ -6,11 +6,11 @@ import '../styles/about.css';
 const TIMELINE = [
   { year: '1998', name: 'Desai Brothers', desc: 'Acquired Desai Brothers and Company.' },
   { year: '2005', name: 'Transpower Tech', desc: 'Renamed to Transpower Technologies Pvt Ltd.' },
-  { year: '2008', name: 'Yash High Voltage', desc: 'Acquired Yash High Voltage.' },
-  { year: '2010', name: 'Kaival Poultry', desc: 'Launched Livebird and ventured into farming.' },
-  { year: '2012', name: 'Apidel Tech', desc: 'Established Apidel Technologies.' },
-  { year: '2013', name: 'ShreeRaj Traders', desc: 'Acquired ShreeRaj Traders.' },
-  { year: '2017', name: 'Techno Sales', desc: 'Acquired Techno Sales Agency.' },
+  { year: '2008', name: 'Yash High Voltage', desc: 'Acquired Yash High Voltage.', logo: '/assets/images/logo_yash.png' },
+  { year: '2010', name: 'Kaival Poultry', desc: 'Launched Livebird and ventured into farming.', logo: '/assets/images/logo_kaival_poultry.png' },
+  { year: '2012', name: 'Apidel Tech', desc: 'Established Apidel Technologies.', logo: '/assets/images/logo_apidel.jpg' },
+  { year: '2013', name: 'ShreeRaj Traders', desc: 'Acquired ShreeRaj Traders.', logo: '/assets/images/logo_shree_raj.jpg' },
+  { year: '2017', name: 'Techno Sales', desc: 'Acquired Techno Sales Agency.', logo: '/assets/images/logo_techno.jpg' },
   { year: '2018', name: 'Transpower Composites', desc: 'Expanded into the FRP composites industry.' },
 ];
 
@@ -31,10 +31,11 @@ const DEFAULT_ABOUT = {
   ],
   address: '346 GIDC, Makarpura, Vadodara - 390010, Gujarat (India)',
   groupCompanies: [
-    { name: 'APIDEL', desc: 'Value Delivered' },
-    { name: 'SHREE RAJ', desc: 'Transpower Group of Companies' },
-    { name: 'TECHNO', desc: 'Techno Sales Agency' },
-    { name: 'TRANSPOWER Exports', desc: 'International Trade Division' }
+    { name: 'APIDEL', desc: 'Value Delivered', logo: '/assets/images/logo_apidel.jpg' },
+    { name: 'SHREE RAJ', desc: 'Transpower Group of Companies', logo: '/assets/images/logo_shree_raj.jpg' },
+    { name: 'TECHNO', desc: 'Techno Sales Agency', logo: '/assets/images/logo_techno.jpg' },
+    { name: 'YASH', desc: 'Yash High Voltage', logo: '/assets/images/logo_yash.png' },
+    { name: 'KAIVAL', desc: 'Kaival Poultry Farm', logo: '/assets/images/logo_kaival_poultry.png' }
   ],
   leaderImg1: '/assets/images/hemant_patel.png',
   leaderName1: 'Mr. Hemant Patel',
@@ -135,9 +136,15 @@ export default function AboutPage() {
 
           <div className="timeline-grid">
             {TIMELINE.map((item) => (
-              <div className="timeline-card" key={item.year}>
+              <div className="timeline-card" key={item.year} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
                 <div className="timeline-year">{item.year}</div>
-                <div className="timeline-logo-name">{item.name}</div>
+                {item.logo ? (
+                  <div style={{ background: '#fff', padding: '0.4rem', borderRadius: '8px', marginBottom: '0.8rem', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '60px', width: '100%', border: '1px solid #e2e8f0' }}>
+                    <img src={item.logo} alt={item.name} style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }} />
+                  </div>
+                ) : (
+                  <div className="timeline-logo-name" style={{ marginBottom: '0.8rem' }}>{item.name}</div>
+                )}
                 <p className="timeline-desc">{item.desc}</p>
               </div>
             ))}
@@ -155,11 +162,17 @@ export default function AboutPage() {
 
           <div className="timeline-grid">
             {(data.groupCompanies || []).map((comp) => (
-              <div className="timeline-card" key={comp.name} style={{ textAlign: 'center', background: 'var(--bg-card)' }}>
-                <div className="timeline-year" style={{ fontSize: '1.5rem', marginBottom: '0.2rem' }}>
-                  {comp.name}
-                </div>
-                <p className="timeline-desc" style={{ fontSize: '0.82rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--accent-orange)' }}>
+              <div className="timeline-card" key={comp.name} style={{ textAlign: 'center', background: 'var(--bg-card)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                {comp.logo ? (
+                  <div style={{ background: '#fff', padding: '0.5rem', borderRadius: '8px', marginBottom: '0.8rem', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '70px', width: '100%', border: '1px solid #e2e8f0' }}>
+                    <img src={comp.logo} alt={comp.name} style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }} />
+                  </div>
+                ) : (
+                  <div className="timeline-year" style={{ fontSize: '1.5rem', marginBottom: '0.2rem' }}>
+                    {comp.name}
+                  </div>
+                )}
+                <p className="timeline-desc" style={{ fontSize: '0.82rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--accent-orange)', margin: 0 }}>
                   {comp.desc}
                 </p>
               </div>
