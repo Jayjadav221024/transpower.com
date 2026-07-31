@@ -153,34 +153,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* ── Group Companies Section (Dynamically Loaded) ── */}
-      <section className="timeline-section" style={{ background: 'var(--bg-primary)', borderTop: '1px solid var(--border-color)' }}>
-        <div className="container">
-          <div className="section-header text-center" style={{ marginBottom: '3rem' }}>
-            <div className="badge-tag">Group Profile</div>
-            <h2 className="section-title">Our Group of Companies</h2>
-          </div>
 
-          <div className="timeline-grid">
-            {(data.groupCompanies || []).map((comp) => (
-              <div className="timeline-card" key={comp.name} style={{ textAlign: 'center', background: 'var(--bg-card)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                {comp.logo ? (
-                  <div style={{ background: '#fff', padding: '0.5rem', borderRadius: '8px', marginBottom: '0.8rem', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '70px', width: '100%', border: '1px solid #e2e8f0' }}>
-                    <img src={comp.logo} alt={comp.name} style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }} />
-                  </div>
-                ) : (
-                  <div className="timeline-year" style={{ fontSize: '1.5rem', marginBottom: '0.2rem' }}>
-                    {comp.name}
-                  </div>
-                )}
-                <p className="timeline-desc" style={{ fontSize: '0.82rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--accent-orange)', margin: 0 }}>
-                  {comp.desc}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* ── Achievements Section ── */}
       <section className="achievements-section">
