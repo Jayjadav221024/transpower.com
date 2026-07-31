@@ -16,7 +16,7 @@ const TIMELINE = [
 
 const BRANDS = [
   { name: 'INNOMOTICS', logo: '/assets/images/brand_innomotics.png' },
-  { name: 'HINDUSTAN ELECTRIC MOTORS', logo: '/assets/images/brand_hindustan.svg' },
+  { name: 'HINDUSTAN ELECTRIC MOTORS', logo: '/assets/images/brand_hindustan.png' },
   { name: 'ROTOMOTIVE', logo: '/assets/images/brand_rotomotive.png' },
   { name: 'CROMPTON GREAVES', logo: '/assets/images/brand_crompton.png' },
   { name: 'SIEMENS', logo: '/assets/images/brand_siemens.png' }
