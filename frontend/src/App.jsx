@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 
 import { AuthProvider } from './context/AuthContext';
@@ -21,7 +22,67 @@ import InquiriesPage from './pages/admin/InquiriesPage';
 import SettingsPage from './pages/admin/SettingsPage';
 import PagesPage from './pages/admin/PagesPage';
 
+import { useLocation } from 'react-router-dom';
+
+const getPageKey = (path) => {
+  if (path === '/') return 'homepage';
+  const clean = path.replace(/[^a-zA-Z0-9]/g, '');
+  return clean ? `${clean}page` : 'homepage';
+};
+
+const applyPageOverrides = (overrides) => {
+  if (!overrides) return;
+  Object.entries(overrides).forEach(([selector, value]) => {
+    try {
+      const elements = document.querySelectorAll(selector);
+      elements.forEach(el => {
+        if (el) {
+          if (el.tagName === 'IMG') {
+            if (el.src !== value && !el.src.endsWith(value)) {
+              el.src = value;
+            }
+          } else {
+            if (el.innerText !== value) {
+              el.innerText = value;
+            }
+          }
+        }
+      });
+    } catch (e) {}
+  });
+};
+
 export default function App() {
+  const location = useLocation();
+
+  useEffect(() => {
+    const pageKey = getPageKey(location.pathname);
+    let overrides = null;
+
+    fetch(`/api/pages/${pageKey}`)
+      .then(r => r.json())
+      .then(res => {
+        if (res && res.content) {
+          overrides = res.content.overrides;
+          applyPageOverrides(overrides);
+          if (res.content.accentColor) {
+            document.documentElement.style.setProperty('--accent-orange', res.content.accentColor);
+          }
+        }
+      })
+      .catch(() => {});
+
+    // MutationObserver guarantees overrides stay applied even when React re-renders components
+    const observer = new MutationObserver(() => {
+      if (overrides) {
+        applyPageOverrides(overrides);
+      }
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    return () => observer.disconnect();
+  }, [location]);
+
   return (
     <AuthProvider>
       <ScrollToTop />

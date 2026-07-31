@@ -24,14 +24,18 @@ const signToken = (user) =>
 function setAuthCookie(res, token) {
   res.cookie(COOKIE_NAME, token, {
     httpOnly: true,
-    sameSite: 'lax',
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
     secure:   process.env.NODE_ENV === 'production',
     maxAge:   MAX_AGE_MS,
     path:     '/',
   });
 }
 
-const clearAuthCookie = (res) => res.clearCookie(COOKIE_NAME, { path: '/' });
+const clearAuthCookie = (res) => res.clearCookie(COOKIE_NAME, { 
+  path: '/',
+  sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+  secure:   process.env.NODE_ENV === 'production',
+});
 
 /** Populates req.user when a valid cookie is present. Never rejects. */
 async function loadUser(req, _res, next) {

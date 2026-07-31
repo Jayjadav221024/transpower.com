@@ -29,6 +29,7 @@ export type GradientPresetName =
   | "spring"
   | "twilight"
   | "bay"
+  | "orange"
 
 /** Either an explicit multi-stop gradient or a built-in preset name. */
 export type GradientInput = GradientStop[] | GradientPresetName
@@ -134,6 +135,13 @@ export const gradientPresets: Record<GradientPresetName, GradientStop[]> = {
     { color: "#076492", position: 0.59 },
     { color: "#154288", position: 0.79 },
     { color: "#262C81", position: 1 },
+  ],
+  orange: [
+    { color: "#faf0eb", position: 0 },
+    { color: "#e28a64", position: 0.25 },
+    { color: "#d9653b", position: 0.5 },
+    { color: "#b24a21", position: 0.75 },
+    { color: "#faf0eb", position: 1 },
   ],
 }
 

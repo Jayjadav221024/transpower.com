@@ -5,7 +5,7 @@ import { GradientShimmer } from '../ui/gradient-shimmer';
 const AUTO_MS = 3000;
 const TEXT_SWAP_MS = 240;   // midpoint of the 0.5s image crossfade
 
-export default function HeroCarousel() {
+export default function HeroCarousel({ pageData }) {
   const [index, setIndex]     = useState(0);   // product whose text is shown
   const [imgIndex, setImgIndex] = useState(0); // product whose image is on the active layer
   const [activeLayer, setActiveLayer] = useState('a');
@@ -51,6 +51,10 @@ export default function HeroCarousel() {
   const pause  = () => setPaused(true);
   const resume = () => setPaused(false);
 
+  // If index is 0 and pageData from database is available, override values
+  const displayTitle = (index === 0 && pageData?.heroTitle) ? pageData.heroTitle : `${product.accent} ${product.rest}`;
+  const displayDesc = (index === 0 && pageData?.heroSubtitle) ? pageData.heroSubtitle : product.desc;
+
   return (
     <section id="hero" className="hero-section">
       <div className="container hero-grid">
@@ -62,9 +66,9 @@ export default function HeroCarousel() {
         >
           <div className="badge-tag">{product.badge}</div>
           <h1>
-            FRP <GradientShimmer gradient="sunrise" duration={2} spread={4} baseColor="var(--text-main)">{`${product.accent} ${product.rest}`}</GradientShimmer>
+            FRP <GradientShimmer gradient="orange" duration={2} spread={4} baseColor="var(--text-main)" data-edit-page="homepage" data-edit-key="heroTitle">{displayTitle}</GradientShimmer>
           </h1>
-          <p>{product.desc}</p>
+          <p data-edit-page="homepage" data-edit-key="heroSubtitle">{displayDesc}</p>
 
           <div className="hero-feature-pills">
             {product.pills.map((pill) => (
@@ -110,10 +114,15 @@ export default function HeroCarousel() {
           <div className="hero-image-stage" onMouseEnter={pause} onMouseLeave={resume}>
             {['a', 'b'].map((layer) => {
               const item = layers[layer];
-              return item ? (
+              if (!item) return null;
+              const itemIdx = HERO_PRODUCTS.findIndex((p) => p.accent === item.accent);
+              const imgSrc = (pageData && pageData[`heroImage_${itemIdx}`]) ? pageData[`heroImage_${itemIdx}`] : item.image;
+              return (
                 <img
                   key={layer}
-                  src={item.image}
+                  src={imgSrc}
+                  data-edit-page="homepage"
+                  data-edit-key={`heroImage_${itemIdx}`}
                   alt={activeLayer === layer ? item.imgAlt : ''}
                   className={`hero-product-image${activeLayer === layer ? ' is-active' : ''}`}
                   width="490"
@@ -122,7 +131,7 @@ export default function HeroCarousel() {
                   fetchPriority={layer === 'a' ? 'high' : undefined}
                   aria-hidden={activeLayer !== layer}
                 />
-              ) : null;
+              );
             })}
           </div>
         </div>

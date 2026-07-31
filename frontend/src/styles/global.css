@@ -127,7 +127,6 @@ img { content-visibility: auto; max-width: 100%; height: auto; }
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-  contain: layout style paint;
 }
 
 .header-container-new {
@@ -1450,11 +1449,11 @@ img { content-visibility: auto; max-width: 100%; height: auto; }
   z-index: 1001;
   background: var(--accent-orange);
   color: #ffffff;
-  padding: 18px 12px;
-  border-radius: 8px 0 0 8px;
+  padding: 14px 4px;
+  border-radius: 6px 0 0 6px;
   font-weight: 700;
-  font-size: 0.8rem;
-  letter-spacing: 0.08em;
+  font-size: 0.68rem;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
   cursor: pointer;
   display: flex;
@@ -1470,7 +1469,7 @@ img { content-visibility: auto; max-width: 100%; height: auto; }
 
 .vertical-brochure-tab:hover {
   background: var(--accent-orange-deep);
-  padding-right: 18px;
+  padding-right: 8px;
 }
 
 /* Scroll top adjustments */
@@ -1605,10 +1604,60 @@ img { content-visibility: auto; max-width: 100%; height: auto; }
   }
   .vertical-brochure-tab {
     top: 50%;
-    padding: 14px 10px;
-    font-size: 0.72rem;
+    padding: 10px 2px;
+    font-size: 0.55rem;
+    letter-spacing: 0.02em;
+  }
+  .vertical-brochure-tab:hover {
+    padding-right: 6px;
   }
   .brochure-modal-card {
-    padding: 2rem 1.5rem;
+    padding: 2rem 1.25rem;
+    max-width: calc(100vw - 2rem);
+  }
+  .products-grid {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
+  }
+  .hero-inline-stats {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.5rem;
+  }
+  .hero-bottom-bar {
+    padding: 1.25rem 1rem;
+    gap: 1rem;
+  }
+  .hero-bottom-bar .btn {
+    width: 100%;
+    text-align: center;
+  }
+  .bar-counter {
+    width: 100%;
+    justify-content: center;
+  }
+  .calc-box {
+    padding: 1.25rem 1rem !important;
+    gap: 1.5rem !important;
+  }
+  .calc-results-card {
+    padding: 1.2rem 1rem !important;
+    gap: 1rem !important;
+  }
+  .result-val {
+    font-size: 1.4rem !important;
+  }
+  .result-item {
+    font-size: 0.85rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .result-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+  .result-val {
+    margin-top: 0.1rem;
   }
 }

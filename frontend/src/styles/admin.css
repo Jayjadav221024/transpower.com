@@ -325,3 +325,18 @@ code { background: #eef2f7; padding: 1px 5px; border-radius: 4px; font-size: .82
 
 /* Sidebar nav items are <NavLink> anchors in React, not <button>s. */
 .side-nav .nav-item { display: block; text-decoration: none; }
+
+/* Visual Editor Helpers */
+.mock-editable-block {
+  transition: all 0.2s ease-in-out;
+}
+.mock-editable-block:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border-style: solid !important;
+}
+.mock-editable-block.selected {
+  box-shadow: 0 0 12px rgba(217, 101, 59, 0.15) !important;
+  border-style: solid !important;
+}
+

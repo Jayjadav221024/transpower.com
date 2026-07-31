@@ -65,7 +65,7 @@ export default function AboutPage() {
       <section className="about-hero">
         <div className="about-hero-content">
           <h1>About Us</h1>
-          <p>{data.aboutText}</p>
+          <p data-edit-page="aboutpage" data-edit-key="aboutText">{data.aboutText}</p>
         </div>
       </section>
 
