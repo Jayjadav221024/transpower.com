@@ -26,6 +26,9 @@ const getFullImageUrl = (path) => {
   if (path.startsWith('http://') || path.startsWith('https://') || path.startsWith('data:')) {
     return path;
   }
+  if (path.startsWith('/assets/')) {
+    return path;
+  }
   const apiBase = import.meta.env.VITE_API_URL || '';
   return `${apiBase}${path}`;
 };
