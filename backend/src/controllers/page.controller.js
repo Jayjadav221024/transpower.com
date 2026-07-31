@@ -18,7 +18,7 @@ const DEFAULTS = {
     ]
   },
   aboutpage: {
-    aboutText: '"Transpower" is a Globally Leading Group and is amongst the few leading names in Electro-Mechanical Industry. With a presence of more than 7 decades, Transpower has achieved a consistent growth and a reputed clientele. The constant zest to learn, lead and innovate has earned the company a strong position in the Electro-Mechanical Industry.',
+    aboutText: 'Transpower is a globally leading group and one of the prominent names in Electro-Mechanical Industry. With over six decades of presence, Transpower has achieved consistent growth and built a reputable clientele. The company\'s unwavering commitment to learning, leadership, and innovation has secured its strong position in the Electro-Mechanical industry.',
     phone: '+91 98255 07517 / 37',
     emails: [
       'baroda@transpower.net.in',
@@ -27,10 +27,11 @@ const DEFAULTS = {
     ],
     address: '346 GIDC, Makarpura, Vadodara - 390010, Gujarat (India)',
     groupCompanies: [
-      { name: 'APIDEL', desc: 'Value Delivered' },
-      { name: 'SHREE RAJ', desc: 'Transpower Group of Companies' },
-      { name: 'TECHNO', desc: 'Techno Sales Agency' },
-      { name: 'TRANSPOWER Exports', desc: 'International Trade Division' }
+      { name: 'APIDEL', desc: 'Value Delivered', logo: '/assets/images/logo_apidel.jpg' },
+      { name: 'SHREE RAJ', desc: 'Transpower Group of Companies', logo: '/assets/images/logo_shree_raj.jpg' },
+      { name: 'TECHNO', desc: 'Techno Sales Agency', logo: '/assets/images/logo_techno.jpg' },
+      { name: 'YASH', desc: 'Yash High Voltage', logo: '/assets/images/logo_yash.png' },
+      { name: 'KAIVAL', desc: 'Kaival Poultry Farm', logo: '/assets/images/logo_kaival_poultry.png' }
     ]
   }
 };
