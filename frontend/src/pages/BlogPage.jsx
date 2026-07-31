@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { publicApi } from '../api/client';
 import BlogCard from '../components/blog/BlogCard';
@@ -6,6 +6,7 @@ import SEO from '../components/common/SEO';
 import '../styles/blog.css';
 
 const PAGE_SIZE = 9;
+const PILL_LIMIT = 4;   // tags shown as pills; the rest live in the dropdown
 
 export default function BlogPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -18,6 +19,8 @@ export default function BlogPage() {
   const [tags, setTags]       = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError]     = useState('');
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef(null);
 
   /* Debounce the search box so typing doesn't fire a request per keystroke. */
   useEffect(() => {
@@ -43,9 +46,23 @@ export default function BlogPage() {
     publicApi.getTags().then(({ tags: t }) => setTags(t)).catch(() => {});
   }, []);
 
+  /* Close the categories dropdown on an outside click or Escape. */
+  useEffect(() => {
+    if (!menuOpen) return undefined;
+    const onDown = (e) => { if (!menuRef.current?.contains(e.target)) setMenuOpen(false); };
+    const onKey  = (e) => { if (e.key === 'Escape') setMenuOpen(false); };
+    document.addEventListener('mousedown', onDown);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('mousedown', onDown);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [menuOpen]);
+
   function selectTag(next) {
     setSearchParams(next ? { tag: next } : {});
     setPage(1);
+    setMenuOpen(false);
   }
 
   function changePage(next) {
@@ -53,56 +70,106 @@ export default function BlogPage() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
+  const pillTags = tags.slice(0, PILL_LIMIT);
+  /* An active tag from the dropdown is promoted into the pill row so the
+     current filter is always visible. */
+  if (tag && !pillTags.some((t) => t.name === tag)) {
+    const active = tags.find((t) => t.name === tag);
+    if (active) pillTags[pillTags.length - 1] = active;
+  }
+
   return (
     <>
-      <SEO 
-        title="Technical Engineering Blog & Guides" 
-        description="Read technical guides, comparisons, specifications, and installation tips on industrial FRP gratings, composite cable trays, and gearbox solutions." 
+      <SEO
+        title="Technical Engineering Blog & Guides"
+        description="Read technical guides, comparisons, specifications, and installation tips on industrial FRP gratings, composite cable trays, and gearbox solutions."
         keywords="engineering blog, FRP articles, composite materials guides, industrial power systems, gearbox specs, Transpower blog"
       />
+
       <section className="blog-hero">
-        <div className="container">
-          <div className="badge-tag">📰 Technical Insights</div>
-          <h1>ENGINEERING <span className="text-orange">INSIGHTS</span></h1>
-          <p>
-            Specification guides, material comparisons and site-installation notes from our FRP composite
-            and power transmission engineers.
-          </p>
+        <div className="container blog-hero-inner">
+          <div className="blog-hero-copy">
+            <h1>Our Blog &amp; Insight</h1>
+            <p>
+              We delve into the world of FRP composites and power transmission — exploring the latest
+              standards, material comparisons and site-installation practices that keep industrial
+              plants running.
+            </p>
+          </div>
+          <div className="blog-hero-art">
+            <img src="/assets/images/blog_hero_art.svg" alt="" aria-hidden="true" />
+          </div>
         </div>
       </section>
 
-      <section className="section">
+      <section className="blog-listing">
         <div className="container">
           <div className="blog-toolbar">
-            <input
-              type="search"
-              className="form-control"
-              placeholder="Search articles…"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
+            <div className="tag-filters">
+              <button
+                type="button"
+                className={`tag-chip${tag === '' ? ' active' : ''}`}
+                onClick={() => selectTag('')}
+              >
+                All
+              </button>
+              {pillTags.map((t) => (
+                <button
+                  key={t.name}
+                  type="button"
+                  className={`tag-chip${tag === t.name ? ' active' : ''}`}
+                  onClick={() => selectTag(t.name)}
+                >
+                  {t.name}
+                </button>
+              ))}
+            </div>
 
-            {tags.length > 0 && (
-              <div className="tag-filters">
+            <div className="blog-toolbar-right">
+              <input
+                type="search"
+                className="blog-search"
+                placeholder="Search articles…"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+
+              <div className="blog-categories" ref={menuRef}>
                 <button
                   type="button"
-                  className={`tag-chip${tag === '' ? ' active' : ''}`}
-                  onClick={() => selectTag('')}
+                  className={`blog-categories-btn${menuOpen ? ' open' : ''}`}
+                  onClick={() => setMenuOpen((v) => !v)}
+                  aria-expanded={menuOpen}
+                  aria-haspopup="listbox"
                 >
-                  All
+                  <span className="blog-categories-icon" aria-hidden="true" />
+                  Categories
+                  <span className="blog-categories-caret" aria-hidden="true" />
                 </button>
-                {tags.map((t) => (
-                  <button
-                    key={t.name}
-                    type="button"
-                    className={`tag-chip${tag === t.name ? ' active' : ''}`}
-                    onClick={() => selectTag(t.name)}
-                  >
-                    {t.name} ({t.count})
-                  </button>
-                ))}
+
+                {menuOpen && (
+                  <div className="blog-categories-menu" role="listbox">
+                    <button
+                      type="button" role="option" aria-selected={tag === ''}
+                      className={`blog-categories-item${tag === '' ? ' active' : ''}`}
+                      onClick={() => selectTag('')}
+                    >
+                      All articles
+                    </button>
+                    {tags.map((t) => (
+                      <button
+                        key={t.name} type="button" role="option" aria-selected={tag === t.name}
+                        className={`blog-categories-item${tag === t.name ? ' active' : ''}`}
+                        onClick={() => selectTag(t.name)}
+                      >
+                        {t.name} <span>{t.count}</span>
+                      </button>
+                    ))}
+                    {tags.length === 0 && <div className="blog-categories-empty">No categories yet</div>}
+                  </div>
+                )}
               </div>
-            )}
+            </div>
           </div>
 
           <div className="blog-grid">
@@ -119,7 +186,9 @@ export default function BlogPage() {
               </div>
             )}
 
-            {!loading && !error && data.posts.map((post) => <BlogCard key={post.id} post={post} />)}
+            {!loading && !error && data.posts.map((post, i) => (
+              <BlogCard key={post.id} post={post} index={i} />
+            ))}
           </div>
 
           {data.totalPages > 1 && !loading && (

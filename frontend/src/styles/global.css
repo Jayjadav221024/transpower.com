@@ -1077,10 +1077,10 @@ img { content-visibility: auto; max-width: 100%; height: auto; }
 }
 
 .site-footer-new {
-  background: var(--bg-secondary);
-  border-top: 1px solid var(--border-color);
+  background: var(--bg-ink);
+  border-top: 1px solid #1e293b;
   padding: 60px 0 30px 0;
-  color: var(--text-main);
+  color: var(--text-on-dark);
   font-family: var(--font-sans);
 }
 
@@ -1100,7 +1100,7 @@ img { content-visibility: auto; max-width: 100%; height: auto; }
 .footer-description {
   font-size: 0.85rem;
   line-height: 1.55;
-  color: var(--text-muted);
+  color: var(--text-on-dark-muted);
 }
 
 .footer-contact-col h4, 
@@ -1111,8 +1111,38 @@ img { content-visibility: auto; max-width: 100%; height: auto; }
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--text-main);
+  color: #ffffff;
   margin-bottom: 1.2rem;
+}
+
+.footer-group-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+/* Logos are supplied as colour artwork on white backgrounds, so they sit on a
+   light chip rather than being knocked out to white against the dark footer. */
+.footer-group-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  border-radius: 6px;
+  padding: 0.5rem 0.65rem;
+  min-height: 46px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.footer-group-logo:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+}
+
+.footer-group-logo img {
+  max-width: 100%;
+  max-height: 30px;
+  object-fit: contain;
 }
 
 .footer-social-icons {
@@ -1124,14 +1154,14 @@ img { content-visibility: auto; max-width: 100%; height: auto; }
 .social-icon {
   width: 32px;
   height: 32px;
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 50%;
   display: grid;
   place-items: center;
   font-size: 0.85rem;
   font-weight: 700;
-  color: var(--text-muted);
+  color: var(--text-on-dark);
   text-decoration: none;
   transition: all 0.2s ease;
 }
@@ -1164,7 +1194,7 @@ img { content-visibility: auto; max-width: 100%; height: auto; }
 .footer-contact-details-list span {
   font-size: 0.85rem;
   font-weight: 600;
-  color: var(--text-muted);
+  color: var(--text-on-dark-muted);
   line-height: 1.4;
 }
 
@@ -1276,8 +1306,8 @@ img { content-visibility: auto; max-width: 100%; height: auto; }
 
 /* Cities Network section */
 .footer-cities-row {
-  border-top: 1px solid var(--border-color);
-  border-bottom: 1px solid var(--border-color);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
   padding: 2.5rem 0;
   margin-bottom: 2rem;
 }
@@ -1287,7 +1317,7 @@ img { content-visibility: auto; max-width: 100%; height: auto; }
   font-size: 0.95rem;
   font-weight: 700;
   text-transform: uppercase;
-  color: var(--text-main);
+  color: #ffffff;
   margin-bottom: 1.5rem;
   letter-spacing: 0.03em;
 }
@@ -1300,7 +1330,7 @@ img { content-visibility: auto; max-width: 100%; height: auto; }
 
 .city-link {
   font-size: 0.85rem;
-  color: var(--text-muted);
+  color: var(--text-on-dark-muted);
   text-decoration: none;
   transition: color 0.2s;
 }
@@ -1315,7 +1345,7 @@ img { content-visibility: auto; max-width: 100%; height: auto; }
   justify-content: space-between;
   align-items: center;
   font-size: 0.8rem;
-  color: var(--text-faint);
+  color: var(--text-on-dark-muted);
 }
 
 .footer-bottom-links {
@@ -1324,7 +1354,7 @@ img { content-visibility: auto; max-width: 100%; height: auto; }
 }
 
 .footer-bottom-links a {
-  color: var(--text-faint);
+  color: var(--text-on-dark-muted);
   text-decoration: none;
   transition: color 0.2s;
 }

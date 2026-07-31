@@ -1,34 +1,45 @@
 import { Link } from 'react-router-dom';
 import { formatDate } from '../../utils/format';
 
-export default function BlogCard({ post, showViews = true }) {
+/* Decorative corner blobs, cycled by card position so a grid row never repeats
+   the same pair. Each entry is [top-left, bottom-right]. */
+const BLOB_PAIRS = [
+  ['var(--accent-orange)', 'var(--accent-cyan)'],
+  ['var(--accent-orange-bright)', 'var(--accent-cyan-bright)'],
+  ['var(--accent-cyan)', 'var(--accent-orange)'],
+  ['var(--accent-orange-deep)', 'var(--accent-orange-bright)'],
+];
+
+export default function BlogCard({ post, index = 0 }) {
+  const [blobA, blobB] = BLOB_PAIRS[index % BLOB_PAIRS.length];
+
   return (
     <Link className="blog-card" to={`/blog/${post.slug}`}>
-      {post.coverImage ? (
-        <div className="blog-card-img">
+      <div className="blog-card-media">
+        {post.coverImage ? (
           <img src={post.coverImage} alt={post.title} loading="lazy" />
-        </div>
-      ) : (
-        <div className="blog-card-img placeholder">⚙️</div>
-      )}
+        ) : (
+          <div className="blog-card-media-fallback">⚙️</div>
+        )}
+        <span className="blog-blob blog-blob-a" style={{ background: blobA }} />
+        <span className="blog-blob blog-blob-b" style={{ background: blobB }} />
+      </div>
 
       <div className="blog-card-body">
-        {post.tags?.length > 0 && (
-          <div className="blog-card-tags">
-            {post.tags.slice(0, 3).map((tag) => (
-              <span className="blog-card-tag" key={tag}>{tag}</span>
-            ))}
-          </div>
-        )}
+        {post.tags?.[0] && <span className="blog-card-badge">{post.tags[0]}</span>}
+
+        <div className="blog-card-meta">
+          <span>{formatDate(post.publishedAt, { long: true })}</span>
+          {post.readTime > 0 && (
+            <>
+              <span className="blog-card-dot">·</span>
+              <span>{post.readTime} min read</span>
+            </>
+          )}
+        </div>
 
         <h2>{post.title}</h2>
         <p>{post.excerpt}</p>
-
-        <div className="blog-card-meta">
-          <span>{formatDate(post.publishedAt)}</span>
-          {showViews && <span>{post.views} views</span>}
-          <span className="blog-card-more">Read →</span>
-        </div>
       </div>
     </Link>
   );

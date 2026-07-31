@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 300" fill="none" role="img" aria-label="Engineering insights illustration">
+  <defs>
+    <linearGradient id="tpOrange" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#e28a64"/>
+      <stop offset="100%" stop-color="#d9653b"/>
+    </linearGradient>
+    <linearGradient id="tpCyan" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#14607a"/>
+      <stop offset="100%" stop-color="#0f4d63"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Soft blob backdrop -->
+  <ellipse cx="230" cy="152" rx="196" ry="132" fill="#e7f1f5"/>
+  <ellipse cx="230" cy="152" rx="150" ry="104" fill="#f4f6f9"/>
+
+  <!-- Back panel: spec sheet with chart -->
+  <g>
+    <rect x="96" y="60" width="128" height="96" rx="10" fill="#ffffff" stroke="#dce3ec" stroke-width="2"/>
+    <rect x="110" y="76" width="52" height="7" rx="3.5" fill="#0e1a2b" opacity="0.75"/>
+    <rect x="110" y="92" width="86" height="5" rx="2.5" fill="#c3ceda"/>
+    <polyline points="112,142 134,124 152,133 172,110 196,118 210,100"
+              stroke="url(#tpCyan)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="210" cy="100" r="5" fill="#d9653b"/>
+  </g>
+
+  <!-- Front panel: article card -->
+  <g>
+    <rect x="196" y="108" width="150" height="122" rx="12" fill="#ffffff" stroke="#dce3ec" stroke-width="2"/>
+    <rect x="196" y="108" width="150" height="42" rx="12" fill="url(#tpOrange)"/>
+    <rect x="196" y="138" width="150" height="12" fill="url(#tpOrange)"/>
+    <rect x="212" y="122" width="60" height="8" rx="4" fill="#ffffff" opacity="0.9"/>
+    <rect x="212" y="166" width="112" height="7" rx="3.5" fill="#0e1a2b" opacity="0.72"/>
+    <rect x="212" y="183" width="96" height="5" rx="2.5" fill="#c3ceda"/>
+    <rect x="212" y="196" width="106" height="5" rx="2.5" fill="#c3ceda"/>
+    <rect x="212" y="209" width="64" height="5" rx="2.5" fill="#c3ceda"/>
+  </g>
+
+  <!-- Gear: engineering cue -->
+  <g transform="translate(330 68)">
+    <circle r="30" fill="url(#tpCyan)"/>
+    <circle r="12" fill="#f4f6f9"/>
+    <g fill="url(#tpCyan)">
+      <rect x="-5" y="-40" width="10" height="12" rx="2.5"/>
+      <rect x="-5" y="28" width="10" height="12" rx="2.5"/>
+      <rect x="-40" y="-5" width="12" height="10" rx="2.5"/>
+      <rect x="28" y="-5" width="12" height="10" rx="2.5"/>
+    </g>
+  </g>
+
+  <!-- Floating accents -->
+  <circle cx="86" cy="200" r="16" fill="url(#tpOrange)"/>
+  <circle cx="382" cy="196" r="10" fill="#d9653b" opacity="0.45"/>
+  <circle cx="132" cy="40" r="7" fill="#14607a" opacity="0.4"/>
+  <rect x="352" y="228" width="34" height="34" rx="9" fill="#0e1a2b" opacity="0.9"/>
+  <path d="M361 245h16M369 237v16" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+</svg>

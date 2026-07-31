@@ -2,6 +2,14 @@ const Post = require('../models/Post');
 const { asyncHandler } = require('../middleware/error');
 
 /* ─── Shaping ────────────────────────────────────────────────────────────── */
+
+/** Rough reading time in whole minutes, at 220 words per minute. */
+function readingTime(html) {
+  const plain = String(html || '').replace(/<[^>]*>/g, ' ').trim();
+  if (!plain) return 1;
+  return Math.max(1, Math.round(plain.split(/\s+/).length / 220));
+}
+
 function shape(doc, { withContent = true } = {}) {
   if (!doc) return null;
   const p = doc.toObject ? doc.toObject() : doc;
@@ -14,6 +22,7 @@ function shape(doc, { withContent = true } = {}) {
     tags:        p.tags || [],
     status:      p.status,
     views:       p.views,
+    readTime:    readingTime(p.content),
     author:      p.author?.name || '',
     createdAt:   p.createdAt,
     updatedAt:   p.updatedAt,
@@ -57,9 +66,9 @@ const listPublished = asyncHandler(async (req, res) => {
     filter.$or = [{ title: re }, { excerpt: re }, { content: re }];
   }
 
+  /* `content` is read so readTime can be derived, then dropped by shape(). */
   const [docs, total] = await Promise.all([
     Post.find(filter)
-      .select('-content')
       .populate('author', 'name')
       .sort({ publishedAt: -1, createdAt: -1 })
       .skip((page - 1) * limit)
@@ -99,7 +108,6 @@ const getBySlug = asyncHandler(async (req, res) => {
   if (!post) return res.status(404).json({ error: 'Post not found' });
 
   const related = await Post.find({ status: 'published', _id: { $ne: post._id } })
-    .select('-content')
     .sort({ publishedAt: -1 })
     .limit(3);
 

@@ -59,7 +59,7 @@ export default function HomeBlog() {
           {loading ? (
             <div className="blog-loading">Loading latest articles…</div>
           ) : (
-            posts.map((post) => <BlogCard key={post.id} post={post} />)
+            posts.map((post, i) => <BlogCard key={post.id} post={post} index={i} />)
           )}
         </div>
       </div>

@@ -7,6 +7,13 @@ const CITIES = [
   'Surat', 'Rajkot', 'Godhra', 'Navsari', 'Vapi', 'Bhuj', 'Amreli', 'Dahod'
 ];
 
+const GROUP_COMPANIES = [
+  { name: 'Apidel', logo: '/assets/images/logo_apidel.jpg' },
+  { name: 'Shree Raj', logo: '/assets/images/logo_shree_raj.jpg' },
+  { name: 'Techno', logo: '/assets/images/logo_techno.jpg' },
+  { name: 'Transpower Exports', logo: '/assets/images/logo_transpower.png' }
+];
+
 export default function SiteFooter() {
   const { pathname } = useLocation();
   const [phone, setPhone] = useState('');
@@ -84,42 +91,12 @@ export default function SiteFooter() {
           {/* Col 3: Our Group of Company */}
           <div className="footer-frameworks-col" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <h4 style={{ color: '#fff', fontSize: '0.9rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '1.2rem' }}>OUR GROUP OF COMPANY</h4>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', alignItems: 'center' }}>
-              {/* Apidel */}
-              <div>
-                <img 
-                  src="/assets/images/logo_apidel.jpg" 
-                  alt="Apidel" 
-                  style={{ maxHeight: '35px', maxWidth: '90%', objectFit: 'contain', filter: 'brightness(0) invert(1)', opacity: 0.85 }} 
-                />
-              </div>
-              {/* Shree Raj */}
-              <div>
-                <img 
-                  src="/assets/images/logo_shree_raj.jpg" 
-                  alt="Shree Raj" 
-                  style={{ maxHeight: '35px', maxWidth: '90%', objectFit: 'contain', filter: 'brightness(0) invert(1)', opacity: 0.85 }} 
-                />
-              </div>
-              {/* Techno */}
-              <div>
-                <img 
-                  src="/assets/images/logo_techno.jpg" 
-                  alt="Techno" 
-                  style={{ maxHeight: '35px', maxWidth: '90%', objectFit: 'contain', filter: 'brightness(0) invert(1)', opacity: 0.85 }} 
-                />
-              </div>
-              {/* Transpower Exports */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.2rem' }}>
-                <img 
-                  src="/assets/images/logo_transpower.png" 
-                  alt="Transpower" 
-                  style={{ maxHeight: '28px', objectFit: 'contain', filter: 'brightness(0) invert(1)', opacity: 0.85 }} 
-                />
-                <span style={{ fontSize: '0.85rem', fontWeight: 900, color: '#fff', letterSpacing: '0.02em', fontFamily: 'system-ui, sans-serif' }}>
-                  TRANSPOWER Exports
-                </span>
-              </div>
+            <div className="footer-group-grid">
+              {GROUP_COMPANIES.map((company) => (
+                <div className="footer-group-logo" key={company.name}>
+                  <img src={company.logo} alt={company.name} loading="lazy" />
+                </div>
+              ))}
             </div>
           </div>
 
