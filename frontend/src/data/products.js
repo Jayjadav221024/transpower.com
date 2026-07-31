@@ -85,6 +85,7 @@ export const HERO_PRODUCTS = [
 /* Product catalogue grid. */
 export const PRODUCT_CARDS = [
   {
+    id: 'cable-trays',
     category: 'cable-tray',
     badge: 'Top Seller',
     image: '/assets/images/cable_tray_product.webp',
@@ -99,6 +100,7 @@ export const PRODUCT_CARDS = [
     cta: 'Get Cable Tray Specs',
   },
   {
+    id: 'gear-boxes',
     category: 'gearboxes',
     badge: 'New Line',
     image: '/assets/images/gearboxes_product.webp',
@@ -113,6 +115,7 @@ export const PRODUCT_CARDS = [
     cta: 'Get Gearbox Catalog',
   },
   {
+    id: 'switchgears',
     category: 'switchgears',
     badge: 'Power Systems',
     image: '/assets/images/switchgears_product.webp',
@@ -127,6 +130,7 @@ export const PRODUCT_CARDS = [
     cta: 'Get Switchgear Specs',
   },
   {
+    id: 'molded-gratings',
     category: 'frp',
     badge: 'Structural',
     image: '/assets/images/hero_frp_grating.webp',
@@ -141,6 +145,7 @@ export const PRODUCT_CARDS = [
     cta: 'Get Grating Specs',
   },
   {
+    id: 'pultruded-profiles',
     category: 'frp',
     badge: 'Heavy Load',
     image: '/assets/images/industrial_walkway.webp',

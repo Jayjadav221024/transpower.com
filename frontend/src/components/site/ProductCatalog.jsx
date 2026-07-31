@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { PRODUCT_CARDS, PRODUCT_FILTERS } from '../../data/products';
 
 export default function ProductCatalog() {
@@ -43,7 +44,7 @@ export default function ProductCatalog() {
                 <ul className="product-specs-list">
                   {p.specs.map((s) => <li key={s}>{s}</li>)}
                 </ul>
-                <a href="#quote" className="btn btn-secondary">{p.cta}</a>
+                <Link to={`/product/${p.id}`} className="btn btn-secondary">{p.cta}</Link>
               </div>
             </article>
           ))}

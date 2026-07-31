@@ -26,6 +26,10 @@ import { useLocation } from 'react-router-dom';
 
 const getPageKey = (path) => {
   if (path === '/') return 'homepage';
+  if (path.startsWith('/product/')) {
+    const productId = path.replace('/product/', '');
+    return `productpage_${productId}`;
+  }
   const clean = path.replace(/[^a-zA-Z0-9]/g, '');
   return clean ? `${clean}page` : 'homepage';
 };
@@ -108,7 +112,7 @@ export default function App() {
         <Route element={<PublicLayout />}>
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<AboutPage />} />
-          <Route path="/product" element={<ProductPage />} />
+          <Route path="/product/:id" element={<ProductPage />} />
           <Route path="/blog" element={<BlogPage />} />
           <Route path="/blog/:slug" element={<PostPage />} />
           <Route path="/feature-demo" element={<FeatureDemoPage />} />

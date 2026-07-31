@@ -313,12 +313,58 @@ export default function PagesPage() {
             </button>
             <button 
               type="button" 
-              className={`btn ${activeTab === 'productpage' ? 'btn-primary' : 'btn-ghost'}`}
-              onClick={() => setActiveTab('productpage')}
+              className={`btn ${activeTab.startsWith('productpage_') ? 'btn-primary' : 'btn-ghost'}`}
+              onClick={() => setActiveTab('productpage_cable-trays')}
             >
-              🛍️ Edit Product Page
+              🛍️ Edit Product Pages
             </button>
           </div>
+
+          {activeTab.startsWith('productpage_') && (
+            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '0.8rem', background: '#f8fafc', padding: '0.5rem', borderRadius: '8px', border: '1px solid #e2e8f0', width: 'fit-content' }}>
+              <span style={{ fontSize: '0.72rem', fontWeight: 800, alignSelf: 'center', color: '#64748b', marginRight: '0.5rem' }}>Select Product to Edit:</span>
+              <button 
+                type="button" 
+                className={`btn btn-xs ${activeTab === 'productpage_cable-trays' ? 'btn-primary' : 'btn-ghost'}`} 
+                onClick={() => setActiveTab('productpage_cable-trays')}
+                style={{ fontSize: '0.7rem', padding: '0.2rem 0.5rem', height: 'auto', minHeight: 0 }}
+              >
+                Cable Trays
+              </button>
+              <button 
+                type="button" 
+                className={`btn btn-xs ${activeTab === 'productpage_gear-boxes' ? 'btn-primary' : 'btn-ghost'}`} 
+                onClick={() => setActiveTab('productpage_gear-boxes')}
+                style={{ fontSize: '0.7rem', padding: '0.2rem 0.5rem', height: 'auto', minHeight: 0 }}
+              >
+                Gear Boxes
+              </button>
+              <button 
+                type="button" 
+                className={`btn btn-xs ${activeTab === 'productpage_switchgears' ? 'btn-primary' : 'btn-ghost'}`} 
+                onClick={() => setActiveTab('productpage_switchgears')}
+                style={{ fontSize: '0.7rem', padding: '0.2rem 0.5rem', height: 'auto', minHeight: 0 }}
+              >
+                Switchgears
+              </button>
+              <button 
+                type="button" 
+                className={`btn btn-xs ${activeTab === 'productpage_molded-gratings' ? 'btn-primary' : 'btn-ghost'}`} 
+                onClick={() => setActiveTab('productpage_molded-gratings')}
+                style={{ fontSize: '0.7rem', padding: '0.2rem 0.5rem', height: 'auto', minHeight: 0 }}
+              >
+                Molded Gratings
+              </button>
+              <button 
+                type="button" 
+                className={`btn btn-xs ${activeTab === 'productpage_pultruded-profiles' ? 'btn-primary' : 'btn-ghost'}`} 
+                onClick={() => setActiveTab('productpage_pultruded-profiles')}
+                style={{ fontSize: '0.7rem', padding: '0.2rem 0.5rem', height: 'auto', minHeight: 0 }}
+              >
+                Pultruded Profiles
+              </button>
+            </div>
+          )}
 
           {/* Editor Mode Control */}
           <div style={{ display: 'flex', gap: '0.5rem', background: '#eef2f7', padding: '0.25rem', borderRadius: '8px' }}>
@@ -438,7 +484,7 @@ export default function PagesPage() {
                   </div>
 
                   <div style={{ background: '#fff', borderRadius: '6px', padding: '0.2rem 1rem', fontSize: '0.72rem', color: '#6b7280', border: '1px solid var(--border)', maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                    <span>localhost:5173{activeTab === 'homepage' ? '/' : activeTab === 'aboutpage' ? '/about' : activeTab === 'productpage' ? '/product' : '/blog'}</span>
+                    <span>localhost:5173{activeTab === 'homepage' ? '/' : activeTab === 'aboutpage' ? '/about' : activeTab.startsWith('productpage_') ? `/product/${activeTab.replace('productpage_', '')}` : '/blog'}</span>
                   </div>
                 </div>
 
@@ -447,7 +493,7 @@ export default function PagesPage() {
                   <iframe
                     key={`${activeTab}-${iframeKey}`}
                     id="preview-iframe"
-                    src={activeTab === 'homepage' ? '/' : activeTab === 'aboutpage' ? '/about' : activeTab === 'productpage' ? '/product' : '/blog'}
+                    src={activeTab === 'homepage' ? '/' : activeTab === 'aboutpage' ? '/about' : activeTab.startsWith('productpage_') ? `/product/${activeTab.replace('productpage_', '')}` : '/blog'}
                     style={{ width: '100%', height: '100%', border: 'none' }}
                     onLoad={handleIframeLoad}
                   />
