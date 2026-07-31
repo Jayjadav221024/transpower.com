@@ -15,10 +15,11 @@ const TIMELINE = [
 ];
 
 const BRANDS = [
-  { name: 'INNOMOTICS', logo: 'I' },
-  { name: 'HINDUSTAN ELECTRIC MOTORS', logo: 'H' },
-  { name: 'ROTOMOTIVE', logo: 'R' },
-  { name: 'CROMPTON GREAVES', logo: 'C' },
+  { name: 'INNOMOTICS', logo: '/assets/images/brand_innomotics.png' },
+  { name: 'HINDUSTAN ELECTRIC MOTORS', logo: '/assets/images/brand_hindustan.svg' },
+  { name: 'ROTOMOTIVE', logo: '/assets/images/brand_rotomotive.png' },
+  { name: 'CROMPTON GREAVES', logo: '/assets/images/brand_crompton.png' },
+  { name: 'SIEMENS', logo: '/assets/images/brand_siemens.png' }
 ];
 
 const DEFAULT_ABOUT = {
@@ -217,13 +218,10 @@ export default function AboutPage() {
             <h2 className="section-title">Authorized Brands</h2>
           </div>
 
-          <div className="brands-grid">
+          <div className="brands-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem', alignItems: 'center' }}>
             {BRANDS.map((brand) => (
-              <div className="brand-card" key={brand.name}>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-                  <div style={{ fontSize: '0.85rem', fontWeight: '800', color: 'var(--accent-orange)' }}>BRAND PARTNER</div>
-                  <div style={{ fontSize: '1.1rem', fontWeight: '900', letterSpacing: '0.02em', color: 'var(--text-main)' }}>{brand.name}</div>
-                </div>
+              <div className="brand-card" key={brand.name} style={{ background: '#fff', padding: '1.25rem', borderRadius: '12px', border: '1px solid #e2e8f0', height: '110px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 10px rgba(0,0,0,0.01)' }}>
+                <img src={brand.logo} alt={brand.name} style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }} />
               </div>
             ))}
           </div>
