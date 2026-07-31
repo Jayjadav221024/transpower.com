@@ -4,7 +4,7 @@ import { publicApi } from '../api/client';
 import '../styles/about.css';
 
 const TIMELINE = [
-  { year: '1998', name: 'Desai Brothers', desc: 'Acquired Desai Brothers and Company.', logo: '/assets/images/logo_desai.png' },
+  { year: '1998', name: 'Desai Brothers', desc: 'Acquired Desai Brothers and Company.', logo: '/assets/images/logo_transpower.png' },
   { year: '2005', name: 'Transpower Tech', desc: 'Renamed to Transpower Technologies Pvt Ltd.', logo: '/assets/images/logo_transpower.png' },
   { year: '2008', name: 'Yash High Voltage', desc: 'Acquired Yash High Voltage.', logo: '/assets/images/logo_yash.png' },
   { year: '2010', name: 'Kaival Poultry', desc: 'Launched Livebird and ventured into farming.', logo: '/assets/images/logo_kaival_poultry.png' },
