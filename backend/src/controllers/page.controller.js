@@ -40,11 +40,7 @@ exports.getPage = async (req, res) => {
   try {
     let doc = await PageContent.findOne({ key });
     if (!doc) {
-      // If no page stored in DB, return default configuration values
-      const defaultContent = DEFAULTS[key];
-      if (!defaultContent) {
-        return res.status(404).json({ error: `Page key "${key}" not found.` });
-      }
+      const defaultContent = DEFAULTS[key] || { overrides: {} };
       return res.json({ key, content: defaultContent });
     }
     return res.json(doc);
