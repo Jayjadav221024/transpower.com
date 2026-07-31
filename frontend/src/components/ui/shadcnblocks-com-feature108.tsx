@@ -177,6 +177,45 @@ const STYLE = `
   font-size: 0.95rem;
   line-height: 1.6;
 }
+/* The shadcn Button ships Tailwind utility classes, but this project has no
+   Tailwind build — so the button is styled here to match .btn-primary. */
+.f108-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 8px;
+  padding: 0.7rem 1.6rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  background: var(--accent-orange);
+  color: #ffffff;
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  font-weight: 700;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  cursor: pointer;
+  box-shadow: var(--shadow-glow);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+}
+.f108-btn:hover {
+  background: var(--accent-orange-deep);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 26px -8px rgba(225, 89, 11, 0.55);
+}
+.f108-btn:focus-visible {
+  outline: 2px solid var(--accent-orange-deep);
+  outline-offset: 2px;
+}
+.f108-btn .f108-btn-arrow {
+  transition: transform var(--transition-fast);
+}
+.f108-btn:hover .f108-btn-arrow {
+  transform: translateX(3px);
+}
 .f108-image-col {
   overflow: hidden;
   border-radius: var(--radius-md);
@@ -287,6 +326,7 @@ const Feature108 = ({
                       <p>{tab.content.description}</p>
                       <Button className="f108-btn">
                         {tab.content.buttonText}
+                        <span className="f108-btn-arrow" aria-hidden="true">→</span>
                       </Button>
                     </div>
                     <div className="f108-image-col">
