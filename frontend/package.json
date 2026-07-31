@@ -6,7 +6,8 @@
   "description": "Transpower Technologies — React front end (site, blog, admin panel)",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "sitemap": "node scripts/generate-sitemap.mjs",
+    "build": "npm run sitemap && vite build",
     "preview": "vite preview"
   },
   "dependencies": {

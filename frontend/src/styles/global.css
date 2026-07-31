@@ -1339,6 +1339,23 @@ img { content-visibility: auto; max-width: 100%; height: auto; }
   color: var(--accent-orange);
 }
 
+.cities-all-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 1.4rem;
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--accent-orange);
+  text-decoration: none;
+}
+
+.cities-all-link:hover {
+  color: var(--accent-orange-bright);
+}
+
 /* Footer Bottom */
 .footer-bottom-new {
   display: flex;

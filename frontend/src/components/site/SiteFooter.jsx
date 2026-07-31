@@ -1,11 +1,7 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { publicApi } from '../../api/client';
-
-const CITIES = [
-  'Vadodara', 'Ahmedabad', 'Anand', 'Ankleshwar', 'Bharuch', 
-  'Surat', 'Rajkot', 'Godhra', 'Navsari', 'Vapi', 'Bhuj', 'Amreli', 'Dahod'
-];
+import { CITIES } from '../../data/cities';
 
 const GROUP_COMPANIES = [
   { name: 'Apidel', logo: '/assets/images/logo_apidel.jpg' },
@@ -148,15 +144,21 @@ export default function SiteFooter() {
           </div>
         </div>
 
-        {/* Network & Cities Row (Only rendered on Home Page) */}
-        {pathname === '/' && (
+        {/* Network & Cities Row — home page plus the location pages, where the
+            city cross-links are directly relevant. */}
+        {(pathname === '/' || pathname.startsWith('/locations')) && (
           <div className="footer-cities-row">
             <div className="cities-heading">Available Offline &amp; Online in Gujarat</div>
             <div className="cities-grid">
               {CITIES.map((city) => (
-                <a href="/#quote" key={city} className="city-link">{city}</a>
+                <Link to={`/locations/${city.slug}`} key={city.slug} className="city-link">
+                  {city.name}
+                </Link>
               ))}
             </div>
+            <Link to="/locations" className="cities-all-link">
+              View all service locations <span aria-hidden="true">→</span>
+            </Link>
           </div>
         )}
 
