@@ -54,6 +54,8 @@ const applyPageOverrides = (overrides) => {
   });
 };
 
+import ProductPage from './pages/ProductPage';
+
 export default function App() {
   const location = useLocation();
 
@@ -94,6 +96,7 @@ export default function App() {
         <Route element={<PublicLayout />}>
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<AboutPage />} />
+          <Route path="/product" element={<ProductPage />} />
           <Route path="/blog" element={<BlogPage />} />
           <Route path="/blog/:slug" element={<PostPage />} />
           <Route path="/feature-demo" element={<FeatureDemoPage />} />

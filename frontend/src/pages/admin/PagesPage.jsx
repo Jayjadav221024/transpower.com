@@ -311,6 +311,13 @@ export default function PagesPage() {
             >
               📰 Edit Blog Page
             </button>
+            <button 
+              type="button" 
+              className={`btn ${activeTab === 'productpage' ? 'btn-primary' : 'btn-ghost'}`}
+              onClick={() => setActiveTab('productpage')}
+            >
+              🛍️ Edit Product Page
+            </button>
           </div>
 
           {/* Editor Mode Control */}
@@ -431,7 +438,7 @@ export default function PagesPage() {
                   </div>
 
                   <div style={{ background: '#fff', borderRadius: '6px', padding: '0.2rem 1rem', fontSize: '0.72rem', color: '#6b7280', border: '1px solid var(--border)', maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                    <span>localhost:5173{activeTab === 'homepage' ? '/' : activeTab === 'aboutpage' ? '/about' : '/blog'}</span>
+                    <span>localhost:5173{activeTab === 'homepage' ? '/' : activeTab === 'aboutpage' ? '/about' : activeTab === 'productpage' ? '/product' : '/blog'}</span>
                   </div>
                 </div>
 
@@ -440,7 +447,7 @@ export default function PagesPage() {
                   <iframe
                     key={`${activeTab}-${iframeKey}`}
                     id="preview-iframe"
-                    src={activeTab === 'homepage' ? '/' : activeTab === 'aboutpage' ? '/about' : '/blog'}
+                    src={activeTab === 'homepage' ? '/' : activeTab === 'aboutpage' ? '/about' : activeTab === 'productpage' ? '/product' : '/blog'}
                     style={{ width: '100%', height: '100%', border: 'none' }}
                     onLoad={handleIframeLoad}
                   />

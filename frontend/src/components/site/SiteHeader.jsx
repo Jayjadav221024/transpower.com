@@ -96,6 +96,11 @@ export default function SiteHeader() {
                 About Us
               </NavLink>
             </li>
+            <li>
+              <NavLink to="/product" className={({ isActive }) => (isActive ? 'active-pill' : 'nav-link-new')}>
+                FRP Catalog
+              </NavLink>
+            </li>
             {SECTIONS.map((s) => (
               <li key={s.hash}>
                 <a href={`/#${s.hash}`} className="nav-link-new" onClick={(e) => goToSection(e, s.hash)}>
@@ -150,6 +155,11 @@ export default function SiteHeader() {
           <li>
             <NavLink to="/about" className={({ isActive }) => (isActive ? 'active-mobile' : 'mobile-link')} onClick={() => setMenuOpen(false)}>
               About Us
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/product" className={({ isActive }) => (isActive ? 'active-mobile' : 'mobile-link')} onClick={() => setMenuOpen(false)}>
+              FRP Catalog
             </NavLink>
           </li>
           {SECTIONS.map((s) => (
