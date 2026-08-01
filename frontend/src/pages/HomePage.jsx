@@ -10,6 +10,7 @@ import RfqForm from '../components/site/RfqForm';
 import Feature108Demo from '../components/ui/demo-feature108';
 import HomeBlog from '../components/site/HomeBlog';
 import SEO from '../components/common/SEO';
+import BrochureDownloadSection from '../components/site/BrochureDownloadSection';
 
 import { useState, useEffect } from 'react';
 import { publicApi } from '../api/client';
@@ -45,6 +46,7 @@ export default function HomePage() {
       <Feature108Demo />
       <AuthorizedBrands />
       <ReputedClients />
+      <BrochureDownloadSection />
       <Testimonials />
       <HomeBlog />
       <RfqForm />
