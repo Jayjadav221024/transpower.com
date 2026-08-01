@@ -1,0 +1,146 @@
+/* ==========================================================================
+   Home page trust sections — Authorized Brands, Reputed Clients, Testimonials
+   ========================================================================== */
+
+/* ── Logo strips (brands + clients share the chip treatment) ────────────── */
+.brands-strip-section { background: var(--bg-secondary); }
+
+.brands-strip,
+.clients-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 1.2rem;
+  align-items: stretch;
+}
+
+.brand-chip,
+.client-chip {
+  display: grid;
+  place-items: center;
+  min-height: 110px;
+  padding: 1.25rem;
+  background: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  transition: var(--transition-fast);
+}
+
+.brand-chip:hover,
+.client-chip:hover {
+  transform: translateY(-3px);
+  border-color: var(--border-active);
+  box-shadow: var(--shadow-lift);
+}
+
+/* Logos are mixed-format artwork on white, so they are contained rather than
+   stretched — object-fit keeps every mark at its own aspect ratio. */
+.brand-chip img,
+.client-chip img {
+  max-width: 100%;
+  max-height: 58px;
+  object-fit: contain;
+}
+
+/* ── Testimonials ───────────────────────────────────────────────────────── */
+.testimonials-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+/* A single quote would stretch the full row width and read poorly, so it is
+   centred at a comfortable measure instead. */
+.testimonials-grid.count-1 {
+  grid-template-columns: minmax(0, 720px);
+  justify-content: center;
+}
+
+.testimonial-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  padding: 2rem 1.75rem 1.6rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  transition: var(--transition-normal);
+}
+
+.testimonial-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--border-active);
+  box-shadow: var(--shadow-lift);
+}
+
+.testimonial-mark {
+  position: absolute;
+  top: 0.35rem;
+  left: 1.4rem;
+  font-family: var(--font-display);
+  font-size: 3.6rem;
+  line-height: 1;
+  color: var(--accent-orange);
+  opacity: 0.22;
+  pointer-events: none;
+}
+
+.testimonial-card blockquote {
+  position: relative;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: var(--text-muted);
+}
+
+.testimonial-card figcaption {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-top: auto;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.testimonial-avatar {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--grad-orange);
+  color: #ffffff;
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.testimonial-who {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.3;
+}
+
+.testimonial-who strong {
+  font-size: 0.92rem;
+  color: var(--text-main);
+}
+
+.testimonial-who span {
+  font-size: 0.8rem;
+  color: var(--text-faint);
+}
+
+@media (max-width: 600px) {
+  .brands-strip,
+  .clients-grid {
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 0.8rem;
+  }
+  .brand-chip,
+  .client-chip { min-height: 88px; padding: 0.9rem; }
+  .brand-chip img,
+  .client-chip img { max-height: 44px; }
+}

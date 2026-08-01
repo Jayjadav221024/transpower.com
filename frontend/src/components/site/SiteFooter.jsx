@@ -167,7 +167,7 @@ export default function SiteFooter() {
           <div>© 2026 Transpower Technologies Pvt. Ltd. All rights reserved.</div>
           <div className="footer-bottom-links">
             <Link to="/blog">Blog</Link>
-            <a href="/#products">Products</a>
+            <Link to="/products">Products</Link>
             <Link to="/admin">Admin Dashboard</Link>
           </div>
         </div>

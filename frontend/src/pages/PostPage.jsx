@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { publicApi } from '../api/client';
+import { publicApi, assetUrl } from '../api/client';
 import BlogCard from '../components/blog/BlogCard';
 import { formatDate, readingTime } from '../utils/format';
 import '../styles/blog.css';
@@ -83,7 +83,7 @@ export default function PostPage() {
 
           {post.coverImage && (
             <div className="post-cover">
-              <img src={post.coverImage} alt={post.title} />
+              <img src={assetUrl(post.coverImage)} alt={post.title} />
             </div>
           )}
 

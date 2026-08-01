@@ -3,6 +3,9 @@ import ProductCatalog from '../components/site/ProductCatalog';
 import LoadCalculator from '../components/site/LoadCalculator';
 import ComparisonTable from '../components/site/ComparisonTable';
 import Applications from '../components/site/Applications';
+import AuthorizedBrands from '../components/site/AuthorizedBrands';
+import ReputedClients from '../components/site/ReputedClients';
+import Testimonials from '../components/site/Testimonials';
 import RfqForm from '../components/site/RfqForm';
 import Feature108Demo from '../components/ui/demo-feature108';
 import HomeBlog from '../components/site/HomeBlog';
@@ -40,6 +43,9 @@ export default function HomePage() {
       <ComparisonTable />
       <Applications />
       <Feature108Demo />
+      <AuthorizedBrands />
+      <ReputedClients />
+      <Testimonials />
       <HomeBlog />
       <RfqForm />
     </>

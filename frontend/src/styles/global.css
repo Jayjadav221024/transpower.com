@@ -543,9 +543,11 @@ img { content-visibility: auto; max-width: 100%; height: auto; }
   margin-top: 1.5rem;
 }
 
+/* Four stats share the hero's left column, so they wrap rather than overflow. */
 .hero-inline-stats {
   display: flex;
-  gap: 2.2rem;
+  flex-wrap: wrap;
+  gap: 1.1rem 1.8rem;
   margin-top: 2rem;
   border-top: 1px solid var(--border-color);
   padding-top: 1.5rem;
@@ -723,29 +725,6 @@ img { content-visibility: auto; max-width: 100%; height: auto; }
 }
 
 .bar-spec-value { font-size: 1.1rem; font-weight: 800; color: var(--text-main); }
-
-.bar-counter {
-  display: flex; align-items: center; gap: 0.7rem;
-  background: var(--bg-primary);
-  padding: 0.35rem 0.7rem;
-  border-radius: var(--radius-pill);
-  border: 1px solid var(--border-color);
-}
-
-.counter-btn {
-  width: 26px; height: 26px;
-  border-radius: 50%;
-  background: #fff;
-  border: 1px solid var(--border-strong);
-  color: var(--text-main);
-  display: grid; place-items: center;
-  font-weight: 700; cursor: pointer;
-  transition: background var(--transition-fast), color var(--transition-fast);
-}
-
-.counter-btn:hover { background: var(--accent-orange); border-color: var(--accent-orange); color: #fff; }
-
-.counter-val { font-weight: 700; min-width: 24px; text-align: center; color: var(--text-main); }
 
 /* SECTIONS */
 .section { padding: 4.5rem 0; position: relative; }
@@ -1706,10 +1685,6 @@ img { content-visibility: auto; max-width: 100%; height: auto; }
   .hero-bottom-bar .btn {
     width: 100%;
     text-align: center;
-  }
-  .bar-counter {
-    width: 100%;
-    justify-content: center;
   }
   .calc-box {
     padding: 1.25rem 1rem !important;

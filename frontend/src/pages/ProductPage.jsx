@@ -8,9 +8,6 @@ const PRODUCT_DEFAULTS = {
     title: 'FRP Cable Trays',
     category: 'Cable Management',
     badge: '⚡ Non-Conductive',
-    price: '$62.00',
-    originalPrice: '$85.00',
-    discount: 'Save 27%',
     feature1: 'Corrosion Proof',
     feature2: 'Non-Conductive',
     feature3: 'UV Stabilised',
@@ -28,9 +25,6 @@ const PRODUCT_DEFAULTS = {
     title: 'Industrial Gear Boxes',
     category: 'Power Transmission',
     badge: '⚙️ High-Torque',
-    price: '$320.00',
-    originalPrice: '$450.00',
-    discount: 'Save 29%',
     feature1: 'High Torque',
     feature2: '96% Efficiency',
     feature3: 'Cast Iron Body',
@@ -48,9 +42,6 @@ const PRODUCT_DEFAULTS = {
     title: 'Power Switchgears',
     category: 'Power Distribution',
     badge: '🔌 High-Voltage',
-    price: '$850.00',
-    originalPrice: '$1,100.00',
-    discount: 'Save 22%',
     feature1: 'Tested Safety',
     feature2: 'ACB & MCCB',
     feature3: 'Modular Panels',
@@ -68,9 +59,6 @@ const PRODUCT_DEFAULTS = {
     title: 'Molded FRP Gratings',
     category: 'FRP Composites',
     badge: '🏋️ Structural',
-    price: '$48.50',
-    originalPrice: '$65.00',
-    discount: 'Save 25%',
     feature1: 'Grit Top Grip',
     feature2: 'Acid Proof',
     feature3: 'Bidirectional',
@@ -84,13 +72,44 @@ const PRODUCT_DEFAULTS = {
     useText: 'Ideal for refinery walkways, drainage trench covers, access stairs, and water treatment decks.',
     productImage: '/assets/images/hero_frp_grating.png'
   },
+  'electric-motors': {
+    title: 'Electric Motors',
+    category: 'Rotating Equipment',
+    badge: '🔄 Authorized Dealer',
+    feature1: 'IE2 / IE3 Rated',
+    feature2: 'Flameproof Ex',
+    feature3: 'Squirrel Cage',
+    feature4: 'Slip Ring',
+    benefit1: 'Energy Saving',
+    benefit2: 'Low Vibration',
+    benefit3: 'Long Bearing Life',
+    benefit4: 'Wide Frame Range',
+    detailsText: 'Three-phase induction, flameproof and energy-efficient IE2/IE3 motors supplied as an authorised partner for Siemens, Crompton Greaves, Innomotics, Hindustan Electric Motors and Rotomotive.',
+    benefitsText: 'Premium-efficiency frames cut running cost on continuous-duty loads, and flameproof variants are rated for hazardous chemical and petrochemical areas.',
+    useText: 'Driving pumps, compressors, conveyors, agitators, fans and blowers across chemical, textile, water treatment and engineering plants.',
+    productImage: '/assets/images/gearboxes_product.webp'
+  },
+  'electric-drives': {
+    title: 'Electric Drives',
+    category: 'Motion Control',
+    badge: '🎛️ Automation',
+    feature1: 'VFD / AC Drive',
+    feature2: 'Soft Starter',
+    feature3: 'Motor Protection',
+    feature4: 'Panel Ready',
+    benefit1: 'Speed Control',
+    benefit2: 'Lower Energy Draw',
+    benefit3: 'Reduced Inrush',
+    benefit4: 'Longer Motor Life',
+    detailsText: 'Variable frequency drives, soft starters and motor control electronics for precise speed regulation and reduced energy draw on continuous industrial loads.',
+    benefitsText: 'Ramped starting removes mechanical shock and current surge, while closed-loop speed control trims energy consumption on variable-torque pump and fan duties.',
+    useText: 'Specified for pump and fan speed regulation, conveyor sequencing, mixer control, and retrofit energy-efficiency upgrades on existing motor lines.',
+    productImage: '/assets/images/switchgears_product.webp'
+  },
   'pultruded-profiles': {
     title: 'Pultruded Structural Profiles',
     category: 'FRP Structural',
     badge: '🏗️ Heavy Load',
-    price: '$95.00',
-    originalPrice: '$130.00',
-    discount: 'Save 27%',
     feature1: 'High Modulus',
     feature2: '75% Lighter',
     feature3: 'Zero Paint',
@@ -235,11 +254,10 @@ export default function ProductPage() {
             {data.title}
           </h1>
 
-          {/* Pricing */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', background: '#fafafa', padding: '0.8rem 1.2rem', borderRadius: '8px', border: '1px solid var(--border)', width: 'fit-content' }}>
-            <span data-edit-page={pageKey} data-edit-key="price" style={{ fontSize: '1.8rem', fontWeight: 900, color: 'var(--text-main)' }}>{data.price}</span>
-            <span data-edit-page={pageKey} data-edit-key="originalPrice" style={{ fontSize: '1.2rem', textDecoration: 'line-through', color: 'var(--text-muted)' }}>{data.originalPrice}</span>
-            <span data-edit-page={pageKey} data-edit-key="discount" style={{ background: 'var(--accent-orange)', color: '#fff', fontSize: '0.7rem', fontWeight: 800, padding: '0.2rem 0.5rem', borderRadius: '4px' }}>{data.discount}</span>
+          {/* Quote-only business — no pricing is shown anywhere on the site. */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', background: 'var(--accent-orange-tint)', padding: '0.8rem 1.2rem', borderRadius: '8px', border: '1px solid rgba(217, 101, 59, 0.2)', width: 'fit-content' }}>
+            <span style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--accent-orange-deep)' }}>Price on Request</span>
+            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>— quoted to your span &amp; load spec</span>
           </div>
 
           {/* Dynamic Details Tabs */}
@@ -317,7 +335,6 @@ export default function ProductPage() {
                   <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Single batch shipment</span>
                 </div>
               </div>
-              <strong style={{ fontSize: '0.9rem' }}>{data.price}</strong>
             </label>
 
             <label 
@@ -328,10 +345,9 @@ export default function ProductPage() {
                 <input type="radio" checked={purchaseTypeState === 'sub'} onChange={() => {}} style={{ accentColor: 'var(--accent-orange)' }} />
                 <div>
                   <strong style={{ display: 'block', fontSize: '0.85rem' }}>Flexible Supply Contract</strong>
-                  <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Deliver batch recurring monthly (Save 10%)</span>
+                  <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Recurring monthly batch delivery</span>
                 </div>
               </div>
-              <strong style={{ fontSize: '0.9rem', color: 'var(--accent-orange)' }}>$53.99</strong>
             </label>
           </div>
 
@@ -340,7 +356,7 @@ export default function ProductPage() {
             className="btn btn-primary" 
             style={{ width: '100%', padding: '1rem', fontSize: '1rem', fontWeight: 800, marginTop: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
           >
-            🛒 Add To Order / Request B2B Quote
+            Request B2B Quote
           </button>
 
           <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', fontSize: '0.78rem', color: 'var(--text-muted)', background: '#f8fafc', padding: '0.6rem 1rem', borderRadius: '6px', border: '1px solid var(--border)' }}>

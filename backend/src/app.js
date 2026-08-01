@@ -22,10 +22,34 @@ app.set('trust proxy', 1);   // correct req.ip behind nginx / a PaaS proxy
 app.disable('x-powered-by');
 
 /* In dev the React app runs on its own port, so it needs credentialed CORS.
-   In production both are served from this origin and CORS is a no-op. */
+   In production both are served from this origin and CORS is a no-op.
+
+   The browser's Origin header never carries a trailing slash or path, so the
+   configured values are normalised to bare origins before comparison —
+   CLIENT_ORIGIN="https://example.com/" would otherwise silently fail to match
+   and every cross-origin request would surface as "Failed to fetch". */
+const normaliseOrigin = (value) => {
+  const trimmed = String(value).trim();
+  if (!trimmed) return null;
+  try {
+    return new URL(trimmed).origin;
+  } catch {
+    return trimmed.replace(/\/+$/, '');
+  }
+};
+
+const ALLOWED_ORIGINS = (process.env.CLIENT_ORIGIN || 'http://localhost:5173')
+  .split(',')
+  .map(normaliseOrigin)
+  .filter(Boolean);
+
 app.use(
   cors({
-    origin: (process.env.CLIENT_ORIGIN || 'http://localhost:5173').split(',').map((s) => s.trim()),
+    origin: (origin, callback) => {
+      // Same-origin and server-to-server requests send no Origin header.
+      if (!origin) return callback(null, true);
+      return callback(null, ALLOWED_ORIGINS.includes(origin));
+    },
     credentials: true,
   })
 );

@@ -14,7 +14,6 @@ export const HERO_PRODUCTS = [
     imgAlt: 'Transpower FRP Molded Gratings & Cable Trays',
     model: 'Molded 38x38mm Mesh',
     resin: 'Isophthalic / Vinyl Ester',
-    price: 48.5,
   },
   {
     badge: '🔌 Cable Management Systems',
@@ -30,7 +29,6 @@ export const HERO_PRODUCTS = [
     imgAlt: 'Transpower FRP Ladder Cable Trays',
     model: 'FRP Ladder Tray Series',
     resin: 'Vinyl Ester Composite',
-    price: 62.0,
   },
   {
     badge: '⚙️ Power Transmission Solutions',
@@ -46,7 +44,6 @@ export const HERO_PRODUCTS = [
     imgAlt: 'Transpower Industrial Gear Boxes',
     model: 'Helical Gearmotor Series',
     resin: 'ISO VG 220 Gear Oil',
-    price: 320.0,
   },
   {
     badge: '⚡ Power Distribution Systems',
@@ -62,7 +59,6 @@ export const HERO_PRODUCTS = [
     imgAlt: 'Transpower Power Switchgears',
     model: 'ACB / MCCB Panel Series',
     resin: 'IEC 62271 Compliant',
-    price: 850.0,
   },
   {
     badge: '🏗️ Structural Composite Profiles',
@@ -78,7 +74,6 @@ export const HERO_PRODUCTS = [
     imgAlt: 'Transpower Pultruded Structural FRP Profiles',
     model: 'Pultruded I-Beam / Box Series',
     resin: 'High-Modulus Glass Fibre',
-    price: 95.0,
   },
 ];
 
@@ -145,6 +140,36 @@ export const PRODUCT_CARDS = [
     cta: 'Get Grating Specs',
   },
   {
+    id: 'electric-motors',
+    category: 'motors',
+    badge: 'Authorized Dealer',
+    image: '/assets/images/gearboxes_product.webp',
+    imgAlt: 'Transpower Industrial Electric Motors',
+    title: 'Electric Motors',
+    desc: 'Three-phase induction, flameproof and energy-efficient IE2/IE3 motors supplied as an authorised partner for Siemens, Crompton Greaves, Innomotics, Hindustan and Rotomotive.',
+    specs: [
+      'Squirrel cage & slip ring induction motors',
+      'Flameproof and increased-safety Ex ratings',
+      'IE2 / IE3 premium efficiency frames',
+    ],
+    cta: 'Get Motor Ratings',
+  },
+  {
+    id: 'electric-drives',
+    category: 'drives',
+    badge: 'Automation',
+    image: '/assets/images/switchgears_product.webp',
+    imgAlt: 'Transpower Variable Frequency Drives and Soft Starters',
+    title: 'Electric Drives',
+    desc: 'Variable frequency drives, soft starters and motor control electronics for precise speed regulation and reduced energy draw on continuous industrial loads.',
+    specs: [
+      'Variable Frequency Drives (VFD / AC drives)',
+      'Soft starters for high-inertia loads',
+      'Panel integration with motor protection',
+    ],
+    cta: 'Get Drive Specs',
+  },
+  {
     id: 'pultruded-profiles',
     category: 'frp',
     badge: 'Heavy Load',
@@ -166,6 +191,8 @@ export const PRODUCT_FILTERS = [
   { key: 'frp',         label: 'FRP & Gratings' },
   { key: 'cable-tray',  label: 'FRP Cable Trays' },
   { key: 'gearboxes',   label: 'Gear Boxes' },
+  { key: 'motors',      label: 'Motors' },
+  { key: 'drives',      label: 'Electric Drives' },
   { key: 'switchgears', label: 'Switchgears' },
 ];
 
@@ -242,6 +269,8 @@ export const RFQ_PRODUCTS = [
   { value: 'frp-gratings',       label: 'Molded FRP Gratings' },
   { value: 'cable-trays',        label: 'FRP Cable Trays' },
   { value: 'gearboxes',          label: 'Industrial Gear Boxes' },
+  { value: 'electric-motors',    label: 'Electric Motors' },
+  { value: 'electric-drives',    label: 'Electric Drives (VFD)' },
   { value: 'switchgears',        label: 'Power Switchgears' },
   { value: 'pultruded-profiles', label: 'Pultruded Profiles & Beams' },
 ];

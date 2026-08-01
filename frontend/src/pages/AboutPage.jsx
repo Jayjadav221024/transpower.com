@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import SEO from '../components/common/SEO';
 import { publicApi } from '../api/client';
+import { BRANDS } from '../data/company';
+import Testimonials from '../components/site/Testimonials';
 import '../styles/about.css';
 
 const TIMELINE = [
@@ -12,14 +14,6 @@ const TIMELINE = [
   { year: '2013', name: 'ShreeRaj Traders', desc: 'Acquired ShreeRaj Traders.', logo: '/assets/images/logo_shree_raj.jpg' },
   { year: '2017', name: 'Techno Sales', desc: 'Acquired Techno Sales Agency.', logo: '/assets/images/logo_techno.jpg' },
   { year: '2018', name: 'Transpower Composites', desc: 'Expanded into the FRP composites industry.', logo: '/assets/images/logo_transpower.png' },
-];
-
-const BRANDS = [
-  { name: 'INNOMOTICS', logo: '/assets/images/brand_innomotics.png' },
-  { name: 'HINDUSTAN ELECTRIC MOTORS', logo: '/assets/images/brand_hindustan.png' },
-  { name: 'ROTOMOTIVE', logo: '/assets/images/brand_rotomotive.png' },
-  { name: 'CROMPTON GREAVES', logo: '/assets/images/brand_crompton.png' },
-  { name: 'SIEMENS', logo: '/assets/images/brand_siemens.png' }
 ];
 
 const DEFAULT_ABOUT = {
@@ -201,27 +195,8 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* ── Testimonials ── */}
-      <section className="testimonial-section">
-        <div className="container">
-          <div className="section-header text-center" style={{ marginBottom: '3.5rem' }}>
-            <div className="badge-tag">Testimonial</div>
-            <h2 className="section-title">Our Happy Customer's</h2>
-          </div>
-
-          <div className="testimonial-container">
-            <div className="quote-bubble">
-              <p>
-                "Transpower Technologies has been our reliable partner for sourcing Crompton Greaves induction motors. Their responsiveness to our queries and prompt delivery of products have helped us meet our project deadlines without any hassle."
-              </p>
-              <div className="quote-author">
-                - Rakesh Gaveriya <br />
-                <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>Mech Tech Machine Pvt Ltd</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* ── Testimonials (shared with the home page via data/company.js) ── */}
+      <Testimonials />
     </>
   );
 }

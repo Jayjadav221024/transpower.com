@@ -12,7 +12,6 @@ export default function HeroCarousel({ pageData }) {
   const [layers, setLayers]   = useState({ a: HERO_PRODUCTS[0], b: null });
   const [fading, setFading]   = useState(false);
   const [paused, setPaused]   = useState(false);
-  const [qty, setQty]         = useState(1);
 
   const textTimer = useRef(null);
 
@@ -95,16 +94,20 @@ export default function HeroCarousel({ pageData }) {
 
           <div className="hero-inline-stats">
             <div>
-              <strong>30+</strong>
-              <span>Years Expected Life</span>
+              <strong>60+</strong>
+              <span>Years Experience</span>
             </div>
             <div>
-              <strong>500+</strong>
-              <span>Global Plants</span>
+              <strong>8000+</strong>
+              <span>Happy Customers</span>
             </div>
             <div>
-              <strong>ISO 9001</strong>
-              <span>Certified Facility</span>
+              <strong>99%</strong>
+              <span>Retention</span>
+            </div>
+            <div>
+              <strong>10000+</strong>
+              <span>Stock Keeping Units</span>
             </div>
           </div>
         </div>
@@ -148,32 +151,6 @@ export default function HeroCarousel({ pageData }) {
           <div className="bar-spec-item">
             <span className="bar-spec-label">Resin Matrix</span>
             <span className="bar-spec-value">{product.resin}</span>
-          </div>
-
-          <div className="bar-spec-item">
-            <span className="bar-spec-label">Estimated Unit Price</span>
-            <span className="bar-spec-value text-orange">${(product.price * qty).toFixed(2)}</span>
-          </div>
-
-          <div className="bar-counter">
-            <span className="bar-spec-label" style={{ marginRight: '0.5rem' }}>Qty:</span>
-            <button
-              type="button"
-              className="counter-btn"
-              aria-label="Decrease quantity"
-              onClick={() => setQty((q) => Math.max(1, q - 1))}
-            >
-              -
-            </button>
-            <span className="counter-val">{qty}</span>
-            <button
-              type="button"
-              className="counter-btn"
-              aria-label="Increase quantity"
-              onClick={() => setQty((q) => q + 1)}
-            >
-              +
-            </button>
           </div>
 
           <a href="#quote" className="btn btn-primary">Request Factory Direct Quote</a>

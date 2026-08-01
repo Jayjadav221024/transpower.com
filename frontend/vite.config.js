@@ -14,6 +14,14 @@ export default defineConfig({
       '/uploads': { target: API_TARGET, changeOrigin: true },
     },
   },
+  /* `vite preview` serves the production bundle and does not inherit
+     server.proxy, so it needs its own copy or the built app has no API. */
+  preview: {
+    proxy: {
+      '/api':     { target: API_TARGET, changeOrigin: true },
+      '/uploads': { target: API_TARGET, changeOrigin: true },
+    },
+  },
   build: {
     outDir: 'dist',
     sourcemap: false,

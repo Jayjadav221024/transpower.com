@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { formatDate } from '../../utils/format';
+import { assetUrl } from '../../api/client';
 
 /* Decorative corner blobs, cycled by card position so a grid row never repeats
    the same pair. Each entry is [top-left, bottom-right]. */
@@ -17,7 +18,7 @@ export default function BlogCard({ post, index = 0 }) {
     <Link className="blog-card" to={`/blog/${post.slug}`}>
       <div className="blog-card-media">
         {post.coverImage ? (
-          <img src={post.coverImage} alt={post.title} loading="lazy" />
+          <img src={assetUrl(post.coverImage)} alt={post.title} loading="lazy" />
         ) : (
           <div className="blog-card-media-fallback">⚙️</div>
         )}
@@ -29,6 +30,12 @@ export default function BlogCard({ post, index = 0 }) {
         {post.tags?.[0] && <span className="blog-card-badge">{post.tags[0]}</span>}
 
         <div className="blog-card-meta">
+          {post.author && (
+            <>
+              <span className="blog-card-author">{post.author}</span>
+              <span className="blog-card-dot">·</span>
+            </>
+          )}
           <span>{formatDate(post.publishedAt, { long: true })}</span>
           {post.readTime > 0 && (
             <>

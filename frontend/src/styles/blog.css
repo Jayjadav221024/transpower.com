@@ -142,10 +142,11 @@
   background: var(--bg-ink); color: var(--text-on-dark);
 }
 .blog-card-meta {
-  display: flex; gap: 0.4rem; align-items: center;
+  display: flex; gap: 0.4rem; align-items: center; flex-wrap: wrap;
   font-size: 0.76rem; color: var(--text-faint); font-weight: 500;
 }
 .blog-card-dot { color: var(--text-faint); }
+.blog-card-author { color: var(--text-muted); font-weight: 700; }
 .blog-card h2 {
   font-family: var(--font-sans);
   font-size: 1.06rem; font-weight: 700; line-height: 1.35;

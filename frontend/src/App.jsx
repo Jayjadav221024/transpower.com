@@ -12,6 +12,7 @@ import PostPage from './pages/PostPage';
 import NotFoundPage from './pages/NotFoundPage';
 import LocationsPage from './pages/LocationsPage';
 import CityPage from './pages/CityPage';
+import ProductsPage from './pages/ProductsPage';
 import FeatureDemoPage from './components/ui/demo-feature108';
 
 import AdminLayout from './layouts/AdminLayout';
@@ -114,6 +115,7 @@ export default function App() {
         <Route element={<PublicLayout />}>
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<AboutPage />} />
+          <Route path="/products" element={<ProductsPage />} />
           <Route path="/product/:id" element={<ProductPage />} />
           <Route path="/blog" element={<BlogPage />} />
           <Route path="/blog/:slug" element={<PostPage />} />

@@ -16,6 +16,16 @@ const getApiBase = () => {
 
 const BASE = getApiBase();
 
+/* Uploaded media is served by the API host, so a bare "/uploads/x.png" would
+   resolve against the front end's own origin when the two are deployed apart.
+   Bundled files under /assets are part of this build and must stay untouched. */
+export const assetUrl = (path) => {
+  if (!path) return '';
+  if (/^(https?:|data:|blob:)/.test(path)) return path;
+  if (path.startsWith('/assets/')) return path;
+  return `${BASE}${path.startsWith('/') ? path : `/${path}`}`;
+};
+
 export class ApiError extends Error {
   constructor(message, status) {
     super(message);
@@ -34,7 +44,21 @@ async function request(path, { method = 'GET', body, formData, signal } = {}) {
     options.body = JSON.stringify(body);
   }
 
-  const res  = await fetch(`${BASE}${path}`, options);
+  const url = `${BASE}${path}`;
+
+  let res;
+  try {
+    res = await fetch(url, options);
+  } catch (cause) {
+    /* fetch() rejects with a bare "Failed to fetch" for DNS failures, refused
+       connections and — most often in this app — a blocked CORS preflight.
+       Name the target so the cause is visible instead of guessed at. */
+    throw new ApiError(
+      `Could not reach the API at ${url}. Check the server is running and that CLIENT_ORIGIN on the backend lists this site's origin (${window.location.origin}) exactly, with no trailing slash.`,
+      0,
+    );
+  }
+
   const data = await res.json().catch(() => ({}));
 
   if (!res.ok) throw new ApiError(data.error || `Request failed (${res.status})`, res.status);

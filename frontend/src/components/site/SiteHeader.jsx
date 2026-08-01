@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 
+/* Products now has its own route, so it is a NavLink rather than a hash jump
+   that only worked on the home page. */
 const SECTIONS = [
-  { hash: 'products',     label: 'Products' },
   { hash: 'calculator',   label: 'Load Specs' },
   { hash: 'comparison',   label: 'Why FRP' },
 ];
@@ -96,6 +97,11 @@ export default function SiteHeader() {
                 About Us
               </NavLink>
             </li>
+            <li>
+              <NavLink to="/products" className={({ isActive }) => (isActive ? 'active-pill' : 'nav-link-new')}>
+                Products
+              </NavLink>
+            </li>
             {SECTIONS.map((s) => (
               <li key={s.hash}>
                 <a href={`/#${s.hash}`} className="nav-link-new" onClick={(e) => goToSection(e, s.hash)}>
@@ -155,6 +161,11 @@ export default function SiteHeader() {
           <li>
             <NavLink to="/about" className={({ isActive }) => (isActive ? 'active-mobile' : 'mobile-link')} onClick={() => setMenuOpen(false)}>
               About Us
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/products" className={({ isActive }) => (isActive ? 'active-mobile' : 'mobile-link')} onClick={() => setMenuOpen(false)}>
+              Products
             </NavLink>
           </li>
           {SECTIONS.map((s) => (
