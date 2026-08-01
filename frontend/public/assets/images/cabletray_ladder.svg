@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 400" width="100%" height="100%">
+  <defs>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="10" stdDeviation="6" flood-color="#000" flood-opacity="0.12" />
+    </filter>
+    <linearGradient id="grey-metal" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#cbd5e1" />
+      <stop offset="100%" stop-color="#64748b" />
+    </linearGradient>
+  </defs>
+
+  <!-- Ground Shadow -->
+  <ellipse cx="250" cy="320" rx="160" ry="20" fill="#f1f5f9" />
+
+  <!-- Isometric Ladder Tray -->
+  <g transform="translate(100, 80)" filter="url(#shadow)">
+    <!-- Right side rail -->
+    <path d="M 0,200 L 220,50 L 225,52 L 5,202 Z" fill="url(#grey-metal)" stroke="#475569" stroke-width="1" />
+    <path d="M 0,200 L 0,170 L 220,20 L 220,50 Z" fill="#64748b" stroke="#334155" stroke-width="1" />
+    
+    <!-- Left side rail (Parallel) -->
+    <path d="M 60,240 L 280,90 L 285,92 L 65,242 Z" fill="url(#grey-metal)" stroke="#475569" stroke-width="1" />
+    <path d="M 60,240 L 60,210 L 280,60 L 280,90 Z" fill="#475569" stroke="#334155" stroke-width="1" />
+
+    <!-- Rungs (Ladders connecting the side rails) -->
+    <g fill="url(#grey-metal)" stroke="#334155" stroke-width="1">
+      <!-- Rung 1 -->
+      <path d="M 15,200 L 72,240 L 75,238 L 18,198 Z" />
+      <!-- Rung 2 -->
+      <path d="M 48,178 L 105,218 L 108,216 L 51,176 Z" />
+      <!-- Rung 3 -->
+      <path d="M 81,156 L 138,196 L 141,194 L 84,154 Z" />
+      <!-- Rung 4 -->
+      <path d="M 114,134 L 171,174 L 174,172 L 117,132 Z" />
+      <!-- Rung 5 -->
+      <path d="M 147,112 L 204,152 L 207,150 L 150,110 Z" />
+      <!-- Rung 6 -->
+      <path d="M 180,90 L 237,130 L 240,128 L 183,88 Z" />
+      <!-- Rung 7 -->
+      <path d="M 213,68 L 270,108 L 273,106 L 216,66 Z" />
+    </g>
+
+    <!-- Side slots for connectors (Detailing) -->
+    <g fill="#1e293b" opacity="0.6">
+      <rect x="25" y="170" width="10" height="4" rx="1" transform="rotate(-34, 25, 170)" />
+      <rect x="75" y="136" width="10" height="4" rx="1" transform="rotate(-34, 75, 136)" />
+      <rect x="125" y="102" width="10" height="4" rx="1" transform="rotate(-34, 125, 102)" />
+      <rect x="175" y="68" width="10" height="4" rx="1" transform="rotate(-34, 175, 68)" />
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="body-gray" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4b5563" />
+      <stop offset="100%" stop-color="#1f2937" />
+    </linearGradient>
+    <linearGradient id="highlight-blue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2563eb" />
+      <stop offset="100%" stop-color="#1d4ed8" />
+    </linearGradient>
+    <linearGradient id="copper" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#b45309" />
+      <stop offset="50%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#78350f" />
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="6" stdDeviation="5" flood-color="#000" flood-opacity="0.2" />
+    </filter>
+  </defs>
+
+  <!-- Ground Shadow -->
+  <ellipse cx="250" cy="340" rx="140" ry="20" fill="#e2e8f0" />
+
+  <!-- Contactor Body Main Housing -->
+  <rect x="150" y="80" width="200" height="230" rx="6" fill="url(#body-gray)" filter="url(#shadow)" stroke="#111827" stroke-width="2" />
+  
+  <!-- Sub-block (top terminals) -->
+  <rect x="170" y="50" width="160" height="30" rx="4" fill="#374151" stroke="#4b5563" stroke-width="1" />
+  
+  <!-- Copper Terminal Screws (Top) -->
+  <g fill="url(#copper)">
+    <circle cx="190" cy="65" r="8" />
+    <circle cx="250" cy="65" r="8" />
+    <circle cx="310" cy="65" r="8" />
+  </g>
+  <g fill="#1f2937">
+    <rect x="188" y="60" width="4" height="10" rx="1" />
+    <rect x="248" y="60" width="4" height="10" rx="1" />
+    <rect x="308" y="60" width="4" height="10" rx="1" />
+  </g>
+
+  <!-- Middle Actuator / Plunger Block -->
+  <rect x="180" y="115" width="140" height="90" rx="4" fill="#111827" stroke="#374151" stroke-width="1.5" />
+  
+  <!-- Dynamic Blue Test Plunger Button -->
+  <rect x="220" y="135" width="60" height="50" rx="3" fill="url(#highlight-blue)" stroke="#1e40af" stroke-width="2" />
+  <rect x="230" y="145" width="40" height="30" rx="2" fill="#3b82f6" opacity="0.6" />
+  <text x="238" y="165" fill="#ffffff" font-family="sans-serif" font-weight="bold" font-size="10">TEST</text>
+
+  <!-- Wiring Terminal Outlets (Middle/Lower) -->
+  <g transform="translate(170, 220)">
+    <!-- Label Grid -->
+    <rect x="0" y="0" width="160" height="70" rx="4" fill="#1f2937" stroke="#374151" stroke-width="1" />
+    
+    <!-- Text Labels -->
+    <text x="15" y="20" fill="#9ca3af" font-family="monospace" font-size="8">1 / L1</text>
+    <text x="65" y="20" fill="#9ca3af" font-family="monospace" font-size="8">3 / L2</text>
+    <text x="115" y="20" fill="#9ca3af" font-family="monospace" font-size="8">5 / L3</text>
+
+    <!-- Copper Terminal Screws (Bottom) -->
+    <g fill="url(#copper)" transform="translate(0, 15)">
+      <circle cx="25" cy="20" r="8" />
+      <circle cx="80" cy="20" r="8" />
+      <circle cx="135" cy="20" r="8" />
+    </g>
+    <g fill="#111827" transform="translate(0, 15)">
+      <rect x="23" y="15" width="4" height="10" rx="1" />
+      <rect x="78" y="15" width="4" height="10" rx="1" />
+      <rect x="133" y="15" width="4" height="10" rx="1" />
+    </g>
+  </g>
+
+  <!-- Specifications Label -->
+  <rect x="180" y="90" width="140" height="18" rx="2" fill="#e2e8f0" />
+  <text x="195" y="103" fill="#1e293b" font-family="sans-serif" font-weight="bold" font-size="9">TRANSPOWER C-32</text>
+</svg>

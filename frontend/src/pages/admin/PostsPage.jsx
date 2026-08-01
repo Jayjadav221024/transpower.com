@@ -20,6 +20,24 @@ export default function PostsPage() {
   const [search, setSearch] = useState('');
   const [query, setQuery]   = useState('');
   const [loading, setLoading] = useState(true);
+  const [uploading, setUploading] = useState(false);
+
+  const handleXmlUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    setUploading(true);
+    try {
+      const res = await adminApi.uploadXml(file);
+      toast(res.message || `Successfully imported blogs! Created: ${res.created}, Updated: ${res.updated}`, false);
+      load();
+    } catch (ex) {
+      toast(ex.message, true);
+    } finally {
+      setUploading(false);
+      e.target.value = '';
+    }
+  };
 
   useEffect(() => {
     const id = setTimeout(() => setQuery(search.trim()), 250);
@@ -48,7 +66,19 @@ export default function PostsPage() {
           <h1>Blog Posts</h1>
           <p className="muted">Write, publish and edit articles shown on the public blog.</p>
         </div>
-        <Link to="/admin/posts/new" className="btn btn-primary">+ New Post</Link>
+        <div style={{ display: 'flex', gap: '0.8rem', alignItems: 'center' }}>
+          <label className="btn btn-ghost" style={{ cursor: 'pointer', margin: 0, display: 'inline-flex', alignItems: 'center', gap: '0.4rem', border: '1px dashed var(--border)' }}>
+            <span>{uploading ? 'Importing...' : '📥 Import XML'}</span>
+            <input 
+              type="file" 
+              accept=".xml" 
+              disabled={uploading}
+              onChange={handleXmlUpload} 
+              style={{ display: 'none' }} 
+            />
+          </label>
+          <Link to="/admin/posts/new" className="btn btn-primary">+ New Post</Link>
+        </div>
       </header>
 
       <div className="stat-row">

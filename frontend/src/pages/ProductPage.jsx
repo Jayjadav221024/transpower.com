@@ -89,23 +89,6 @@ const PRODUCT_DEFAULTS = {
     useText: 'Driving pumps, compressors, conveyors, agitators, fans and blowers across chemical, textile, water treatment and engineering plants.',
     productImage: '/assets/images/gearboxes_product.webp'
   },
-  'electric-drives': {
-    title: 'Electric Drives',
-    category: 'Motion Control',
-    badge: '🎛️ Automation',
-    feature1: 'VFD / AC Drive',
-    feature2: 'Soft Starter',
-    feature3: 'Motor Protection',
-    feature4: 'Panel Ready',
-    benefit1: 'Speed Control',
-    benefit2: 'Lower Energy Draw',
-    benefit3: 'Reduced Inrush',
-    benefit4: 'Longer Motor Life',
-    detailsText: 'Variable frequency drives, soft starters and motor control electronics for precise speed regulation and reduced energy draw on continuous industrial loads.',
-    benefitsText: 'Ramped starting removes mechanical shock and current surge, while closed-loop speed control trims energy consumption on variable-torque pump and fan duties.',
-    useText: 'Specified for pump and fan speed regulation, conveyor sequencing, mixer control, and retrofit energy-efficiency upgrades on existing motor lines.',
-    productImage: '/assets/images/switchgears_product.webp'
-  },
   'pultruded-profiles': {
     title: 'Pultruded Structural Profiles',
     category: 'FRP Structural',
@@ -134,6 +117,7 @@ export default function ProductPage() {
   const [activeTabState, setActiveTabState] = useState('details');
   const [activeQty, setActiveQty] = useState('2');
   const [purchaseTypeState, setPurchaseTypeState] = useState('once');
+  const [selectedProduct, setSelectedProduct] = useState(null);
 
   useEffect(() => {
     // Reset state to default first on product key swap
@@ -162,6 +146,1156 @@ export default function ProductPage() {
   };
 
   const pageKey = `productpage_${productKey}`;
+
+  // Specifications and details for each switchgear sub-product
+  const SWITCHGEAR_SUB_PRODUCTS = [
+    {
+      id: 'distribution',
+      title: 'Low Voltage Power Distribution Product',
+      desc: 'Our Electrical Control Products ensure efficient and safe operation of your electrical systems. From versatile contactors and switching devices to advanced protection devices and motor protection circuit breakers, we offer comprehensive solutions. The SIMOCODE smart motor control device enhances motor monitoring, protection, and control for optimal performance.',
+      image: '/assets/images/switchgear_distribution_3d.png',
+      specs: {
+        'Current Rating': '630A to 6300A',
+        'Breaking Capacity': 'Up to 150 kA',
+        'Standard': 'IEC 60947-2 Compliant',
+        'Releases': 'Intelligent Microprocessor-based releases (Modbus/Profibus support)',
+        'Application': 'Main power intake, heavy-duty industrial substations'
+      }
+    },
+    {
+      id: 'control',
+      title: 'Low Voltage Control Product',
+      desc: 'Explore our professional range of Low Voltage Control Products, designed to enable maximum safety and efficiency in your electrical systems. Our MCCBs provide outstanding protection for low-voltage systems by safeguarding against damage due to overload and short circuits.',
+      image: '/assets/images/switchgear_control_3d.png',
+      specs: {
+        'Device Type': 'Contactors, Relays, MPCBs, and MCCBs',
+        'Operating Voltage': 'Up to 690 V AC',
+        'Mechanical Life': 'Up to 10 Million operations',
+        'Coil Types': 'Wide range AC/DC operating coils',
+        'Application': 'Motor control centers (MCC), process automation boards'
+      }
+    },
+    {
+      id: 'mcb',
+      title: 'MCB',
+      desc: 'Our MCBs offer reliable circuit protection, adhering to high standards for performance and safety. Designed for various voltage systems, they feature ISI marking, multiple pole options, and high breaking capacity. These MCBs are also RoHS compliant, ensuring they meet environmental and safety regulations.',
+      image: '/assets/images/switchgear_mcb_3d.png',
+      specs: {
+        'Poles': 'SP, DP, TP, FP (1P, 2P, 3P, 4P)',
+        'Trip Curves': 'B, C, and D curves',
+        'Rated Current': '0.5 A to 125 A',
+        'Breaking Capacity': 'Up to 15 kA',
+        'Standards': 'IS/IEC 60898-1 certified, CE & RoHS marked'
+      }
+    },
+    {
+      id: 'sinova',
+      title: 'Sinova',
+      desc: 'The electrical protection solutions from Sinova include MCCBs with rated currents from 16A to 630A, ACBs for industrial applications up to 4000A, Load Break Switches for manual circuit switching, accurate Control Switches, Energy Management Systems for effective usage, and Fuses for overcurrent protection in various areas.',
+      image: '/assets/images/switchgear_sinova_3d.png',
+      specs: {
+        'Brand Line': 'Siemens Partnered Sinova range',
+        'MCCB Rating': '16 A to 630 A',
+        'ACB Rating': 'Up to 4000 A',
+        'Trip Units': 'Thermal-magnetic & electronic options',
+        'Application': 'Cost-effective commercial & factory electrical distribution'
+      }
+    }
+  ];
+
+  // Specifications and details for each motor sub-product
+  const MOTOR_SUB_PRODUCTS = [
+    {
+      id: 'siemens-motor',
+      title: 'Siemens Motor',
+      desc: 'Transpower Technologies Pvt. Ltd. offers Siemens motors featuring high protection degrees, robust cast iron housing, and efficient cooling. Designed for various industrial applications, they meet international standards, ensuring reliable performance and energy efficiency. Available with multiple mounting options, these motors are perfect for demanding environments.',
+      image: '/assets/images/motor_siemens_3d.png',
+      specs: {
+        'Frame Size': '56 to 450',
+        'Output Rating': '0.09 kW to 1000 kW',
+        'Efficiency Class': 'IE2, IE3, IE4 Premium Efficiency',
+        'Protection Degree': 'IP55 / IP56 / IP65',
+        'Mounting': 'Foot (B3), Flange (B5), Face (B14)'
+      }
+    },
+    {
+      id: 'crompton-motor',
+      title: 'Crompton Greaves Motor',
+      desc: 'Transpower Technologies Pvt. Ltd. provides Crompton motors, featuring strong cast iron housing and high degrees of protection. Designed for industrial applications, they offer reliable performance with efficient cooling. Compliant with global standards, these motors come with various mounting options and ensure energy-efficient operation for diverse needs.',
+      image: '/assets/images/motor_crompton_3d.jpg',
+      specs: {
+        'Frame Size': '63 to 355',
+        'Output Rating': '0.18 kW to 315 kW',
+        'Efficiency Class': 'IE2 & IE3 Rated',
+        'Enclosure': 'Totally Enclosed Fan Cooled (TEFC)',
+        'Applicable Standards': 'IS 12615, IEC 60034-30'
+      }
+    },
+    {
+      id: 'hindustan-motor',
+      title: 'Hindustan Electric Motor',
+      desc: 'HEM motors from Transpower Technologies Pvt. Ltd. are known for their durability and high protection levels. With a cast iron housing and efficient cooling method, these motors are ideal for industrial use. They comply with international standards and offer versatile mounting options for enhanced flexibility and performance.',
+      image: '/assets/images/motor_hindustan_3d.png',
+      specs: {
+        'Frame Size': '63 to 400',
+        'Output Rating': '0.12 kW to 315 kW',
+        'Body Material': 'Rugged Grade FG200 Cast Iron',
+        'Duty Cycle': 'S1 Continuous Duty',
+        'Insulation Class': 'Class F with Class B temperature rise'
+      }
+    }
+  ];
+
+  // Specifications and details for each gearbox sub-product
+  const GEARBOX_SUB_PRODUCTS = [
+    {
+      id: 'rotomotive-gearbox',
+      title: 'Gear Box',
+      desc: "Transpower Technologies Pvt. Ltd. provides high-quality gearboxes from Rotomotive, featuring the helical ROBUS series and the worm QUBO series. The ROBUS series, made from cast iron, boasts a capacity of up to 4300Nm and includes synthetic oil for long-lasting performance. These gearboxes are designed with a rigid, monobloc body, base, and flange, ensuring extreme durability and a modular design with a detachable output flange for versatile use. The QUBO series, available in sizes 25 to 150, combines die-cast aluminium and cast iron construction. The QUBO gearboxes are maintenance-free for sizes 30 to 90, using synthetic oil, while sizes 110 to 150 use mineral oil. Both series offer flexible mounting options, making them suitable for various industrial applications.",
+      image: '/assets/images/gearbox_rotomotive_3d.jpg',
+      buttonLabel: 'Download Brochure',
+      specs: {
+        'Series / Models': 'Helical ROBUS series, Worm QUBO series',
+        'Torque Capacity': 'Up to 4300 Nm (ROBUS series)',
+        'QUBO Sizes': 'Sizes 25 to 150 (Maintenance-free sizes 30 to 90)',
+        'Construction': 'Monobloc Cast Iron housing & Die-cast Aluminium configurations',
+        'Lubrication': 'Synthetic oil (ROBUS & QUBO 30-90) / Mineral oil (QUBO 110-150)',
+        'Mounting': 'Flexible foot, shaft, and detachable output flange options'
+      }
+    }
+  ];
+
+  if (productKey === 'gear-boxes') {
+    return (
+      <>
+        <SEO 
+          title="Industrial Gear Boxes - Helical ROBUS & Worm QUBO Series" 
+          description="Heavy-duty industrial gearboxes from Rotomotive. Helical ROBUS cast iron gearboxes and Worm QUBO series." 
+          keywords="Gear Boxes, industrial gearboxes, Rotomotive, ROBUS series, QUBO series, B2B gearboxes Vadodara"
+        />
+
+        {/* Top Dark Header */}
+        <div style={{ background: '#2c2d30', padding: '3.5rem 1.5rem', marginTop: '4.8rem' }}>
+          <div className="container" style={{ display: 'flex', alignItems: 'center' }}>
+            <h1 style={{ color: '#ffffff', fontSize: '2.2rem', margin: 0, fontWeight: '700', letterSpacing: '0.5px' }}>Industrial Gear Boxes</h1>
+          </div>
+        </div>
+
+        {/* Main Products Grid */}
+        <div className="container" style={{ padding: '4rem 1.5rem', display: 'flex', flexDirection: 'column', gap: '5rem' }}>
+          {GEARBOX_SUB_PRODUCTS.map((prod, index) => {
+            const isEven = index % 2 === 0;
+            return (
+              <div 
+                key={prod.id} 
+                className="gearbox-product-row"
+                style={{ 
+                  display: 'flex', 
+                  flexDirection: isEven ? 'row' : 'row-reverse', 
+                  alignItems: 'center', 
+                  gap: '4rem',
+                  flexWrap: 'wrap'
+                }}
+              >
+                {/* Description Column */}
+                <div style={{ flex: '1 1 300px', display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
+                  <h2 style={{ fontSize: '1.8rem', fontWeight: '800', color: 'var(--text-main)', margin: 0 }}>
+                    {prod.title}
+                  </h2>
+                  <p style={{ fontSize: '0.94rem', lineHeight: '1.6', color: 'var(--text-muted)', margin: 0 }}>
+                    {prod.desc}
+                  </p>
+                  <div>
+                    <button 
+                      onClick={() => setSelectedProduct(prod)}
+                      className="btn btn-primary"
+                      style={{ 
+                        background: 'var(--accent-orange)', 
+                        color: '#fff', 
+                        border: 'none', 
+                        padding: '0.75rem 1.8rem', 
+                        borderRadius: '6px', 
+                        fontWeight: '700',
+                        fontSize: '0.88rem',
+                        cursor: 'pointer',
+                        transition: 'background-color 0.2s',
+                        boxShadow: '0 2px 4px rgba(217, 101, 59, 0.2)',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.5rem'
+                      }}
+                      onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-orange-deep)'}
+                      onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-orange)'}
+                    >
+                      {prod.buttonLabel === 'Download Brochure' && <span style={{ fontSize: '1rem' }}>📥</span>}
+                      {prod.buttonLabel || 'Click for More Details'}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Image Showcase Column */}
+                <div style={{ 
+                  flex: '1 1 300px', 
+                  display: 'flex', 
+                  justifyContent: 'center',
+                  background: '#f8fafc', 
+                  border: '1px solid var(--border)', 
+                  borderRadius: '16px', 
+                  padding: '2.5rem',
+                  boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)'
+                }}>
+                  <img 
+                    src={prod.image} 
+                    alt={prod.title} 
+                    style={{ maxWidth: '100%', maxHeight: '300px', objectFit: 'contain' }}
+                  />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Modal Overlay */}
+        {selectedProduct && (
+          <div style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            background: 'rgba(0, 0, 0, 0.55)',
+            backdropFilter: 'blur(4px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 9999,
+            padding: '1rem'
+          }}>
+            <div style={{
+              background: '#ffffff',
+              borderRadius: '12px',
+              width: '100%',
+              maxWidth: '600px',
+              boxShadow: '0 20px 25px -5px rgba(0,0,0,0.15)',
+              overflow: 'hidden',
+              display: 'flex',
+              flexDirection: 'column',
+              maxHeight: '90vh'
+            }}>
+              {/* Modal Header */}
+              <div style={{
+                padding: '1.2rem 1.5rem',
+                borderBottom: '1px solid var(--border)',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                background: '#f8fafc'
+              }}>
+                <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: '800', color: 'var(--text-main)' }}>
+                  {selectedProduct.title}
+                </h3>
+                <button 
+                  onClick={() => setSelectedProduct(null)}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    fontSize: '1.5rem',
+                    color: 'var(--text-muted)',
+                    cursor: 'pointer',
+                    padding: '0.2rem'
+                  }}
+                >
+                  &times;
+                </button>
+              </div>
+
+              {/* Modal Body */}
+              <div style={{ padding: '1.5rem', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                <div>
+                  <h4 style={{ margin: '0 0 0.5rem 0', fontSize: '0.9rem', color: 'var(--accent-orange)', fontWeight: '800', textTransform: 'uppercase' }}>Product Specifications</h4>
+                  <div style={{ border: '1px solid var(--border)', borderRadius: '8px', overflow: 'hidden' }}>
+                    {Object.entries(selectedProduct.specs).map(([label, val], idx) => (
+                      <div 
+                        key={label} 
+                        style={{ 
+                          display: 'grid', 
+                          gridTemplateColumns: '150px 1fr', 
+                          padding: '0.75rem 1rem',
+                          background: idx % 2 === 0 ? '#f8fafc' : '#ffffff',
+                          borderBottom: idx < Object.entries(selectedProduct.specs).length - 1 ? '1px solid var(--border)' : 'none',
+                          fontSize: '0.85rem'
+                        }}
+                      >
+                        <span style={{ fontWeight: '700', color: 'var(--text-main)' }}>{label}</span>
+                        <span style={{ color: 'var(--text-muted)' }}>{val}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div style={{ background: 'rgba(217, 101, 59, 0.05)', border: '1px solid rgba(217, 101, 59, 0.15)', padding: '1rem', borderRadius: '8px' }}>
+                  <h4 style={{ margin: '0 0 0.3rem 0', fontSize: '0.9rem', color: 'var(--accent-orange-deep)', fontWeight: '800' }}>B2B Specification Inquiry</h4>
+                  <p style={{ margin: '0 0 1rem 0', fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+                    Need a custom quote, technical datasheet, or drawing configuration for this product?
+                  </p>
+                  <button 
+                    onClick={() => {
+                      setSelectedProduct(null);
+                      const contactForm = document.getElementById('inquiry-form') || document.getElementById('contact') || document.querySelector('footer');
+                      if (contactForm) {
+                        contactForm.scrollIntoView({ behavior: 'smooth' });
+                      }
+                    }}
+                    className="btn btn-primary"
+                    style={{ width: '100%', padding: '0.6rem', fontSize: '0.85rem', fontWeight: '700' }}
+                  >
+                    Request Technical Specification
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </>
+    );
+  }
+
+  // Specifications and details for each cable tray sub-product
+  const CABLETRAY_SUB_PRODUCTS = [
+    {
+      id: 'ladder-tray',
+      title: 'Ladder Type Cable Tray',
+      desc: "Ladder-type cable trays are a robust and versatile solution for organizing and protecting cables in industrial and commercial settings. Designed with a rugged, ladder-like structure, these trays provide excellent support and stability for heavy cable loads, while also allowing for easy installation, modification and maintenance. Ideal for power distribution, communication and data transmission applications, ladder-type cable trays are a reliable choice for efficient cable management systems.",
+      image: '/assets/images/cabletray_ladder_3d.jpg',
+      specs: {
+        'Tray Type': 'Ladder Type Cable Management',
+        'Rung Spacing': '150mm / 250mm / 300mm',
+        'Resin Grades': 'Vinyl Ester (high chemical resistance) / Isophthalic Polyester',
+        'Side Rail Height': '50mm, 75mm, 100mm, 150mm',
+        'Key Properties': 'Excellent heat dissipation, B2B heavy load capacity, UV-stabilized'
+      }
+    },
+    {
+      id: 'perforated-tray',
+      title: 'Perforated Cable Tray',
+      desc: "Perforated cable trays offer a lightweight, versatile and cost-effective solution for cable management. Featuring precision-punched holes for easy cable tie access and optimal airflow, these trays provide excellent ventilation, reducing heat buildup and moisture accumulation. Ideal for telecommunications, data centers and commercial applications, perforated cable trays combine strength, durability and aesthetic appeal, making them a popular choice for efficient cable routing and organization.",
+      image: '/assets/images/cabletray_perforated_3d.jpg',
+      specs: {
+        'Tray Type': 'Perforated Trough/Channel Type',
+        'Ventilation Holes': 'Precision-punched air flow patterns',
+        'Material Thickness': '1.5mm to 3mm composite thickness',
+        'Standard Width': '50mm to 1000mm options',
+        'Key Applications': 'Data centers, telecommunication runs, instrument control cable routing'
+      }
+    }
+  ];
+
+  if (productKey === 'cable-trays') {
+    return (
+      <>
+        <SEO 
+          title="FRP Cable Trays - Ladder & Perforated Channel Trays" 
+          description="High-performance fiberglass reinforced plastic (FRP/GRP) cable trays. Non-conductive, chemical resistant ladder and perforated trough trays." 
+          keywords="FRP Cable Trays, ladder cable tray, perforated cable tray, GRP cable tray, B2B cable routing Vadodara"
+        />
+
+        {/* Top Dark Header */}
+        <div style={{ background: '#2c2d30', padding: '3.5rem 1.5rem', marginTop: '4.8rem' }}>
+          <div className="container" style={{ display: 'flex', alignItems: 'center' }}>
+            <h1 style={{ color: '#ffffff', fontSize: '2.2rem', margin: 0, fontWeight: '700', letterSpacing: '0.5px' }}>FRP Cable Trays</h1>
+          </div>
+        </div>
+
+        {/* Main Products Grid */}
+        <div className="container" style={{ padding: '4rem 1.5rem', display: 'flex', flexDirection: 'column', gap: '5rem' }}>
+          {CABLETRAY_SUB_PRODUCTS.map((prod, index) => {
+            const isEven = index % 2 === 0;
+            return (
+              <div 
+                key={prod.id} 
+                className="cabletray-product-row"
+                style={{ 
+                  display: 'flex', 
+                  flexDirection: isEven ? 'row' : 'row-reverse', 
+                  alignItems: 'center', 
+                  gap: '4rem',
+                  flexWrap: 'wrap'
+                }}
+              >
+                {/* Description Column */}
+                <div style={{ flex: '1 1 300px', display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
+                  <h2 style={{ fontSize: '1.8rem', fontWeight: '800', color: 'var(--text-main)', margin: 0 }}>
+                    {prod.title}
+                  </h2>
+                  <p style={{ fontSize: '0.94rem', lineHeight: '1.6', color: 'var(--text-muted)', margin: 0 }}>
+                    {prod.desc}
+                  </p>
+                  <div>
+                    <button 
+                      onClick={() => setSelectedProduct(prod)}
+                      className="btn btn-primary"
+                      style={{ 
+                        background: 'var(--accent-orange)', 
+                        color: '#fff', 
+                        border: 'none', 
+                        padding: '0.75rem 1.8rem', 
+                        borderRadius: '6px', 
+                        fontWeight: '700',
+                        fontSize: '0.88rem',
+                        cursor: 'pointer',
+                        transition: 'background-color 0.2s',
+                        boxShadow: '0 2px 4px rgba(217, 101, 59, 0.2)'
+                      }}
+                      onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-orange-deep)'}
+                      onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-orange)'}
+                    >
+                      Click for More Details
+                    </button>
+                  </div>
+                </div>
+
+                {/* Image Showcase Column */}
+                <div style={{ 
+                  flex: '1 1 300px', 
+                  display: 'flex', 
+                  justifyContent: 'center',
+                  background: '#f8fafc', 
+                  border: '1px solid var(--border)', 
+                  borderRadius: '16px', 
+                  padding: '2.5rem',
+                  boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)'
+                }}>
+                  <img 
+                    src={prod.image} 
+                    alt={prod.title} 
+                    style={{ maxWidth: '100%', maxHeight: '300px', objectFit: 'contain' }}
+                  />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Modal Overlay */}
+        {selectedProduct && (
+          <div style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            background: 'rgba(0, 0, 0, 0.55)',
+            backdropFilter: 'blur(4px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 9999,
+            padding: '1rem'
+          }}>
+            <div style={{
+              background: '#ffffff',
+              borderRadius: '12px',
+              width: '100%',
+              maxWidth: '600px',
+              boxShadow: '0 20px 25px -5px rgba(0,0,0,0.15)',
+              overflow: 'hidden',
+              display: 'flex',
+              flexDirection: 'column',
+              maxHeight: '90vh'
+            }}>
+              {/* Modal Header */}
+              <div style={{
+                padding: '1.2rem 1.5rem',
+                borderBottom: '1px solid var(--border)',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                background: '#f8fafc'
+              }}>
+                <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: '800', color: 'var(--text-main)' }}>
+                  {selectedProduct.title}
+                </h3>
+                <button 
+                  onClick={() => setSelectedProduct(null)}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    fontSize: '1.5rem',
+                    color: 'var(--text-muted)',
+                    cursor: 'pointer',
+                    padding: '0.2rem'
+                  }}
+                >
+                  &times;
+                </button>
+              </div>
+
+              {/* Modal Body */}
+              <div style={{ padding: '1.5rem', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                <div>
+                  <h4 style={{ margin: '0 0 0.5rem 0', fontSize: '0.9rem', color: 'var(--accent-orange)', fontWeight: '800', textTransform: 'uppercase' }}>Product Specifications</h4>
+                  <div style={{ border: '1px solid var(--border)', borderRadius: '8px', overflow: 'hidden' }}>
+                    {Object.entries(selectedProduct.specs).map(([label, val], idx) => (
+                      <div 
+                        key={label} 
+                        style={{ 
+                          display: 'grid', 
+                          gridTemplateColumns: '150px 1fr', 
+                          padding: '0.75rem 1rem',
+                          background: idx % 2 === 0 ? '#f8fafc' : '#ffffff',
+                          borderBottom: idx < Object.entries(selectedProduct.specs).length - 1 ? '1px solid var(--border)' : 'none',
+                          fontSize: '0.85rem'
+                        }}
+                      >
+                        <span style={{ fontWeight: '700', color: 'var(--text-main)' }}>{label}</span>
+                        <span style={{ color: 'var(--text-muted)' }}>{val}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div style={{ background: 'rgba(217, 101, 59, 0.05)', border: '1px solid rgba(217, 101, 59, 0.15)', padding: '1rem', borderRadius: '8px' }}>
+                  <h4 style={{ margin: '0 0 0.3rem 0', fontSize: '0.9rem', color: 'var(--accent-orange-deep)', fontWeight: '800' }}>B2B Specification Inquiry</h4>
+                  <p style={{ margin: '0 0 1rem 0', fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+                    Need a custom quote, technical datasheet, or drawing configuration for this product?
+                  </p>
+                  <button 
+                    onClick={() => {
+                      setSelectedProduct(null);
+                      const contactForm = document.getElementById('inquiry-form') || document.getElementById('contact') || document.querySelector('footer');
+                      if (contactForm) {
+                        contactForm.scrollIntoView({ behavior: 'smooth' });
+                      }
+                    }}
+                    className="btn btn-primary"
+                    style={{ width: '100%', padding: '0.6rem', fontSize: '0.85rem', fontWeight: '700' }}
+                  >
+                    Request Technical Specification
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </>
+    );
+  }
+
+  // Specifications and details for each grating sub-product
+  const GRATING_SUB_PRODUCTS = [
+    {
+      id: 'meniscus-top',
+      title: 'Meniscus Top',
+      desc: "Transpower Technologies Pvt. Ltd. offers a range of products designed for durability and safety. Transpower's Meniscus Top FRP Gratings provide a slip-resistant surface ideal for wet and oily conditions. Corrosion-free, low-maintenance, and lightweight, these Fiber Reinforced Plastic gratings offer long-lasting performance for industrial walkways, platforms, and drainage systems. Built to resist tough conditions, they're the intelligent choice for high-demand workspaces.",
+      image: '/assets/images/grating_meniscus_3d.jpg',
+      specs: {
+        'Surface Finish': 'Concave Meniscus Slip-Resistant Top',
+        'Standard Mesh Size': '38x38mm / 50x50mm / 40x40mm',
+        'Resin Options': 'Isophthalic Polyester, Vinyl Ester, Phenolic',
+        'Thickness': '25mm, 30mm, 38mm, 50mm',
+        'Certifications': 'ASTM E84 Class 1 Flame Retardant, ISO 9001:2015'
+      }
+    },
+    {
+      id: 'grit-top',
+      title: 'Grit Top',
+      desc: "Transpower Technologies Pvt. Ltd. offers Grit Top FRP Gratings provide ultimate traction in addition to strength and offer a coarse finish for surface texture. Suitable for areas with high traffic and dangerous areas, the chemical, corrosion, and impact-resistant FRP gratings are ideal for factories, refineries, and marine platforms. Transpower's ruggedly designed FRP gratings ensure long-term performance and safety for workers.",
+      image: '/assets/images/grating_grit_3d.jpg',
+      specs: {
+        'Surface Finish': 'Quartz Grit Embedded Textured Surface',
+        'Slip Resistance Rating': 'R13 Class (DIN 51130)',
+        'Resin Grades': 'Chemical resistant Vinyl Ester / General purpose Isophthalic',
+        'Loading Capacity': 'High strength bi-directional load distribution',
+        'Color Options': 'Yellow, Orange, Dark Gray, Green'
+      }
+    },
+    {
+      id: 'chequered-plate',
+      title: 'Chequered Plate',
+      desc: "Transpower Technologies Pvt. Ltd. offers a range of Chequered Plate FRP Gratings, offering a solid surface topped with the durability of Fiber Reinforced Plastic, perfect for applications requiring full surface coverage. Tough, non-corrosive, and impact-resistant, they're ideal for access platforms and loading zones. A solid option when there's debris or tools to be held back.",
+      image: '/assets/images/grating_chequered_3d.jpg',
+      specs: {
+        'Surface Finish': 'Solid Flat Top with Diamond Tread Chequered Pattern',
+        'Structure': 'Solid laminated FRP sheet bonded on core grid grating',
+        'Odour/Gas Seal': 'Excellent containment of gas/vapours in drainage channels',
+        'Impact Resistance': 'Heavy-duty load bearing, zero denting',
+        'Key Applications': 'Walkway covers, trench covers, inspection hatches'
+      }
+    }
+  ];
+
+  if (productKey === 'molded-gratings') {
+    return (
+      <>
+        <SEO 
+          title="Molded FRP Gratings - Meniscus, Grit & Chequered Plates" 
+          description="High-strength composite Molded GRP/FRP Gratings. Meniscus, quartz grit top, and solid chequered plate walkways for chemical plants and offshore platforms." 
+          keywords="FRP Gratings, molded grating, GRP grating, meniscus top, grit top, chequered plate, trench cover, composite walkway"
+        />
+
+        {/* Top Dark Header */}
+        <div style={{ background: '#2c2d30', padding: '3.5rem 1.5rem', marginTop: '4.8rem' }}>
+          <div className="container" style={{ display: 'flex', alignItems: 'center' }}>
+            <h1 style={{ color: '#ffffff', fontSize: '2.2rem', margin: 0, fontWeight: '700', letterSpacing: '0.5px' }}>Molded FRP Gratings</h1>
+          </div>
+        </div>
+
+        {/* Main Products Grid */}
+        <div className="container" style={{ padding: '4rem 1.5rem', display: 'flex', flexDirection: 'column', gap: '5rem' }}>
+          {GRATING_SUB_PRODUCTS.map((prod, index) => {
+            const isEven = index % 2 === 0;
+            return (
+              <div 
+                key={prod.id} 
+                className="grating-product-row"
+                style={{ 
+                  display: 'flex', 
+                  flexDirection: isEven ? 'row' : 'row-reverse', 
+                  alignItems: 'center', 
+                  gap: '4rem',
+                  flexWrap: 'wrap'
+                }}
+              >
+                {/* Description Column */}
+                <div style={{ flex: '1 1 300px', display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
+                  <h2 style={{ fontSize: '1.8rem', fontWeight: '800', color: 'var(--text-main)', margin: 0 }}>
+                    {prod.title}
+                  </h2>
+                  <p style={{ fontSize: '0.94rem', lineHeight: '1.6', color: 'var(--text-muted)', margin: 0 }}>
+                    {prod.desc}
+                  </p>
+                  <div>
+                    <button 
+                      onClick={() => setSelectedProduct(prod)}
+                      className="btn btn-primary"
+                      style={{ 
+                        background: 'var(--accent-orange)', 
+                        color: '#fff', 
+                        border: 'none', 
+                        padding: '0.75rem 1.8rem', 
+                        borderRadius: '6px', 
+                        fontWeight: '700',
+                        fontSize: '0.88rem',
+                        cursor: 'pointer',
+                        transition: 'background-color 0.2s',
+                        boxShadow: '0 2px 4px rgba(217, 101, 59, 0.2)'
+                      }}
+                      onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-orange-deep)'}
+                      onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-orange)'}
+                    >
+                      Click for More Details
+                    </button>
+                  </div>
+                </div>
+
+                {/* Image Showcase Column */}
+                <div style={{ 
+                  flex: '1 1 300px', 
+                  display: 'flex', 
+                  justifyContent: 'center',
+                  background: '#f8fafc', 
+                  border: '1px solid var(--border)', 
+                  borderRadius: '16px', 
+                  padding: '2.5rem',
+                  boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)'
+                }}>
+                  <img 
+                    src={prod.image} 
+                    alt={prod.title} 
+                    style={{ maxWidth: '100%', maxHeight: '300px', objectFit: 'contain' }}
+                  />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Modal Overlay */}
+        {selectedProduct && (
+          <div style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            background: 'rgba(0, 0, 0, 0.55)',
+            backdropFilter: 'blur(4px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 9999,
+            padding: '1rem'
+          }}>
+            <div style={{
+              background: '#ffffff',
+              borderRadius: '12px',
+              width: '100%',
+              maxWidth: '600px',
+              boxShadow: '0 20px 25px -5px rgba(0,0,0,0.15)',
+              overflow: 'hidden',
+              display: 'flex',
+              flexDirection: 'column',
+              maxHeight: '90vh'
+            }}>
+              {/* Modal Header */}
+              <div style={{
+                padding: '1.2rem 1.5rem',
+                borderBottom: '1px solid var(--border)',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                background: '#f8fafc'
+              }}>
+                <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: '800', color: 'var(--text-main)' }}>
+                  {selectedProduct.title}
+                </h3>
+                <button 
+                  onClick={() => setSelectedProduct(null)}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    fontSize: '1.5rem',
+                    color: 'var(--text-muted)',
+                    cursor: 'pointer',
+                    padding: '0.2rem'
+                  }}
+                >
+                  &times;
+                </button>
+              </div>
+
+              {/* Modal Body */}
+              <div style={{ padding: '1.5rem', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                <div>
+                  <h4 style={{ margin: '0 0 0.5rem 0', fontSize: '0.9rem', color: 'var(--accent-orange)', fontWeight: '800', textTransform: 'uppercase' }}>Product Specifications</h4>
+                  <div style={{ border: '1px solid var(--border)', borderRadius: '8px', overflow: 'hidden' }}>
+                    {Object.entries(selectedProduct.specs).map(([label, val], idx) => (
+                      <div 
+                        key={label} 
+                        style={{ 
+                          display: 'grid', 
+                          gridTemplateColumns: '150px 1fr', 
+                          padding: '0.75rem 1rem',
+                          background: idx % 2 === 0 ? '#f8fafc' : '#ffffff',
+                          borderBottom: idx < Object.entries(selectedProduct.specs).length - 1 ? '1px solid var(--border)' : 'none',
+                          fontSize: '0.85rem'
+                        }}
+                      >
+                        <span style={{ fontWeight: '700', color: 'var(--text-main)' }}>{label}</span>
+                        <span style={{ color: 'var(--text-muted)' }}>{val}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div style={{ background: 'rgba(217, 101, 59, 0.05)', border: '1px solid rgba(217, 101, 59, 0.15)', padding: '1rem', borderRadius: '8px' }}>
+                  <h4 style={{ margin: '0 0 0.3rem 0', fontSize: '0.9rem', color: 'var(--accent-orange-deep)', fontWeight: '800' }}>B2B Specification Inquiry</h4>
+                  <p style={{ margin: '0 0 1rem 0', fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+                    Need a custom quote, technical datasheet, or drawing configuration for this product?
+                  </p>
+                  <button 
+                    onClick={() => {
+                      setSelectedProduct(null);
+                      const contactForm = document.getElementById('inquiry-form') || document.getElementById('contact') || document.querySelector('footer');
+                      if (contactForm) {
+                        contactForm.scrollIntoView({ behavior: 'smooth' });
+                      }
+                    }}
+                    className="btn btn-primary"
+                    style={{ width: '100%', padding: '0.6rem', fontSize: '0.85rem', fontWeight: '700' }}
+                  >
+                    Request Technical Specification
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </>
+    );
+  }
+
+  if (productKey === 'electric-motors') {
+    return (
+      <>
+        <SEO 
+          title="Industrial Electric Motors - Siemens, Crompton Greaves & HEM" 
+          description="Premium heavy-duty industrial electric motors including Siemens, Crompton Greaves and Hindustan Electric Motors (HEM)." 
+          keywords="Electric Motors, Siemens motors, Crompton Greaves, Hindustan Electric Motors, HEM, B2B motors Vadodara"
+        />
+
+        {/* Top Dark Header */}
+        <div style={{ background: '#2c2d30', padding: '3.5rem 1.5rem', marginTop: '4.8rem' }}>
+          <div className="container" style={{ display: 'flex', alignItems: 'center' }}>
+            <h1 style={{ color: '#ffffff', fontSize: '2.2rem', margin: 0, fontWeight: '700', letterSpacing: '0.5px' }}>Electric Motors</h1>
+          </div>
+        </div>
+
+        {/* Main Products Grid */}
+        <div className="container" style={{ padding: '4rem 1.5rem', display: 'flex', flexDirection: 'column', gap: '5rem' }}>
+          {MOTOR_SUB_PRODUCTS.map((prod, index) => {
+            const isEven = index % 2 === 0;
+            return (
+              <div 
+                key={prod.id} 
+                className="motor-product-row"
+                style={{ 
+                  display: 'flex', 
+                  flexDirection: isEven ? 'row' : 'row-reverse', 
+                  alignItems: 'center', 
+                  gap: '4rem',
+                  flexWrap: 'wrap'
+                }}
+              >
+                {/* Description Column */}
+                <div style={{ flex: '1 1 300px', display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
+                  <h2 style={{ fontSize: '1.8rem', fontWeight: '800', color: 'var(--text-main)', margin: 0 }}>
+                    {prod.title}
+                  </h2>
+                  <p style={{ fontSize: '0.94rem', lineHeight: '1.6', color: 'var(--text-muted)', margin: 0 }}>
+                    {prod.desc}
+                  </p>
+                  <div>
+                    <button 
+                      onClick={() => setSelectedProduct(prod)}
+                      className="btn btn-primary"
+                      style={{ 
+                        background: 'var(--accent-orange)', 
+                        color: '#fff', 
+                        border: 'none', 
+                        padding: '0.75rem 1.8rem', 
+                        borderRadius: '6px', 
+                        fontWeight: '700',
+                        fontSize: '0.88rem',
+                        cursor: 'pointer',
+                        transition: 'background-color 0.2s',
+                        boxShadow: '0 2px 4px rgba(217, 101, 59, 0.2)'
+                      }}
+                      onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-orange-deep)'}
+                      onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-orange)'}
+                    >
+                      Click for More Details
+                    </button>
+                  </div>
+                </div>
+
+                {/* Image Showcase Column */}
+                <div style={{ 
+                  flex: '1 1 300px', 
+                  display: 'flex', 
+                  justifyContent: 'center',
+                  background: '#f8fafc', 
+                  border: '1px solid var(--border)', 
+                  borderRadius: '16px', 
+                  padding: '2.5rem',
+                  boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)'
+                }}>
+                  <img 
+                    src={prod.image} 
+                    alt={prod.title} 
+                    style={{ maxWidth: '100%', maxHeight: '300px', objectFit: 'contain' }}
+                  />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Modal Overlay */}
+        {selectedProduct && (
+          <div style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            background: 'rgba(0, 0, 0, 0.55)',
+            backdropFilter: 'blur(4px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 9999,
+            padding: '1rem'
+          }}>
+            <div style={{
+              background: '#ffffff',
+              borderRadius: '12px',
+              width: '100%',
+              maxWidth: '600px',
+              boxShadow: '0 20px 25px -5px rgba(0,0,0,0.15)',
+              overflow: 'hidden',
+              display: 'flex',
+              flexDirection: 'column',
+              maxHeight: '90vh'
+            }}>
+              {/* Modal Header */}
+              <div style={{
+                padding: '1.2rem 1.5rem',
+                borderBottom: '1px solid var(--border)',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                background: '#f8fafc'
+              }}>
+                <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: '800', color: 'var(--text-main)' }}>
+                  {selectedProduct.title}
+                </h3>
+                <button 
+                  onClick={() => setSelectedProduct(null)}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    fontSize: '1.5rem',
+                    color: 'var(--text-muted)',
+                    cursor: 'pointer',
+                    padding: '0.2rem'
+                  }}
+                >
+                  &times;
+                </button>
+              </div>
+
+              {/* Modal Body */}
+              <div style={{ padding: '1.5rem', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                <div>
+                  <h4 style={{ margin: '0 0 0.5rem 0', fontSize: '0.9rem', color: 'var(--accent-orange)', fontWeight: '800', textTransform: 'uppercase' }}>Product Specifications</h4>
+                  <div style={{ border: '1px solid var(--border)', borderRadius: '8px', overflow: 'hidden' }}>
+                    {Object.entries(selectedProduct.specs).map(([label, val], idx) => (
+                      <div 
+                        key={label} 
+                        style={{ 
+                          display: 'grid', 
+                          gridTemplateColumns: '150px 1fr', 
+                          padding: '0.75rem 1rem',
+                          background: idx % 2 === 0 ? '#f8fafc' : '#ffffff',
+                          borderBottom: idx < Object.entries(selectedProduct.specs).length - 1 ? '1px solid var(--border)' : 'none',
+                          fontSize: '0.85rem'
+                        }}
+                      >
+                        <span style={{ fontWeight: '700', color: 'var(--text-main)' }}>{label}</span>
+                        <span style={{ color: 'var(--text-muted)' }}>{val}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div style={{ background: 'rgba(217, 101, 59, 0.05)', border: '1px solid rgba(217, 101, 59, 0.15)', padding: '1rem', borderRadius: '8px' }}>
+                  <h4 style={{ margin: '0 0 0.3rem 0', fontSize: '0.9rem', color: 'var(--accent-orange-deep)', fontWeight: '800' }}>B2B Specification Inquiry</h4>
+                  <p style={{ margin: '0 0 1rem 0', fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+                    Need a custom quote, technical datasheet, or drawing configuration for this product?
+                  </p>
+                  <button 
+                    onClick={() => {
+                      setSelectedProduct(null);
+                      const contactForm = document.getElementById('inquiry-form') || document.getElementById('contact') || document.querySelector('footer');
+                      if (contactForm) {
+                        contactForm.scrollIntoView({ behavior: 'smooth' });
+                      }
+                    }}
+                    className="btn btn-primary"
+                    style={{ width: '100%', padding: '0.6rem', fontSize: '0.85rem', fontWeight: '700' }}
+                  >
+                    Request Technical Specification
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </>
+    );
+  }
+
+  if (productKey === 'switchgears') {
+    return (
+      <>
+        <SEO 
+          title="Industrial Switchgears - Low Voltage Distribution & Control" 
+          description="High-performance low voltage distribution switchgears, circuit breakers, contactors, MCBs and Sinova B2B electrical protection solutions." 
+          keywords="Switchgears, low voltage power distribution, contactors, MCB, Sinova, circuit breakers, B2B electric panels"
+        />
+
+        {/* Top Dark Header */}
+        <div style={{ background: '#2c2d30', padding: '3.5rem 1.5rem', marginTop: '4.8rem' }}>
+          <div className="container" style={{ display: 'flex', alignItems: 'center' }}>
+            <h1 style={{ color: '#ffffff', fontSize: '2.2rem', margin: 0, fontWeight: '700', letterSpacing: '0.5px' }}>Switchgears</h1>
+          </div>
+        </div>
+
+        {/* Main Products Grid */}
+        <div className="container" style={{ padding: '4rem 1.5rem', display: 'flex', flexDirection: 'column', gap: '5rem' }}>
+          {SWITCHGEAR_SUB_PRODUCTS.map((prod, index) => {
+            const isEven = index % 2 === 0;
+            return (
+              <div 
+                key={prod.id} 
+                className="switchgear-product-row"
+                style={{ 
+                  display: 'flex', 
+                  flexDirection: isEven ? 'row' : 'row-reverse', 
+                  alignItems: 'center', 
+                  gap: '4rem',
+                  flexWrap: 'wrap'
+                }}
+              >
+                {/* Description Column */}
+                <div style={{ flex: '1 1 300px', display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
+                  <h2 style={{ fontSize: '1.8rem', fontWeight: '800', color: 'var(--text-main)', margin: 0 }}>
+                    {prod.title}
+                  </h2>
+                  <p style={{ fontSize: '0.94rem', lineHeight: '1.6', color: 'var(--text-muted)', margin: 0 }}>
+                    {prod.desc}
+                  </p>
+                  <div>
+                    <button 
+                      onClick={() => setSelectedProduct(prod)}
+                      className="btn btn-primary"
+                      style={{ 
+                        background: 'var(--accent-orange)', 
+                        color: '#fff', 
+                        border: 'none', 
+                        padding: '0.75rem 1.8rem', 
+                        borderRadius: '6px', 
+                        fontWeight: '700',
+                        fontSize: '0.88rem',
+                        cursor: 'pointer',
+                        transition: 'background-color 0.2s',
+                        boxShadow: '0 2px 4px rgba(217, 101, 59, 0.2)'
+                      }}
+                      onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-orange-deep)'}
+                      onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-orange)'}
+                    >
+                      Click for More Details
+                    </button>
+                  </div>
+                </div>
+
+                {/* Image Showcase Column */}
+                <div style={{ 
+                  flex: '1 1 300px', 
+                  display: 'flex', 
+                  justifyContent: 'center',
+                  background: '#f8fafc', 
+                  border: '1px solid var(--border)', 
+                  borderRadius: '16px', 
+                  padding: '2.5rem',
+                  boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)'
+                }}>
+                  <img 
+                    src={prod.image} 
+                    alt={prod.title} 
+                    style={{ maxWidth: '100%', maxHeight: '300px', objectFit: 'contain' }}
+                  />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Modal Overlay */}
+        {selectedProduct && (
+          <div style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            background: 'rgba(0, 0, 0, 0.55)',
+            backdropFilter: 'blur(4px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 9999,
+            padding: '1rem'
+          }}>
+            <div style={{
+              background: '#ffffff',
+              borderRadius: '12px',
+              width: '100%',
+              maxWidth: '600px',
+              boxShadow: '0 20px 25px -5px rgba(0,0,0,0.15)',
+              overflow: 'hidden',
+              display: 'flex',
+              flexDirection: 'column',
+              maxHeight: '90vh'
+            }}>
+              {/* Modal Header */}
+              <div style={{
+                padding: '1.2rem 1.5rem',
+                borderBottom: '1px solid var(--border)',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                background: '#f8fafc'
+              }}>
+                <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: '800', color: 'var(--text-main)' }}>
+                  {selectedProduct.title}
+                </h3>
+                <button 
+                  onClick={() => setSelectedProduct(null)}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    fontSize: '1.5rem',
+                    color: 'var(--text-muted)',
+                    cursor: 'pointer',
+                    padding: '0.2rem'
+                  }}
+                >
+                  &times;
+                </button>
+              </div>
+
+              {/* Modal Body */}
+              <div style={{ padding: '1.5rem', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                <div>
+                  <h4 style={{ margin: '0 0 0.5rem 0', fontSize: '0.9rem', color: 'var(--accent-orange)', fontWeight: '800', textTransform: 'uppercase' }}>Product Specifications</h4>
+                  <div style={{ border: '1px solid var(--border)', borderRadius: '8px', overflow: 'hidden' }}>
+                    {Object.entries(selectedProduct.specs).map(([label, val], idx) => (
+                      <div 
+                        key={label} 
+                        style={{ 
+                          display: 'grid', 
+                          gridTemplateColumns: '150px 1fr', 
+                          padding: '0.75rem 1rem',
+                          background: idx % 2 === 0 ? '#f8fafc' : '#ffffff',
+                          borderBottom: idx < Object.entries(selectedProduct.specs).length - 1 ? '1px solid var(--border)' : 'none',
+                          fontSize: '0.85rem'
+                        }}
+                      >
+                        <span style={{ fontWeight: '700', color: 'var(--text-main)' }}>{label}</span>
+                        <span style={{ color: 'var(--text-muted)' }}>{val}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div style={{ background: 'rgba(217, 101, 59, 0.05)', border: '1px solid rgba(217, 101, 59, 0.15)', padding: '1rem', borderRadius: '8px' }}>
+                  <h4 style={{ margin: '0 0 0.3rem 0', fontSize: '0.9rem', color: 'var(--accent-orange-deep)', fontWeight: '800' }}>B2B Specification Inquiry</h4>
+                  <p style={{ margin: '0 0 1rem 0', fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+                    Need a custom quote, technical datasheet, or drawing configuration for this product?
+                  </p>
+                  <button 
+                    onClick={() => {
+                      setSelectedProduct(null);
+                      const contactForm = document.getElementById('inquiry-form') || document.getElementById('contact') || document.querySelector('footer');
+                      if (contactForm) {
+                        contactForm.scrollIntoView({ behavior: 'smooth' });
+                      }
+                    }}
+                    className="btn btn-primary"
+                    style={{ width: '100%', padding: '0.6rem', fontSize: '0.85rem', fontWeight: '700' }}
+                  >
+                    Request Technical Specification
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </>
+    );
+  }
 
   return (
     <>

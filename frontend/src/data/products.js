@@ -155,21 +155,6 @@ export const PRODUCT_CARDS = [
     cta: 'Get Motor Ratings',
   },
   {
-    id: 'electric-drives',
-    category: 'drives',
-    badge: 'Automation',
-    image: '/assets/images/switchgears_product.webp',
-    imgAlt: 'Transpower Variable Frequency Drives and Soft Starters',
-    title: 'Electric Drives',
-    desc: 'Variable frequency drives, soft starters and motor control electronics for precise speed regulation and reduced energy draw on continuous industrial loads.',
-    specs: [
-      'Variable Frequency Drives (VFD / AC drives)',
-      'Soft starters for high-inertia loads',
-      'Panel integration with motor protection',
-    ],
-    cta: 'Get Drive Specs',
-  },
-  {
     id: 'pultruded-profiles',
     category: 'frp',
     badge: 'Heavy Load',
@@ -192,7 +177,6 @@ export const PRODUCT_FILTERS = [
   { key: 'cable-tray',  label: 'FRP Cable Trays' },
   { key: 'gearboxes',   label: 'Gear Boxes' },
   { key: 'motors',      label: 'Motors' },
-  { key: 'drives',      label: 'Electric Drives' },
   { key: 'switchgears', label: 'Switchgears' },
 ];
 
@@ -270,7 +254,6 @@ export const RFQ_PRODUCTS = [
   { value: 'cable-trays',        label: 'FRP Cable Trays' },
   { value: 'gearboxes',          label: 'Industrial Gear Boxes' },
   { value: 'electric-motors',    label: 'Electric Motors' },
-  { value: 'electric-drives',    label: 'Electric Drives (VFD)' },
   { value: 'switchgears',        label: 'Power Switchgears' },
   { value: 'pultruded-profiles', label: 'Pultruded Profiles & Beams' },
 ];

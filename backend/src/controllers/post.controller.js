@@ -225,4 +225,124 @@ const remove = asyncHandler(async (req, res) => {
   res.json({ ok: true });
 });
 
-module.exports = { listPublished, listTags, getBySlug, listAll, getById, create, update, remove };
+/* POST /api/admin/posts/upload-xml */
+const uploadXml = asyncHandler(async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: 'Please upload an XML file.' });
+  }
+
+  const xmlString = req.file.buffer.toString('utf8');
+  
+  // Custom XML parsing helper
+  const posts = [];
+  const items = xmlString.split(/<item>|<entry>/i);
+  
+  for (let i = 1; i < items.length; i++) {
+    const itemHtml = items[i].split(/<\/item>|<\/entry>/i)[0];
+    
+    const extractTag = (tagName) => {
+      const regex = new RegExp(`<${tagName}(?:\\s+[^>]*)?>([\\s\\S]*?)<\\/${tagName}>`, 'i');
+      const match = itemHtml.match(regex);
+      if (!match) return '';
+      let val = match[1].trim();
+      if (val.startsWith('<![CDATA[')) {
+        val = val.substring(9, val.length - 3);
+      }
+      return val;
+    };
+
+    const extractTags = () => {
+      const tags = [];
+      const regex = /<category(?:\s+[^>]*)?>([\s\S]*?)<\/category>/gi;
+      let match;
+      while ((match = regex.exec(itemHtml)) !== null) {
+        let val = match[1].trim();
+        if (val.startsWith('<![CDATA[')) {
+          val = val.substring(9, val.length - 3);
+        }
+        if (val) tags.push(val);
+      }
+      return tags;
+    };
+
+    const title = extractTag('title');
+    let content = extractTag('content:encoded') || extractTag('content') || extractTag('description');
+    let excerpt = extractTag('excerpt:encoded') || extractTag('description');
+    let slug = extractTag('wp:post_name') || extractTag('slug');
+    if (!slug) {
+      const link = extractTag('link');
+      if (link) {
+        const parts = link.replace(/\/$/, '').split('/');
+        slug = parts[parts.length - 1];
+      }
+    }
+    if (!slug && title) {
+      const { slugify } = require('../utils/slugify');
+      slug = slugify(title);
+    }
+
+    const pubDateStr = extractTag('pubDate') || extractTag('published') || extractTag('wp:post_date');
+    let publishedAt = pubDateStr ? new Date(pubDateStr) : new Date();
+    if (isNaN(publishedAt.getTime())) {
+      publishedAt = new Date();
+    }
+
+    const statusVal = extractTag('wp:status') || 'published';
+    const status = statusVal === 'publish' || statusVal === 'published' ? 'published' : 'draft';
+
+    if (title && content) {
+      posts.push({
+        title,
+        slug,
+        excerpt: excerpt ? excerpt.substring(0, 380) : content.replace(/<[^>]*>/g, '').substring(0, 200) + '...',
+        content,
+        tags: extractTags(),
+        status,
+        publishedAt
+      });
+    }
+  }
+
+  if (posts.length === 0) {
+    return res.status(400).json({ error: 'No valid blog posts found in the XML file.' });
+  }
+
+  let createdCount = 0;
+  let updatedCount = 0;
+
+  for (const postData of posts) {
+    const existing = await Post.findOne({ slug: postData.slug });
+    
+    const fields = {
+      title: postData.title,
+      content: postData.content,
+      excerpt: postData.excerpt,
+      tags: postData.tags,
+      status: postData.status,
+      publishedAt: postData.publishedAt,
+      author: req.user._id
+    };
+
+    if (existing) {
+      Object.assign(existing, fields);
+      await existing.save();
+      updatedCount++;
+    } else {
+      const finalSlug = await Post.uniqueSlug(postData.slug || postData.title);
+      await Post.create({
+        ...fields,
+        slug: finalSlug
+      });
+      createdCount++;
+    }
+  }
+
+  res.json({
+    message: `Successfully imported blogs.`,
+    created: createdCount,
+    updated: updatedCount,
+    total: posts.length
+  });
+});
+
+module.exports = { listPublished, listTags, getBySlug, listAll, getById, create, update, remove, uploadXml };

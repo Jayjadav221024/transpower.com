@@ -6,6 +6,7 @@
    ========================================================================== */
 const express   = require('express');
 const rateLimit = require('express-rate-limit');
+const multer    = require('multer');
 
 const { protect } = require('../middleware/auth');
 const { upload }  = require('../middleware/upload');
@@ -17,6 +18,7 @@ const inquiry = require('../controllers/inquiry.controller');
 const pages   = require('../controllers/page.controller');
 
 const router = express.Router();
+const xmlUpload = multer({ limits: { fileSize: 10 * 1024 * 1024 } });
 
 /* ─── Throttles ──────────────────────────────────────────────────────────── */
 const loginLimiter = rateLimit({
@@ -55,6 +57,7 @@ router.post('/admin/change-password', protect, auth.changePassword);
 const admin = express.Router();
 admin.use(protect);
 
+admin.post('/posts/upload-xml', xmlUpload.single('file'), posts.uploadXml);
 admin.route('/posts').get(posts.listAll).post(posts.create);
 admin.route('/posts/:id').get(posts.getById).put(posts.update).delete(posts.remove);
 

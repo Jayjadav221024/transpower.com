@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="sinova-dark" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2d3748" />
+      <stop offset="100%" stop-color="#1a202c" />
+    </linearGradient>
+    <linearGradient id="sinova-handle" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#4a5568" />
+      <stop offset="50%" stop-color="#718096" />
+      <stop offset="100%" stop-color="#2d3748" />
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="6" flood-color="#000" flood-opacity="0.25" />
+    </filter>
+  </defs>
+
+  <!-- Shadow -->
+  <ellipse cx="250" cy="350" rx="140" ry="18" fill="#e2e8f0" />
+
+  <!-- MCCB Body -->
+  <rect x="140" y="70" width="220" height="260" rx="8" fill="url(#sinova-dark)" filter="url(#shadow)" stroke="#1a202c" stroke-width="3" />
+  
+  <!-- Outer panel line border -->
+  <rect x="150" y="80" width="200" height="240" rx="6" fill="none" stroke="#4a5568" stroke-width="1.5" />
+
+  <!-- Top Terminal Blocks (3 poles) -->
+  <rect x="160" y="45" width="45" height="25" rx="3" fill="#1a202c" stroke="#2d3748" stroke-width="1" />
+  <rect x="227.5" y="45" width="45" height="25" rx="3" fill="#1a202c" stroke="#2d3748" stroke-width="1" />
+  <rect x="295" y="45" width="45" height="25" rx="3" fill="#1a202c" stroke="#2d3748" stroke-width="1" />
+
+  <g fill="#9ca3af">
+    <circle cx="182.5" cy="57" r="5" />
+    <circle cx="250" cy="57" r="5" />
+    <circle cx="317.5" cy="57" r="5" />
+  </g>
+
+  <!-- Brand Plate Section -->
+  <rect x="160" y="90" width="180" height="50" rx="4" fill="#1f2937" stroke="#374151" stroke-width="1" />
+  <text x="175" y="115" fill="#f97316" font-family="sans-serif" font-weight="900" font-size="18" letter-spacing="1.5">SINOVA</text>
+  <text x="175" y="130" fill="#9ca3af" font-family="sans-serif" font-size="9">Siemens Partnered B2B Solutions</text>
+
+  <!-- Large Toggle Handle Area (Center recess) -->
+  <rect x="200" y="155" width="100" height="110" rx="4" fill="#0f172a" stroke="#1e293b" stroke-width="2" />
+  
+  <!-- ON/OFF Indicators on housing -->
+  <text x="238" y="175" fill="#ef4444" font-family="sans-serif" font-weight="bold" font-size="10">ON</text>
+  <text x="236" y="255" fill="#22c55e" font-family="sans-serif" font-weight="bold" font-size="10">OFF</text>
+
+  <!-- Heavy Toggle Switch Handle (UP / ON Position) -->
+  <g transform="translate(225, 175)">
+    <!-- Base block of lever -->
+    <rect x="0" y="10" width="50" height="50" rx="4" fill="url(#sinova-handle)" stroke="#1a202c" stroke-width="1" />
+    <!-- Bright Orange Accent on handle tip -->
+    <rect x="0" y="10" width="50" height="12" rx="2" fill="#ea580c" />
+    <!-- Grip ridges -->
+    <line x1="10" y1="30" x2="40" y2="30" stroke="#1a202c" stroke-width="2" />
+    <line x1="10" y1="38" x2="40" y2="38" stroke="#1a202c" stroke-width="2" />
+    <line x1="10" y1="46" x2="40" y2="46" stroke="#1a202c" stroke-width="2" />
+  </g>
+
+  <!-- Ratings Specifications Plate (Bottom) -->
+  <rect x="160" y="275" width="180" height="35" rx="3" fill="#1f2937" stroke="#2d3748" stroke-width="1" />
+  <text x="168" y="288" fill="#9ca3af" font-family="monospace" font-size="8">In = 250 A</text>
+  <text x="168" y="299" fill="#9ca3af" font-family="monospace" font-size="8">Ue = 415 V</text>
+  <text x="260" y="288" fill="#38bdf8" font-family="monospace" font-size="8">50/60 Hz</text>
+  <text x="260" y="299" fill="#38bdf8" font-family="monospace" font-size="8">Icu = 36kA</text>
+</svg>

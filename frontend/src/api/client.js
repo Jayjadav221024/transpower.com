@@ -105,6 +105,11 @@ export const adminApi = {
   createPost: (payload)     => api.post('/api/admin/posts', payload),
   updatePost: (id, payload) => api.put(`/api/admin/posts/${id}`, payload),
   deletePost: (id)          => api.del(`/api/admin/posts/${id}`),
+  uploadXml: (file) => {
+    const form = new FormData();
+    form.append('file', file);
+    return api.upload('/api/admin/posts/upload-xml', form);
+  },
 
   listMedia:  ()          => api.get('/api/admin/media'),
   uploadMedia: (files) => {

@@ -1,6 +1,52 @@
 import { useState } from 'react';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 
+const CATEGORIES = [
+  {
+    key: 'switchgears',
+    label: 'SIEMENS Switchgears',
+    items: [
+      { label: 'Low Voltage Power Distribution Product' },
+      { label: 'Low Voltage Control Product' },
+      { label: 'MCB' },
+      { label: 'Sinova' }
+    ]
+  },
+  {
+    key: 'electric-motors',
+    label: 'Motors',
+    items: [
+      { label: 'Siemens Motor' },
+      { label: 'Crompton Greaves Motor' },
+      { label: 'Hindustan Electric Motor' }
+    ]
+  },
+  {
+    key: 'molded-gratings',
+    label: 'FRP Gratings',
+    items: [
+      { label: 'Meniscus Top' },
+      { label: 'Grit Top' },
+      { label: 'Chequered Plate' }
+    ]
+  },
+  {
+    key: 'cable-trays',
+    label: 'FRP Cable Tray',
+    items: [
+      { label: 'Ladder Type Cable Tray' },
+      { label: 'Perforated Cable Tray' }
+    ]
+  },
+  {
+    key: 'gear-boxes',
+    label: 'Gear Box',
+    items: [
+      { label: 'Gear Box' }
+    ]
+  }
+];
+
 /* Products now has its own route, so it is a NavLink rather than a hash jump
    that only worked on the home page. */
 const SECTIONS = [
@@ -13,6 +59,8 @@ export default function SiteHeader() {
   const navigate = useNavigate();
   const onHome = pathname === '/';
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isProductsHovered, setIsProductsHovered] = useState(false);
+  const [hoveredCategory, setHoveredCategory] = useState(null);
 
   function goToSection(e, hash) {
     setMenuOpen(false);
@@ -97,10 +145,114 @@ export default function SiteHeader() {
                 About Us
               </NavLink>
             </li>
-            <li>
+            <li 
+              onMouseEnter={() => setIsProductsHovered(true)}
+              onMouseLeave={() => {
+                setIsProductsHovered(false);
+                setHoveredCategory(null);
+              }}
+              style={{ position: 'relative' }}
+            >
               <NavLink to="/products" className={({ isActive }) => (isActive ? 'active-pill' : 'nav-link-new')}>
-                Products
+                Products <span style={{ fontSize: '0.62rem', marginLeft: '2px', verticalAlign: 'middle' }}>▼</span>
               </NavLink>
+
+              {/* Main Dropdown Menu */}
+              {isProductsHovered && (
+                <div style={{
+                  position: 'absolute',
+                  top: '100%',
+                  left: 0,
+                  background: '#ffffff',
+                  boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+                  borderRadius: '6px',
+                  padding: '0.8rem 0',
+                  minWidth: '220px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  zIndex: 10000,
+                  border: '1px solid #e2e8f0',
+                  marginTop: '0.5rem'
+                }}>
+                  {CATEGORIES.map(cat => (
+                    <div
+                      key={cat.key}
+                      onMouseEnter={() => setHoveredCategory(cat.key)}
+                      style={{
+                        position: 'relative',
+                        padding: '0.6rem 1.5rem',
+                        fontWeight: '700',
+                        fontSize: '0.88rem',
+                        color: hoveredCategory === cat.key ? 'var(--accent-orange)' : '#1e293b',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        background: hoveredCategory === cat.key ? '#f8fafc' : 'transparent',
+                        transition: 'color 0.15s, background-color 0.15s'
+                      }}
+                      onClick={() => {
+                        navigate(`/product/${cat.key}`);
+                        setIsProductsHovered(false);
+                      }}
+                    >
+                      <span>{cat.label}</span>
+                      <span style={{ fontSize: '0.7rem', color: hoveredCategory === cat.key ? 'var(--accent-orange)' : '#cbd5e1' }}>▶</span>
+
+                      {/* Sub flyout menu */}
+                      {hoveredCategory === cat.key && (
+                        <div style={{
+                          position: 'absolute',
+                          top: '-8px',
+                          left: '100%',
+                          background: '#ffffff',
+                          boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+                          borderRadius: '6px',
+                          padding: '0.8rem 0',
+                          minWidth: '280px',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          zIndex: 10001,
+                          border: '1px solid #e2e8f0',
+                          marginLeft: '4px'
+                        }}>
+                          {cat.items.map(subItem => (
+                            <Link
+                              key={subItem.label}
+                              to={`/product/${cat.key}`}
+                              style={{
+                                padding: '0.6rem 1.5rem',
+                                fontWeight: '700',
+                                fontSize: '0.85rem',
+                                color: '#1e293b',
+                                textDecoration: 'none',
+                                display: 'block',
+                                transition: 'color 0.15s, background-color 0.15s',
+                                whiteSpace: 'nowrap'
+                              }}
+                              onMouseOver={(e) => {
+                                e.currentTarget.style.color = 'var(--accent-orange)';
+                                e.currentTarget.style.backgroundColor = '#f8fafc';
+                              }}
+                              onMouseOut={(e) => {
+                                e.currentTarget.style.color = '#1e293b';
+                                e.currentTarget.style.backgroundColor = 'transparent';
+                              }}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setIsProductsHovered(false);
+                                setHoveredCategory(null);
+                              }}
+                            >
+                              {subItem.label}
+                            </Link>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
             </li>
             {SECTIONS.map((s) => (
               <li key={s.hash}>
