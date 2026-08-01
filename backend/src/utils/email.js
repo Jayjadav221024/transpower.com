@@ -70,8 +70,9 @@ const sendEmail = async ({ to, subject, text, html, attachments, replyTo }) => {
 
   const transporter = getTransporter();
 
-  // Gmail/most providers reject a From that doesn't match the authenticated
-  // mailbox, so fall back to SMTP_USER rather than a bogus no-reply domain.
+  // Providers reject a From they haven't authorised — Brevo wants a verified
+  // sender, Gmail wants the authenticated mailbox. Set EMAIL_FROM to that
+  // address; SMTP_USER is only a last resort so we never send a bogus domain.
   const from = process.env.EMAIL_FROM || process.env.SMTP_USER;
 
   const info = await transporter.sendMail({
