@@ -5,6 +5,7 @@ export default function BrochureDownloadSection() {
   const [formData, setFormData] = useState({ name: '', phone: '', email: '', company: '' });
   const [sending, setSending] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [emailed, setEmailed] = useState(false);
   const [error, setError] = useState('');
 
   const handleInputChange = (field) => (e) => {
@@ -18,7 +19,7 @@ export default function BrochureDownloadSection() {
 
     try {
       // Send Lead data to the API client (triggers DB storage & email sending)
-      await publicApi.sendInquiry({
+      const res = await publicApi.sendInquiry({
         name: `${formData.name} (${formData.company || 'No Company'})`,
         email: formData.email,
         phone: formData.phone,
@@ -26,6 +27,7 @@ export default function BrochureDownloadSection() {
         message: `Requested corporate catalog. Company: ${formData.company}`
       });
 
+      setEmailed(Boolean(res?.emailed));
       setSuccess(true);
 
       // Trigger automatic PDF brochure download locally
@@ -39,6 +41,7 @@ export default function BrochureDownloadSection() {
       // Reset form after short delay
       setTimeout(() => {
         setSuccess(false);
+        setEmailed(false);
         setFormData({ name: '', phone: '', email: '', company: '' });
       }, 5000);
 
@@ -161,7 +164,9 @@ export default function BrochureDownloadSection() {
             {error && <div className="feedback-error">{error}</div>}
             {success && (
               <div className="feedback-success">
-                ✓ Success! Your PDF download is starting, and a copy has been sent to your email.
+                {emailed
+                  ? '✓ Success! Your PDF download is starting, and a copy has been sent to your email.'
+                  : '✓ Your PDF download is starting. We could not email a copy right now — our team has your request and will follow up.'}
               </div>
             )}
 

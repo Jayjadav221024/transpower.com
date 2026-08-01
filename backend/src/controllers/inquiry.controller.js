@@ -1,6 +1,24 @@
+const path = require('path');
+const fs = require('fs');
 const Inquiry = require('../models/Inquiry');
 const { asyncHandler } = require('../middleware/error');
 const { sendEmail } = require('../utils/email');
+
+const BROCHURE_FILE = 'transpower_corporate_brochure.pdf';
+
+/* The brochure lives in the frontend public folder in dev, but the deployed
+   backend has its own copy. Try every layout instead of assuming one. */
+const findBrochure = () => {
+  const candidates = [
+    path.join(__dirname, '../../../frontend/public/assets', BROCHURE_FILE),
+    path.join(__dirname, '../../../frontend/dist/assets', BROCHURE_FILE),
+    path.join(__dirname, '../../frontend/public/assets', BROCHURE_FILE),
+    path.join(__dirname, '../../frontend/dist/assets', BROCHURE_FILE),
+    path.join(__dirname, '../../uploads', BROCHURE_FILE),
+    path.join(__dirname, '../../assets', BROCHURE_FILE),
+  ];
+  return candidates.find((p) => fs.existsSync(p)) || null;
+};
 
 const shape = (i) => ({
   id:        i._id,
@@ -57,26 +75,34 @@ const create = asyncHandler(async (req, res) => {
 
   const attachments = [];
   if (isBrochure) {
-    const path = require('path');
-    const fs = require('fs');
-    const brochurePath = path.join(__dirname, '../../../frontend/public/assets/transpower_corporate_brochure.pdf');
-    if (fs.existsSync(brochurePath)) {
+    const brochurePath = findBrochure();
+    if (brochurePath) {
       attachments.push({
         filename: 'Transpower_Corporate_Brochure.pdf',
-        path: brochurePath
+        path: brochurePath,
+        contentType: 'application/pdf',
       });
     } else {
-      console.warn('⚠️ Brochure PDF not found at path:', brochurePath);
+      console.warn(`⚠️  ${BROCHURE_FILE} not found in any known location — sending email without the attachment.`);
     }
   }
 
-  // Send confirmation email to the user (non-blocking)
-  sendEmail({
-    to: inquiry.email,
-    subject: mailSubject,
-    html: mailHtml,
-    attachments
-  }).catch(err => console.error('Error sending confirmation email to user:', err));
+  // Awaited so the response can tell the visitor the truth about delivery.
+  let emailed = false;
+  let emailError = null;
+  try {
+    await sendEmail({
+      to: inquiry.email,
+      subject: mailSubject,
+      html: mailHtml,
+      attachments,
+      replyTo: process.env.EMAIL_TO || undefined,
+    });
+    emailed = true;
+  } catch (err) {
+    emailError = err.message;
+    console.error('❌ Error sending confirmation email to user:', err);
+  }
 
   // Send notification email to the admin if EMAIL_TO is set (non-blocking)
   if (process.env.EMAIL_TO) {
@@ -95,11 +121,13 @@ const create = asyncHandler(async (req, res) => {
           <li><strong>Message:</strong> ${inquiry.message || 'N/A'}</li>
         </ul>
         <p><a href="${originBase}/admin/inquiries">Click here to view in the admin panel</a></p>
-      `
+      `,
+      replyTo: inquiry.email,
     }).catch(err => console.error('Error sending admin notification email:', err));
   }
 
-  res.status(201).json({ ok: true, id: inquiry._id });
+  // The lead is always saved, so a mail failure must not fail the request.
+  res.status(201).json({ ok: true, id: inquiry._id, emailed, emailError });
 });
 
 /* GET /api/admin/inquiries?status= */
