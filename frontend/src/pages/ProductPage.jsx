@@ -306,30 +306,60 @@ export default function ProductPage() {
                     {prod.desc}
                   </p>
                   <div>
-                    <button 
-                      onClick={() => setSelectedProduct(prod)}
-                      className="btn btn-primary"
-                      style={{ 
-                        background: 'var(--accent-orange)', 
-                        color: '#fff', 
-                        border: 'none', 
-                        padding: '0.75rem 1.8rem', 
-                        borderRadius: '6px', 
-                        fontWeight: '700',
-                        fontSize: '0.88rem',
-                        cursor: 'pointer',
-                        transition: 'background-color 0.2s',
-                        boxShadow: '0 2px 4px rgba(217, 101, 59, 0.2)',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '0.5rem'
-                      }}
-                      onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-orange-deep)'}
-                      onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-orange)'}
-                    >
-                      {prod.buttonLabel === 'Download Brochure' && <span style={{ fontSize: '1rem' }}>📥</span>}
-                      {prod.buttonLabel || 'Click for More Details'}
-                    </button>
+                    {prod.buttonLabel === 'Download Brochure' ? (
+                      <a 
+                        href="/assets/rotomotive_qubo_gearboxes.pdf"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        download
+                        className="btn btn-primary"
+                        style={{ 
+                          background: 'var(--accent-orange)', 
+                          color: '#fff', 
+                          border: 'none', 
+                          padding: '0.75rem 1.8rem', 
+                          borderRadius: '6px', 
+                          fontWeight: '700',
+                          fontSize: '0.88rem',
+                          cursor: 'pointer',
+                          transition: 'background-color 0.2s',
+                          boxShadow: '0 2px 4px rgba(217, 101, 59, 0.2)',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '0.5rem',
+                          textDecoration: 'none'
+                        }}
+                        onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-orange-deep)'}
+                        onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-orange)'}
+                      >
+                        <span style={{ fontSize: '1rem' }}>📥</span>
+                        {prod.buttonLabel}
+                      </a>
+                    ) : (
+                      <button 
+                        onClick={() => setSelectedProduct(prod)}
+                        className="btn btn-primary"
+                        style={{ 
+                          background: 'var(--accent-orange)', 
+                          color: '#fff', 
+                          border: 'none', 
+                          padding: '0.75rem 1.8rem', 
+                          borderRadius: '6px', 
+                          fontWeight: '700',
+                          fontSize: '0.88rem',
+                          cursor: 'pointer',
+                          transition: 'background-color 0.2s',
+                          boxShadow: '0 2px 4px rgba(217, 101, 59, 0.2)',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '0.5rem'
+                        }}
+                        onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-orange-deep)'}
+                        onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-orange)'}
+                      >
+                        {prod.buttonLabel || 'Click for More Details'}
+                      </button>
+                    )}
                   </div>
                 </div>
 
