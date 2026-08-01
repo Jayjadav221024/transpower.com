@@ -188,6 +188,7 @@ export default function SiteFooter() {
           <div className="footer-bottom-links">
             <Link to="/blog">Blog</Link>
             <Link to="/products">Products</Link>
+            <Link to="/admin">Admin Dashboard</Link>
           </div>
         </div>
       </div>
