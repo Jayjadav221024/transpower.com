@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { HERO_PRODUCTS } from '../../data/products';
 import { GradientShimmer } from '../ui/gradient-shimmer';
+import { assetUrl } from '../../api/client';
 
 const AUTO_MS = 3000;
 const TEXT_SWAP_MS = 240;   // midpoint of the 0.5s image crossfade
@@ -123,7 +124,7 @@ export default function HeroCarousel({ pageData }) {
               return (
                 <img
                   key={layer}
-                  src={imgSrc}
+                  src={assetUrl(imgSrc)}
                   data-edit-page="homepage"
                   data-edit-key={`heroImage_${itemIdx}`}
                   alt={activeLayer === layer ? item.imgAlt : ''}
