@@ -271,12 +271,6 @@ export default function SiteHeader() {
                 Blog
               </NavLink>
             </li>
-
-            <li>
-              <NavLink to="/feature-demo" className={({ isActive }) => (isActive ? 'active-pill' : 'nav-link-new')}>
-                Feature Demo
-              </NavLink>
-            </li>
           </ul>
         </nav>
 
@@ -335,12 +329,6 @@ export default function SiteHeader() {
           <li>
             <NavLink to="/blog" className={({ isActive }) => (isActive ? 'active-mobile' : 'mobile-link')} onClick={() => setMenuOpen(false)}>
               Blog
-            </NavLink>
-          </li>
-
-          <li>
-            <NavLink to="/feature-demo" className={({ isActive }) => (isActive ? 'active-mobile' : 'mobile-link')} onClick={() => setMenuOpen(false)}>
-              Feature Demo
             </NavLink>
           </li>
           <li style={{ marginTop: '20px' }}>

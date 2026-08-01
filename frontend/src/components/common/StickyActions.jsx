@@ -85,7 +85,7 @@ export default function StickyActions() {
       <div className="sticky-actions-container">
         {/* WhatsApp Button */}
         <a
-          href="https://wa.me/919876543210?text=Hi,%20I'm%20interested%20in%20FRP%20Composite%20products."
+          href="https://wa.me/919825507527?text=Hi,%20I'm%20interested%20in%20FRP%20Composite%20products."
           target="_blank"
           rel="noopener noreferrer"
           className="sticky-action-btn whatsapp-btn"

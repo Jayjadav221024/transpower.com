@@ -44,11 +44,15 @@ export default function RfqForm() {
           <div className="rfq-contact-details">
             <div>
               <strong>📞 Call / WhatsApp</strong>
-              <span>+91 98765 43210</span>
+              <span>+91 98255 07517 / 37</span>
             </div>
             <div>
               <strong>✉️ Email Address</strong>
-              <span>sales@transpower.co.in</span>
+              <span style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem', fontSize: '0.92rem' }}>
+                <a href="mailto:sales@transpower.com" style={{ color: 'inherit' }}>sales@transpower.com</a>
+                <a href="mailto:baroda@transpower.net.in" style={{ color: 'inherit' }}>baroda@transpower.net.in</a>
+                <a href="mailto:frp@transpower.net.in" style={{ color: 'inherit' }}>frp@transpower.net.in</a>
+              </span>
             </div>
           </div>
         </div>

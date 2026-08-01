@@ -76,11 +76,11 @@ export default function SiteFooter() {
             </div>
             
             <div className="footer-social-icons" style={{ display: 'flex', gap: '0.75rem', marginTop: '1.2rem' }}>
-              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="social-icon">f</a>
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="social-icon">ig</a>
-              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="social-icon">in</a>
-              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="social-icon">tw</a>
-              <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="social-icon">yt</a>
+              <a href="https://facebook.com/TranspowerTech" target="_blank" rel="noopener noreferrer" className="social-icon">f</a>
+              <a href="https://instagram.com/transpower.technologies" target="_blank" rel="noopener noreferrer" className="social-icon">ig</a>
+              <a href="https://linkedin.com/company/transpowertech" target="_blank" rel="noopener noreferrer" className="social-icon">in</a>
+              <a href="https://x.com/Transpower_Tech" target="_blank" rel="noopener noreferrer" className="social-icon">tw</a>
+              <a href="https://youtube.com/@TranspowerTechnologies" target="_blank" rel="noopener noreferrer" className="social-icon">yt</a>
             </div>
           </div>
 
@@ -168,7 +168,6 @@ export default function SiteFooter() {
           <div className="footer-bottom-links">
             <Link to="/blog">Blog</Link>
             <Link to="/products">Products</Link>
-            <Link to="/admin">Admin Dashboard</Link>
           </div>
         </div>
       </div>
