@@ -34,8 +34,16 @@ export class ApiError extends Error {
   }
 }
 
-async function request(path, { method = 'GET', body, formData, signal } = {}) {
-  const options = { method, credentials: 'include', headers: {}, signal };
+/* Nothing here should ever hang the UI. Uploads get a longer leash. */
+const DEFAULT_TIMEOUT_MS = 30_000;
+
+async function request(path, { method = 'GET', body, formData, signal, timeout } = {}) {
+  const limit = timeout ?? (formData ? 120_000 : DEFAULT_TIMEOUT_MS);
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), limit);
+  if (signal) signal.addEventListener('abort', () => controller.abort(), { once: true });
+
+  const options = { method, credentials: 'include', headers: {}, signal: controller.signal };
 
   if (formData) {
     options.body = formData;                       // browser sets the boundary
@@ -50,6 +58,12 @@ async function request(path, { method = 'GET', body, formData, signal } = {}) {
   try {
     res = await fetch(url, options);
   } catch (cause) {
+    if (controller.signal.aborted && !signal?.aborted) {
+      throw new ApiError(
+        `The server did not respond within ${Math.round(limit / 1000)} seconds. Please try again.`,
+        0,
+      );
+    }
     /* fetch() rejects with a bare "Failed to fetch" for DNS failures, refused
        connections and — most often in this app — a blocked CORS preflight.
        Name the target so the cause is visible instead of guessed at. */
@@ -57,6 +71,8 @@ async function request(path, { method = 'GET', body, formData, signal } = {}) {
       `Could not reach the API at ${url}. Check the server is running and that CLIENT_ORIGIN on the backend lists this site's origin (${window.location.origin}) exactly, with no trailing slash.`,
       0,
     );
+  } finally {
+    clearTimeout(timer);
   }
 
   const data = await res.json().catch(() => ({}));

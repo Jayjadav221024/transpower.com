@@ -7,6 +7,7 @@ export default function StickyActions() {
   const [formData, setFormData] = useState({ name: '', phone: '', email: '', company: '' });
   const [sending, setSending] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [emailStatus, setEmailStatus] = useState('pending');   // pending | sent | failed
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -25,42 +26,49 @@ export default function StickyActions() {
     setFormData({ ...formData, [field]: e.target.value });
   };
 
+  const triggerDownload = () => {
+    const link = document.createElement('a');
+    link.href = '/assets/transpower_corporate_brochure.pdf';
+    link.download = 'Transpower_Corporate_Brochure.pdf';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSending(true);
     setError('');
+    setEmailStatus('pending');
+
+    /* The download is a local file — hand it over straight away. Saving the
+       lead and mailing a copy happen behind it, so a slow or broken SMTP can
+       never leave the visitor stuck on "Sending...". */
+    triggerDownload();
+    setSuccess(true);
 
     try {
-      // Send Lead data to the API client
-      await publicApi.sendInquiry({
+      const res = await publicApi.sendInquiry({
         name: `${formData.name} (${formData.company || 'No Company'})`,
         email: formData.email,
         phone: formData.phone,
         product: 'Brochure Request',
         message: `Requested product brochure. Company: ${formData.company || 'Not Specified'}`
       });
-
-      setSuccess(true);
-
-      // Trigger automatic PDF brochure download
-      const link = document.createElement('a');
-      link.href = '/assets/transpower_corporate_brochure.pdf';
-      link.download = 'Transpower_Corporate_Brochure.pdf';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      setEmailStatus(res?.emailed ? 'sent' : 'failed');
+    } catch (err) {
+      setEmailStatus('failed');
+      setError(err.message || 'Something went wrong. Please try again.');
+    } finally {
+      setSending(false);
 
       // Clear Form and close modal after short delay
       setTimeout(() => {
         setModalOpen(false);
         setSuccess(false);
+        setEmailStatus('pending');
         setFormData({ name: '', phone: '', email: '', company: '' });
-      }, 3000);
-
-    } catch (err) {
-      setError(err.message || 'Something went wrong. Please try again.');
-    } finally {
-      setSending(false);
+      }, 4000);
     }
   };
 
@@ -183,7 +191,11 @@ export default function StickyActions() {
               {error && <div className="modal-error">{error}</div>}
               {success && (
                 <div className="modal-success">
-                  ✓ Success! Downloading brochure now...
+                  {emailStatus === 'sent'
+                    ? '✓ Downloading brochure now — a copy is on its way to your inbox.'
+                    : emailStatus === 'failed'
+                      ? '✓ Downloading brochure now. We could not email a copy — our team has your details and will follow up.'
+                      : '✓ Downloading brochure now...'}
                 </div>
               )}
 

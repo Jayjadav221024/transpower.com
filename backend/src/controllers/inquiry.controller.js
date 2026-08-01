@@ -87,18 +87,35 @@ const create = asyncHandler(async (req, res) => {
     }
   }
 
-  // Awaited so the response can tell the visitor the truth about delivery.
+  // Awaited so the response can tell the visitor the truth about delivery, but
+  // capped: the lead is already saved, and no visitor should wait on SMTP.
+  // A send that outlives the cap keeps running and is logged when it settles.
   let emailed = false;
   let emailError = null;
+  const pending = sendEmail({
+    to: inquiry.email,
+    subject: mailSubject,
+    html: mailHtml,
+    attachments,
+    replyTo: process.env.EMAIL_TO || undefined,
+  });
+
   try {
-    await sendEmail({
-      to: inquiry.email,
-      subject: mailSubject,
-      html: mailHtml,
-      attachments,
-      replyTo: process.env.EMAIL_TO || undefined,
-    });
-    emailed = true;
+    const TIMED_OUT = Symbol('timeout');
+    let timer;
+    const result = await Promise.race([
+      pending.then(() => 'sent'),
+      new Promise((resolve) => { timer = setTimeout(() => resolve(TIMED_OUT), 15_000); }),
+    ]);
+    clearTimeout(timer);
+
+    if (result === TIMED_OUT) {
+      emailError = 'Email is taking too long to send; it will continue in the background.';
+      console.warn(`⏳ Confirmation email to ${inquiry.email} exceeded 15s — responding without waiting.`);
+      pending.catch((err) => console.error('❌ Late email failure:', err.message));
+    } else {
+      emailed = true;
+    }
   } catch (err) {
     emailError = err.message;
     console.error('❌ Error sending confirmation email to user:', err);

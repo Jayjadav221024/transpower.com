@@ -5,7 +5,7 @@ export default function BrochureDownloadSection() {
   const [formData, setFormData] = useState({ name: '', phone: '', email: '', company: '' });
   const [sending, setSending] = useState(false);
   const [success, setSuccess] = useState(false);
-  const [emailed, setEmailed] = useState(false);
+  const [emailStatus, setEmailStatus] = useState('pending');   // pending | sent | failed
   const [error, setError] = useState('');
 
   const handleInputChange = (field) => (e) => {
@@ -16,6 +16,17 @@ export default function BrochureDownloadSection() {
     e.preventDefault();
     setSending(true);
     setError('');
+    setEmailStatus('pending');
+
+    /* The PDF is a local file — start it immediately. Storing the lead and
+       mailing a copy run behind it, so SMTP trouble can't block the download. */
+    const link = document.createElement('a');
+    link.href = '/assets/transpower_corporate_brochure.pdf';
+    link.download = 'Transpower_Corporate_Brochure.pdf';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    setSuccess(true);
 
     try {
       // Send Lead data to the API client (triggers DB storage & email sending)
@@ -26,29 +37,19 @@ export default function BrochureDownloadSection() {
         product: 'Brochure Request',
         message: `Requested corporate catalog. Company: ${formData.company}`
       });
-
-      setEmailed(Boolean(res?.emailed));
-      setSuccess(true);
-
-      // Trigger automatic PDF brochure download locally
-      const link = document.createElement('a');
-      link.href = '/assets/transpower_corporate_brochure.pdf';
-      link.download = 'Transpower_Corporate_Brochure.pdf';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      setEmailStatus(res?.emailed ? 'sent' : 'failed');
+    } catch (err) {
+      setEmailStatus('failed');
+      setError(err.message || 'Something went wrong. Please try again.');
+    } finally {
+      setSending(false);
 
       // Reset form after short delay
       setTimeout(() => {
         setSuccess(false);
-        setEmailed(false);
+        setEmailStatus('pending');
         setFormData({ name: '', phone: '', email: '', company: '' });
       }, 5000);
-
-    } catch (err) {
-      setError(err.message || 'Something went wrong. Please try again.');
-    } finally {
-      setSending(false);
     }
   };
 
@@ -164,9 +165,11 @@ export default function BrochureDownloadSection() {
             {error && <div className="feedback-error">{error}</div>}
             {success && (
               <div className="feedback-success">
-                {emailed
+                {emailStatus === 'sent'
                   ? '✓ Success! Your PDF download is starting, and a copy has been sent to your email.'
-                  : '✓ Your PDF download is starting. We could not email a copy right now — our team has your request and will follow up.'}
+                  : emailStatus === 'failed'
+                    ? '✓ Your PDF download is starting. We could not email a copy right now — our team has your request and will follow up.'
+                    : '✓ Your PDF download is starting...'}
               </div>
             )}
 

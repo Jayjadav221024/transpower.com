@@ -21,6 +21,11 @@ const buildTransporter = () => {
       user: process.env.SMTP_USER,
       pass: process.env.SMTP_PASS,
     },
+    // Nodemailer's defaults (2 min to connect, 10 min socket) leave the visitor
+    // staring at "Sending..." when a port is filtered rather than refused.
+    connectionTimeout: 10_000,
+    greetingTimeout:   10_000,
+    socketTimeout:     20_000,
   });
 };
 
