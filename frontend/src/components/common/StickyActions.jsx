@@ -44,8 +44,8 @@ export default function StickyActions() {
 
       // Trigger automatic PDF brochure download
       const link = document.createElement('a');
-      link.href = '/brochure.pdf';
-      link.download = 'Transpower_Brochure.pdf';
+      link.href = '/assets/transpower_corporate_brochure.pdf';
+      link.download = 'Transpower_Corporate_Brochure.pdf';
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);

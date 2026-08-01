@@ -203,13 +203,14 @@ export default function ProductPage() {
     }
   ];
 
-  // Specifications and details for each motor sub-product
   const MOTOR_SUB_PRODUCTS = [
     {
       id: 'siemens-motor',
       title: 'Siemens Motor',
       desc: 'Transpower Technologies Pvt. Ltd. offers Siemens motors featuring high protection degrees, robust cast iron housing, and efficient cooling. Designed for various industrial applications, they meet international standards, ensuring reliable performance and energy efficiency. Available with multiple mounting options, these motors are perfect for demanding environments.',
       image: '/assets/images/motor_siemens_3d.png',
+      buttonLabel: 'Download Brochure',
+      downloadUrl: '/assets/siemens_innomotics_motors.pdf',
       specs: {
         'Frame Size': '56 to 450',
         'Output Rating': '0.09 kW to 1000 kW',
@@ -223,6 +224,8 @@ export default function ProductPage() {
       title: 'Crompton Greaves Motor',
       desc: 'Transpower Technologies Pvt. Ltd. provides Crompton motors, featuring strong cast iron housing and high degrees of protection. Designed for industrial applications, they offer reliable performance with efficient cooling. Compliant with global standards, these motors come with various mounting options and ensure energy-efficient operation for diverse needs.',
       image: '/assets/images/motor_crompton_3d.jpg',
+      buttonLabel: 'Download Brochure',
+      downloadUrl: '/assets/crompton_motors.pdf',
       specs: {
         'Frame Size': '63 to 355',
         'Output Rating': '0.18 kW to 315 kW',
@@ -236,6 +239,8 @@ export default function ProductPage() {
       title: 'Hindustan Electric Motor',
       desc: 'HEM motors from Transpower Technologies Pvt. Ltd. are known for their durability and high protection levels. With a cast iron housing and efficient cooling method, these motors are ideal for industrial use. They comply with international standards and offer versatile mounting options for enhanced flexibility and performance.',
       image: '/assets/images/motor_hindustan_3d.png',
+      buttonLabel: 'Download Brochure',
+      downloadUrl: '/assets/hindustan_motors.pdf',
       specs: {
         'Frame Size': '63 to 400',
         'Output Rating': '0.12 kW to 315 kW',
@@ -986,26 +991,57 @@ export default function ProductPage() {
                     {prod.desc}
                   </p>
                   <div>
-                    <button 
-                      onClick={() => setSelectedProduct(prod)}
-                      className="btn btn-primary"
-                      style={{ 
-                        background: 'var(--accent-orange)', 
-                        color: '#fff', 
-                        border: 'none', 
-                        padding: '0.75rem 1.8rem', 
-                        borderRadius: '6px', 
-                        fontWeight: '700',
-                        fontSize: '0.88rem',
-                        cursor: 'pointer',
-                        transition: 'background-color 0.2s',
-                        boxShadow: '0 2px 4px rgba(217, 101, 59, 0.2)'
-                      }}
-                      onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-orange-deep)'}
-                      onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-orange)'}
-                    >
-                      Click for More Details
-                    </button>
+                    {prod.buttonLabel === 'Download Brochure' ? (
+                      <a 
+                        href={prod.downloadUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        download
+                        className="btn btn-primary"
+                        style={{ 
+                          background: 'var(--accent-orange)', 
+                          color: '#fff', 
+                          border: 'none', 
+                          padding: '0.75rem 1.8rem', 
+                          borderRadius: '6px', 
+                          fontWeight: '700',
+                          fontSize: '0.88rem',
+                          cursor: 'pointer',
+                          transition: 'background-color 0.2s',
+                          boxShadow: '0 2px 4px rgba(217, 101, 59, 0.2)',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '0.5rem',
+                          textDecoration: 'none'
+                        }}
+                        onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-orange-deep)'}
+                        onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-orange)'}
+                      >
+                        <span style={{ fontSize: '1rem' }}>📥</span>
+                        {prod.buttonLabel}
+                      </a>
+                    ) : (
+                      <button 
+                        onClick={() => setSelectedProduct(prod)}
+                        className="btn btn-primary"
+                        style={{ 
+                          background: 'var(--accent-orange)', 
+                          color: '#fff', 
+                          border: 'none', 
+                          padding: '0.75rem 1.8rem', 
+                          borderRadius: '6px', 
+                          fontWeight: '700',
+                          fontSize: '0.88rem',
+                          cursor: 'pointer',
+                          transition: 'background-color 0.2s',
+                          boxShadow: '0 2px 4px rgba(217, 101, 59, 0.2)'
+                        }}
+                        onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-orange-deep)'}
+                        onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-orange)'}
+                      >
+                        {prod.buttonLabel || 'Click for More Details'}
+                      </button>
+                    )}
                   </div>
                 </div>
 
