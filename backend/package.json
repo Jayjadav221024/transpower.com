@@ -14,7 +14,8 @@
     "dev:memory": "node src/scripts/devMemoryServer.js",
     "create-admin": "node src/scripts/createAdmin.js",
     "seed": "node src/scripts/seed.js",
-    "import-blog": "node src/scripts/importWordpressPosts.js"
+    "import-blog": "node src/scripts/importWordpressPosts.js",
+    "backfill-covers": "node src/scripts/backfillCovers.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
