@@ -3,6 +3,8 @@ dist/
 .env
 .env.local
 *.log
+.transpower.txt
+transpower.txt
 
 # Uploaded content — back this up, don't commit it
 backend/uploads/*
