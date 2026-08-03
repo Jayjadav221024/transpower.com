@@ -22,6 +22,7 @@ const urls = [
   { loc: '/about', changefreq: 'yearly', priority: '0.6' },
   { loc: '/blog', changefreq: 'weekly', priority: '0.8' },
   { loc: '/products', changefreq: 'monthly', priority: '0.9' },
+  { loc: '/gallery', changefreq: 'monthly', priority: '0.7' },
   { loc: '/locations', changefreq: 'monthly', priority: '0.9' },
   ...CITIES.map((c) => ({
     loc: `/locations/${c.slug}`,

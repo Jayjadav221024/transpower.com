@@ -1,0 +1,271 @@
+/* ==========================================================================
+   Gallery page — grid, filter chips and lightbox
+   ========================================================================== */
+
+.gallery-hero {
+  padding-top: 130px;   /* clears the fixed header */
+}
+
+/* ── Category filter chips ───────────────────────────────────────────────── */
+.gallery-filters {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.6rem;
+  margin: 0 auto 2.5rem;
+}
+
+.gallery-chip {
+  padding: 0.5rem 1.15rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border-color);
+  background: var(--bg-card);
+  color: var(--text-muted);
+  font-size: 0.83rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: color var(--transition-fast), background-color var(--transition-fast),
+              border-color var(--transition-fast), transform var(--transition-fast);
+}
+
+.gallery-chip:hover {
+  color: var(--accent-orange-deep);
+  border-color: var(--border-active);
+  transform: translateY(-1px);
+}
+
+.gallery-chip.is-active {
+  background: var(--accent-orange);
+  border-color: var(--accent-orange);
+  color: #fff;
+}
+
+/* ── Grid ────────────────────────────────────────────────────────────────── */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.25rem;
+}
+
+.gallery-tile {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--bg-card);
+  cursor: pointer;
+  box-shadow: var(--shadow-card);
+  /* Transform and opacity only — the tiles must not repaint the page on hover. */
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+.gallery-tile:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lift);
+}
+
+.gallery-tile img {
+  display: block;
+  width: 100%;
+  height: auto;
+  /* Fixed ratio keeps the grid from reflowing as photos of different
+     dimensions load — the visitor's uploads will not all match. */
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  transition: transform var(--transition-normal);
+}
+
+.gallery-tile:hover img {
+  transform: scale(1.05);
+}
+
+.gallery-tile-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 2.2rem 1rem 0.9rem;
+  text-align: left;
+  color: #fff;
+  background: linear-gradient(to top, rgba(10, 14, 21, 0.88) 0%, rgba(10, 14, 21, 0.55) 45%, transparent 100%);
+}
+
+.gallery-tile-caption {
+  font-size: 0.95rem;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.gallery-tile-detail {
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.gallery-tile-zoom {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  color: var(--text-main);
+  background: rgba(255, 255, 255, 0.92);
+  opacity: 0;
+  transform: scale(0.85);
+  transition: opacity var(--transition-fast), transform var(--transition-fast);
+}
+
+.gallery-tile:hover .gallery-tile-zoom,
+.gallery-tile:focus-visible .gallery-tile-zoom {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.gallery-empty {
+  text-align: center;
+  color: var(--text-muted);
+  padding: 3rem 0;
+}
+
+/* ── Lightbox ────────────────────────────────────────────────────────────── */
+.gallery-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 12000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background: rgba(8, 12, 19, 0.92);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  overscroll-behavior: contain;
+  animation: galleryFade 0.18s ease-out;
+}
+
+@keyframes galleryFade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.gallery-lb-figure {
+  max-width: min(1100px, 92vw);
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  margin: 0;
+}
+
+.gallery-lb-figure img {
+  max-width: 100%;
+  max-height: 74vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: var(--radius-md);
+  background: #0a0e15;
+}
+
+.gallery-lb-figure figcaption {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 0.9rem;
+  color: var(--text-on-dark);
+  font-size: 0.88rem;
+}
+
+.gallery-lb-figure figcaption strong {
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.gallery-lb-figure figcaption span {
+  color: var(--text-on-dark-muted);
+}
+
+.gallery-lb-count {
+  margin-left: auto;
+  font-variant-numeric: tabular-nums;
+}
+
+.gallery-lb-close,
+.gallery-lb-nav {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: background-color var(--transition-fast), transform var(--transition-fast);
+}
+
+.gallery-lb-close:hover,
+.gallery-lb-nav:hover {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.gallery-lb-close {
+  top: 1.1rem;
+  right: 1.1rem;
+  width: 44px;
+  height: 44px;
+  font-size: 1.9rem;
+  line-height: 1;
+}
+
+.gallery-lb-nav {
+  top: 50%;
+  width: 48px;
+  height: 48px;
+  font-size: 2.1rem;
+  line-height: 1;
+  transform: translateY(-50%);
+}
+
+.gallery-lb-nav:hover { transform: translateY(-50%) scale(1.06); }
+.gallery-lb-nav.prev  { left: 1.1rem; }
+.gallery-lb-nav.next  { right: 1.1rem; }
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .gallery-hero { padding-top: 105px; }
+
+  .gallery-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 0.8rem;
+  }
+
+  .gallery-tile-overlay { padding: 1.6rem 0.7rem 0.6rem; }
+  .gallery-tile-caption { font-size: 0.82rem; }
+  .gallery-tile-detail  { display: none; }
+
+  /* Nudged inward and shrunk so the controls never sit over the photo edge. */
+  .gallery-lb-nav   { width: 40px; height: 40px; font-size: 1.7rem; }
+  .gallery-lb-nav.prev { left: 0.35rem; }
+  .gallery-lb-nav.next { right: 0.35rem; }
+  .gallery-lb-close { top: 0.5rem; right: 0.5rem; width: 38px; height: 38px; }
+
+  .gallery-filters { gap: 0.4rem; }
+  .gallery-chip { padding: 0.42rem 0.85rem; font-size: 0.76rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gallery-tile,
+  .gallery-tile img,
+  .gallery-lightbox { transition: none; animation: none; }
+  .gallery-tile:hover { transform: none; }
+  .gallery-tile:hover img { transform: none; }
+}

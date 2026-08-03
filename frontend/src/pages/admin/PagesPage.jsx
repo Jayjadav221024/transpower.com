@@ -21,6 +21,20 @@ function getUniqueSelector(el) {
   return parts.join(' > ');
 }
 
+/* Which public route each editable page tab previews. Kept in one place — the
+   preview iframe and the URL label above it must never disagree. */
+const PAGE_PREVIEW_PATHS = {
+  homepage:    '/',
+  aboutpage:   '/about',
+  gallerypage: '/gallery',
+  blogpage:    '/blog',
+};
+
+const previewPathFor = (tab) => {
+  if (tab.startsWith('productpage_')) return `/product/${tab.replace('productpage_', '')}`;
+  return PAGE_PREVIEW_PATHS[tab] || '/';
+};
+
 const getFullImageUrl = (path) => {
   if (!path) return '';
   if (path.startsWith('http://') || path.startsWith('https://') || path.startsWith('data:')) {
@@ -308,8 +322,15 @@ export default function PagesPage() {
             >
               ℹ️ Edit About Us
             </button>
-            <button 
-              type="button" 
+            <button
+              type="button"
+              className={`btn ${activeTab === 'gallerypage' ? 'btn-primary' : 'btn-ghost'}`}
+              onClick={() => setActiveTab('gallerypage')}
+            >
+              🖼️ Edit Gallery
+            </button>
+            <button
+              type="button"
               className={`btn ${activeTab === 'blogpage' ? 'btn-primary' : 'btn-ghost'}`}
               onClick={() => setActiveTab('blogpage')}
             >
@@ -488,7 +509,7 @@ export default function PagesPage() {
                   </div>
 
                   <div style={{ background: '#fff', borderRadius: '6px', padding: '0.2rem 1rem', fontSize: '0.72rem', color: '#6b7280', border: '1px solid var(--border)', maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                    <span>localhost:5173{activeTab === 'homepage' ? '/' : activeTab === 'aboutpage' ? '/about' : activeTab.startsWith('productpage_') ? `/product/${activeTab.replace('productpage_', '')}` : '/blog'}</span>
+                    <span>{window.location.host}{previewPathFor(activeTab)}</span>
                   </div>
                 </div>
 
@@ -497,7 +518,7 @@ export default function PagesPage() {
                   <iframe
                     key={`${activeTab}-${iframeKey}`}
                     id="preview-iframe"
-                    src={activeTab === 'homepage' ? '/' : activeTab === 'aboutpage' ? '/about' : activeTab.startsWith('productpage_') ? `/product/${activeTab.replace('productpage_', '')}` : '/blog'}
+                    src={previewPathFor(activeTab)}
                     style={{ width: '100%', height: '100%', border: 'none' }}
                     onLoad={handleIframeLoad}
                   />
