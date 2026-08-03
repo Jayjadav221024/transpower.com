@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { publicApi } from '../../api/client';
 import { RFQ_PRODUCTS } from '../../data/products';
 
@@ -12,6 +12,19 @@ export default function RfqForm() {
   const [sending, setSending] = useState(false);
   const [sent, setSent]       = useState(false);
   const [error, setError]     = useState('');
+
+  useEffect(() => {
+    const handlePrefill = (e) => {
+      const { product, message } = e.detail;
+      setValues((v) => ({
+        ...v,
+        product: product || v.product,
+        message: message || v.message,
+      }));
+    };
+    window.addEventListener('prefillRFQ', handlePrefill);
+    return () => window.removeEventListener('prefillRFQ', handlePrefill);
+  }, []);
 
   const update = (field) => (e) => setValues((v) => ({ ...v, [field]: e.target.value }));
 

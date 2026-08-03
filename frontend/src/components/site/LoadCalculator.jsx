@@ -8,10 +8,26 @@ const SURFACE_TYPES = [
 ];
 
 export default function LoadCalculator() {
-  const [meshKey, setMeshKey]       = useState(MESH_PROFILES[0].key);
-  const [surfaceKey, setSurfaceKey] = useState(SURFACE_TYPES[0].key);
+  const [meshKey, setMeshKey]       = useState('38mm-molded');
+  const [surfaceKey, setSurfaceKey] = useState('meniscus');
   const [span, setSpan]             = useState('900');
   const [load, setLoad]             = useState('500');
+
+  // Max recommended span per grating profile
+  const maxSpan = useMemo(() => {
+    if (meshKey === '25mm-molded') return 600;
+    if (meshKey === '30mm-molded') return 750;
+    return 1000;
+  }, [meshKey]);
+
+  // Span limit warnings
+  const spanWarning = useMemo(() => {
+    const spanNum = parseFloat(span);
+    if (!isNaN(spanNum) && spanNum > maxSpan && surfaceKey !== 'chequered') {
+      return `⚠️ Exceeds recommended span of ${maxSpan} mm for this profile`;
+    }
+    return '';
+  }, [span, maxSpan, surfaceKey]);
 
   // Input parsing and validation
   const validation = useMemo(() => {
@@ -69,16 +85,39 @@ export default function LoadCalculator() {
     }
 
     const utilisationRatio = (deflection / allowableDeflection) * 100;
+    const isOverCap = utilisationRatio > 400;
     const utilisationText = utilisationRatio > 999 ? '> 999%' : `${utilisationRatio.toFixed(1)}%`;
 
     return {
       deflection: deflection.toFixed(2),
       allowable: allowableDeflection.toFixed(2),
       utilisation: utilisationText,
+      isOverCap,
       badgeText,
       badgeClass,
     };
   }, [meshKey, validation]);
+
+  // Dispatch current details to RFQ Form
+  const handleRequestTable = () => {
+    const profile = MESH_PROFILES.find((m) => m.key === meshKey) ?? MESH_PROFILES[0];
+    const surface = SURFACE_TYPES.find((s) => s.key === surfaceKey) ?? SURFACE_TYPES[0];
+
+    let messageText = '';
+    if (surfaceKey === 'chequered') {
+      messageText = `Requesting verified spacing calculations/load tables for:\n- Product: Chequered Plate (5 mm)\n- Design Load: ${load} kg/m²\n- Support Span: ${span} mm`;
+    } else {
+      messageText = `Requesting verified spacing calculations/load tables for:\n- Product: Molded FRP Grating\n- Profile: ${profile.label}\n- Surface Type: ${surface.label}\n- Support Span: ${span} mm\n- Design Load: ${load} kg/m²\n- Estimated Deflection: ${results?.deflection || '--'} mm\n- Deflection Utilisation: ${results?.isOverCap ? 'Over 400%' : results?.utilisation || '--'}\n- Sizing Check: ${results?.badgeText || '--'}`;
+    }
+
+    const event = new CustomEvent('prefillRFQ', {
+      detail: {
+        product: 'frp-gratings',
+        message: messageText,
+      }
+    });
+    window.dispatchEvent(event);
+  };
 
   return (
     <section id="calculator" className="section">
@@ -86,7 +125,7 @@ export default function LoadCalculator() {
         <div className="section-header">
           <div className="badge-tag">Engineering Tool</div>
           <h2>Interactive FRP <span className="text-orange">Load Calculator</span></h2>
-          <p>Instant deflection estimator and design check based on standard physical sizing parameters.</p>
+          <p>Simply-supported uniform-load deflection check against the L/200 serviceability limit.</p>
         </div>
 
         <div className="calc-box">
@@ -98,6 +137,7 @@ export default function LoadCalculator() {
                 id="calc-mesh-type"
                 className="form-control"
                 value={meshKey}
+                disabled={surfaceKey === 'chequered'}
                 onChange={(e) => setMeshKey(e.target.value)}
               >
                 {MESH_PROFILES.map((m) => (
@@ -113,7 +153,10 @@ export default function LoadCalculator() {
                 id="calc-surface-type"
                 className="form-control"
                 value={surfaceKey}
-                onChange={(e) => setSurfaceKey(e.target.value)}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setSurfaceKey(val);
+                }}
               >
                 {SURFACE_TYPES.map((s) => (
                   <option key={s.key} value={s.key}>{s.label}</option>
@@ -134,8 +177,21 @@ export default function LoadCalculator() {
                 step="50"
                 onChange={(e) => setSpan(e.target.value)}
               />
-              {validation.spanError && (
+              {validation.spanError ? (
                 <span className="calc-error-text">{validation.spanError}</span>
+              ) : (
+                surfaceKey !== 'chequered' && (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.1rem', marginTop: '0.2rem' }}>
+                    <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
+                      Max recommended span for this profile: {maxSpan} mm
+                    </span>
+                    {spanWarning && (
+                      <span className="calc-error-text" style={{ color: '#d97706', fontSize: '0.74rem' }}>
+                        {spanWarning}
+                      </span>
+                    )}
+                  </div>
+                )
               )}
             </div>
 
@@ -159,31 +215,47 @@ export default function LoadCalculator() {
           </div>
 
           <div className="calc-results-card">
-            {/* Estimated Deflection */}
-            <div className="result-item-wrapper" style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-              <div className="result-item" style={{ borderBottom: 'none', paddingBottom: 0 }}>
-                <span>Estimated Deflection</span>
-                <div className="result-val">
-                  {validation.isValid ? `${results.deflection} mm` : '--'}
+            {surfaceKey === 'chequered' ? (
+              <div style={{ color: 'rgba(255, 255, 255, 0.95)', fontSize: '0.88rem', lineHeight: '1.6', padding: '1.2rem 0', minHeight: '136px', display: 'flex', alignItems: 'center' }}>
+                Chequered plate is a solid 5 mm panel — contact engineering for support spacing.
+              </div>
+            ) : (
+              <>
+                {/* Estimated Deflection */}
+                <div className="result-item-wrapper" style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                  <div className="result-item" style={{ borderBottom: 'none', paddingBottom: 0 }}>
+                    <span>Estimated Deflection</span>
+                    <div className="result-val">
+                      {validation.isValid ? `${results.deflection} mm` : '--'}
+                    </div>
+                  </div>
+                  <div style={{ fontSize: '0.8rem', color: 'rgba(255, 255, 255, 0.65)', textAlign: 'right', borderBottom: '1px solid rgba(241, 245, 249, 0.15)', paddingBottom: '0.8rem' }}>
+                    {validation.isValid ? `Allowable Limit: ${results.allowable} mm (L/200)` : 'Allowable Limit: --'}
+                  </div>
                 </div>
-              </div>
-              <div style={{ fontSize: '0.8rem', color: 'rgba(255, 255, 255, 0.65)', textAlign: 'right', borderBottom: '1px solid rgba(241, 245, 249, 0.15)', paddingBottom: '0.8rem' }}>
-                {validation.isValid ? `Allowable Limit: ${results.allowable} mm (L/200)` : 'Allowable Limit: --'}
-              </div>
-            </div>
 
-            {/* Utilisation Ratio */}
-            <div className="result-item">
-              <span>Utilisation Ratio</span>
-              <div className="result-val" style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
-                {validation.isValid ? results.utilisation : '--'}
-                {validation.isValid && (
-                  <span className={`calc-badge ${results.badgeClass}`}>{results.badgeText}</span>
-                )}
-              </div>
-            </div>
+                {/* Deflection Utilisation */}
+                <div className="result-item">
+                  <span>Deflection Utilisation (vs L/200)</span>
+                  <div className="result-val" style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', textAlign: 'right' }}>
+                    {validation.isValid ? (
+                      results.isOverCap ? (
+                        <span style={{ fontSize: '0.78rem', color: '#ffb0b0', fontWeight: '500', display: 'block', maxWidth: '200px', lineHeight: '1.3' }}>
+                          Span too long for this profile — reduce span or select a deeper grating.
+                        </span>
+                      ) : (
+                        results.utilisation
+                      )
+                    ) : '--'}
+                    {validation.isValid && (
+                      <span className={`calc-badge ${results.badgeClass}`}>{results.badgeText}</span>
+                    )}
+                  </div>
+                </div>
+              </>
+            )}
 
-            <a href="#quote" className="btn btn-primary" style={{ marginTop: '0.5rem', width: '100%', textAlign: 'center' }}>
+            <a href="#quote" onClick={handleRequestTable} className="btn btn-primary" style={{ marginTop: '0.5rem', width: '100%', textAlign: 'center' }}>
               Request Verified Load Table from Engineering Team
             </a>
           </div>

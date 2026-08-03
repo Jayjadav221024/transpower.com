@@ -184,57 +184,57 @@ export const PRODUCT_FILTERS = [
 export const COMPARISON_ROWS = [
   {
     feature: 'Corrosion Resistance',
-    frp:  { text: '✓ Excellent – Chemically Inert to Acids, Alkalis & Solvents', tone: 'good' },
-    galv: { text: '✗ Rusts over time', tone: 'bad' },
-    ss:   { text: '✓ Good, but high material cost', tone: 'neutral' },
+    frp:  { text: 'Excellent – Chemically Inert to Acids, Alkalis & Solvents', tone: 'good' },
+    galv: { text: 'Rusts over time', tone: 'bad' },
+    ss:   { text: 'Good — resists most media', tone: 'good' },
   },
   {
     feature: 'Electrical Insulation',
-    frp:  { text: '✓ Non-Conductive / Electrically Insulating', tone: 'good' },
-    galv: { text: '✗ Highly Conductive', tone: 'bad' },
-    ss:   { text: '✗ Highly Conductive', tone: 'bad' },
+    frp:  { text: 'Non-Conductive / Electrically Insulating', tone: 'good' },
+    galv: { text: 'Highly Conductive', tone: 'bad' },
+    ss:   { text: 'Highly Conductive', tone: 'bad' },
   },
   {
     feature: 'Weight Efficiency',
-    frp:  { text: '✓ High Strength-to-Weight Ratio – Significantly Lighter than Steel', tone: 'good' },
-    galv: { text: '✗ Very Heavy', tone: 'bad' },
-    ss:   { text: '✗ Very Heavy', tone: 'bad' },
+    frp:  { text: 'High Strength-to-Weight Ratio – Significantly Lighter than Steel', tone: 'good' },
+    galv: { text: 'Very Heavy', tone: 'bad' },
+    ss:   { text: 'Very Heavy', tone: 'bad' },
   },
   {
     feature: 'Maintenance Requirement',
-    frp:  { text: '✓ Low Maintenance – No Painting or Galvanizing Required', tone: 'good' },
-    galv: { text: '✗ Regular Painting / Galvanizing', tone: 'bad' },
-    ss:   { text: '✓ Low maintenance, high initial cost', tone: 'good' },
+    frp:  { text: 'Low Maintenance – No Painting or Galvanizing Required', tone: 'good' },
+    galv: { text: 'Regular Painting / Galvanizing', tone: 'bad' },
+    ss:   { text: 'Low — no coating required', tone: 'good' },
   },
   {
     feature: 'Slip Resistance',
-    frp:  { text: '✓ Excellent – Meniscus & Grit top options', tone: 'good' },
-    galv: { text: '✗ Poor – Slippery when wet', tone: 'bad' },
-    ss:   { text: '✗ Poor – Slippery when wet', tone: 'bad' },
+    frp:  { text: 'Excellent – Meniscus & Grit top options', tone: 'good' },
+    galv: { text: 'Poor – Slippery when wet', tone: 'bad' },
+    ss:   { text: 'Moderate — requires serrated or chequered finish', tone: 'neutral' },
   },
   {
     feature: 'Installation Cost & Labour',
-    frp:  { text: '✓ Low – Lightweight, easy to cut on site', tone: 'good' },
-    galv: { text: '✗ High – Heavy, requires welding & hot work', tone: 'bad' },
-    ss:   { text: '✗ High – Heavy, requires specialized welding', tone: 'bad' },
+    frp:  { text: 'Low – Lightweight, easy to cut on site', tone: 'good' },
+    galv: { text: 'High – Heavy, requires welding & hot work', tone: 'bad' },
+    ss:   { text: 'High – Heavy, requires specialized welding', tone: 'bad' },
   },
   {
     feature: 'Impact Resistance',
-    frp:  { text: '✓ High – Elastic recovery prevents permanent deformation', tone: 'good' },
-    galv: { text: '✗ Moderate – Dents permanently under impact', tone: 'neutral' },
-    ss:   { text: '✗ Moderate – Dents permanently under impact', tone: 'neutral' },
+    frp:  { text: 'High – Elastic recovery prevents permanent deformation', tone: 'good' },
+    galv: { text: 'Moderate – Dents permanently under impact', tone: 'neutral' },
+    ss:   { text: 'Moderate – Dents permanently under impact', tone: 'neutral' },
   },
   {
     feature: 'Service Life in Wet / Wastewater',
-    frp:  { text: '✓ Excellent – Will not rot or rust in wet conditions', tone: 'good' },
-    galv: { text: '✗ Poor – Rapid coating deterioration', tone: 'bad' },
-    ss:   { text: '✓ Good, but subject to crevice corrosion', tone: 'neutral' },
+    frp:  { text: 'Excellent – Will not rot or rust in wet conditions', tone: 'good' },
+    galv: { text: 'Poor – Rapid coating deterioration', tone: 'bad' },
+    ss:   { text: 'Good, but subject to crevice corrosion', tone: 'neutral' },
   },
   {
     feature: 'Lifecycle Cost',
-    frp:  { text: '✓ Low total cost of ownership', tone: 'good' },
-    galv: { text: '✗ Low upfront, high recoating cost', tone: 'bad' },
-    ss:   { text: '✗ Very high upfront cost', tone: 'bad' },
+    frp:  { text: 'Low total cost of ownership', tone: 'good' },
+    galv: { text: 'Low upfront, high recoating cost', tone: 'bad' },
+    ss:   { text: 'Very high upfront cost', tone: 'bad' },
   },
 ];
 
@@ -274,9 +274,9 @@ export const CERTIFICATIONS = [
 
 /* Load calculator profiles — EI in N·mm². */
 export const MESH_PROFILES = [
-  { key: '25mm-molded', label: '25 mm Molded FRP Grating (38x38 mesh)', EI: 0.31e9 },
-  { key: '30mm-molded', label: '30 mm Molded FRP Grating (38x38 mesh)', EI: 0.54e9 },
-  { key: '38mm-molded', label: '38 mm Molded FRP Grating (38x38 mesh)', EI: 1.10e9 },
+  { key: '25mm-molded', label: '25 mm Molded FRP Grating (38x38 mesh)', EI: 3.4e9 },
+  { key: '30mm-molded', label: '30 mm Molded FRP Grating (38x38 mesh)', EI: 6.7e9 },
+  { key: '38mm-molded', label: '38 mm Molded FRP Grating (38x38 mesh)', EI: 1.1e10 },
 ];
 
 export const RFQ_PRODUCTS = [

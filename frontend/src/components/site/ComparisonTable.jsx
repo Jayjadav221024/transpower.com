@@ -1,9 +1,21 @@
 import { COMPARISON_ROWS } from '../../data/products';
 
-const toneClass = { good: 'check-green', bad: 'cross-red', neutral: undefined };
+const toneClass = { good: 'check-green', bad: 'cross-red', neutral: 'warn-orange' };
+
+const ToneIcon = ({ tone }) => {
+  if (tone === 'good') return <span className="check-green" style={{ marginRight: '0.4rem', flexShrink: 0 }}>✓</span>;
+  if (tone === 'bad') return <span className="cross-red" style={{ marginRight: '0.4rem', flexShrink: 0 }}>✗</span>;
+  if (tone === 'neutral') return <span className="warn-orange" style={{ marginRight: '0.4rem', flexShrink: 0 }}>⚠</span>;
+  return null;
+};
 
 const Cell = ({ cell }) => (
-  <td><span className={toneClass[cell.tone] || ''}>{cell.text}</span></td>
+  <td>
+    <div style={{ display: 'flex', alignItems: 'flex-start' }}>
+      <ToneIcon tone={cell.tone} />
+      <span>{cell.text}</span>
+    </div>
+  </td>
 );
 
 export default function ComparisonTable() {
@@ -49,7 +61,10 @@ export default function ComparisonTable() {
               {COMPARISON_ROWS.map((row) => (
                 <div key={row.feature} className="card-spec-item">
                   <span className="spec-label">{row.feature}</span>
-                  <span className={`spec-value ${toneClass[row.frp.tone] || ''}`}>{row.frp.text}</span>
+                  <span className="spec-value" style={{ display: 'flex', alignItems: 'flex-start' }}>
+                    <ToneIcon tone={row.frp.tone} />
+                    <span>{row.frp.text}</span>
+                  </span>
                 </div>
               ))}
             </div>
@@ -62,7 +77,10 @@ export default function ComparisonTable() {
               {COMPARISON_ROWS.map((row) => (
                 <div key={row.feature} className="card-spec-item">
                   <span className="spec-label">{row.feature}</span>
-                  <span className={`spec-value ${toneClass[row.galv.tone] || ''}`}>{row.galv.text}</span>
+                  <span className="spec-value" style={{ display: 'flex', alignItems: 'flex-start' }}>
+                    <ToneIcon tone={row.galv.tone} />
+                    <span>{row.galv.text}</span>
+                  </span>
                 </div>
               ))}
             </div>
@@ -75,7 +93,10 @@ export default function ComparisonTable() {
               {COMPARISON_ROWS.map((row) => (
                 <div key={row.feature} className="card-spec-item">
                   <span className="spec-label">{row.feature}</span>
-                  <span className={`spec-value ${toneClass[row.ss.tone] || ''}`}>{row.ss.text}</span>
+                  <span className="spec-value" style={{ display: 'flex', alignItems: 'flex-start' }}>
+                    <ToneIcon tone={row.ss.tone} />
+                    <span>{row.ss.text}</span>
+                  </span>
                 </div>
               ))}
             </div>
