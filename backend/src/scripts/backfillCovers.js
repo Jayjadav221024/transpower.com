@@ -2,10 +2,18 @@
    Backfills coverImage on posts that were imported without one, pulling each
    article's featured image from the old WordPress site.
 
+     npm run backfill-covers -- --report      # what's in the DB now; no network
      npm run backfill-covers                  # match, download, update
      npm run backfill-covers -- --dry-run     # report the matching, write nothing
+     npm run backfill-covers -- --link-only   # store the remote WP URL, download nothing
+     npm run backfill-covers -- --from-content# reuse the first <img> in each post's own HTML
      npm run backfill-covers -- --force       # also replace covers already set
      npm run backfill-covers -- --min=0.7     # fuzzy-match threshold (default 0.6)
+
+   --link-only is the safer choice on Render: backend/uploads is gitignored and
+   the instance filesystem is wiped on redeploy unless a persistent disk is
+   mounted there, so downloaded files would vanish. assetUrl() passes absolute
+   http(s) URLs straight through, so a remote cover renders fine.
 
    Matching is title-first on purpose. Posts imported from full URLs have slugs
    like "https-www-transpower-net-in-industrial-gearbox-maintenance-checkl…" —
@@ -30,6 +38,9 @@ const PER_PAGE   = 100;
 const args    = process.argv.slice(2);
 const DRY_RUN = args.includes('--dry-run');
 const FORCE   = args.includes('--force');
+const REPORT  = args.includes('--report');
+const LINK_ONLY    = args.includes('--link-only');
+const FROM_CONTENT = args.includes('--from-content');
 const MIN_SCORE = Number((args.find((a) => a.startsWith('--min=')) || '').split('=')[1]) || 0.6;
 
 /* ─── Text matching ──────────────────────────────────────────────────────── */
@@ -121,11 +132,79 @@ async function downloadCover(url, slug) {
   return `/uploads/${name}`;
 }
 
+/** First <img src> in a chunk of post HTML, absolutised against SOURCE. */
+function firstImageIn(html) {
+  const m = /<img\b[^>]*?\ssrc\s*=\s*["']([^"']+)["']/i.exec(String(html || ''));
+  if (!m) return '';
+  const src = decodeEntities(m[1]).trim();
+  if (!src || src.startsWith('data:')) return '';
+  if (/^https?:\/\//i.test(src)) return src;
+  return `${SOURCE.replace(/\/$/, '')}/${src.replace(/^\//, '')}`;
+}
+
 /* ─── Run ────────────────────────────────────────────────────────────────── */
 
 (async function run() {
+  /* --report answers "what is actually in the database?" without touching the
+     network, which is the first thing to know when covers aren't rendering. */
+  if (REPORT) {
+    await connectDB();
+    const all = await Post.find().select('title slug coverImage content status').lean();
+    const withCover = all.filter((p) => p.coverImage);
+    const withInline = all.filter((p) => !p.coverImage && firstImageIn(p.content));
+
+    console.log(`\n  ${all.length} post(s) total`);
+    console.log(`  ${withCover.length} with coverImage set`);
+    console.log(`  ${all.length - withCover.length} with NO cover  (these render the ⚙️ fallback)`);
+    console.log(`  ${withInline.length} of those have an <img> inside their own content → --from-content can use it\n`);
+
+    for (const p of all) {
+      console.log(`  ${p.coverImage ? '[cover]' : '[     ]'} ${p.title}`);
+      console.log(`          slug:  ${p.slug}`);
+      if (p.coverImage) console.log(`          cover: ${p.coverImage}`);
+      else {
+        const inline = firstImageIn(p.content);
+        console.log(`          inline: ${inline || '(no <img> in content)'}`);
+      }
+    }
+    console.log('');
+    await mongoose.disconnect();
+    process.exit(0);
+  }
+
+  /* --from-content needs no WordPress round-trip at all: the imported HTML
+     already carries the article's own images. */
+  if (FROM_CONTENT) {
+    await connectDB();
+    const query = FORCE ? {} : { $or: [{ coverImage: '' }, { coverImage: null }] };
+    const posts = await Post.find(query);
+    console.log(`\n  ${posts.length} post(s) to fill from their own content`);
+    if (DRY_RUN) console.log('  DRY RUN — nothing will be written');
+    console.log('');
+
+    let filled = 0;
+    for (const post of posts) {
+      const src = firstImageIn(post.content);
+      if (!src) {
+        console.log(`  skip    ${post.title} — no <img> in content`);
+        continue;
+      }
+      console.log(`  fill    ${post.title}`);
+      console.log(`          → ${src}`);
+      if (!DRY_RUN) {
+        post.coverImage = LINK_ONLY ? src : await downloadCover(src, post.slug).catch(() => src);
+        await post.save();
+      }
+      filled++;
+    }
+    console.log(`\n  Done — ${filled} filled.\n`);
+    await mongoose.disconnect();
+    process.exit(0);
+  }
+
   console.log(`\n  Source: ${SOURCE}`);
   if (DRY_RUN) console.log('  DRY RUN — nothing will be written');
+  if (LINK_ONLY) console.log('  LINK ONLY — storing remote URLs, downloading nothing');
   console.log('');
 
   const wpPosts = await fetchAllPosts();
@@ -181,7 +260,7 @@ async function downloadCover(url, slug) {
     }
 
     try {
-      post.coverImage = await downloadCover(best.image, best.slug);
+      post.coverImage = LINK_ONLY ? best.image : await downloadCover(best.image, best.slug);
       await post.save();
       stats.matched++;
       console.log(`  ${pct.padStart(4)}  ${post.title}`);
