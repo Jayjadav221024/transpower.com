@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { adminApi } from '../../api/client';
+import { adminApi, assetUrl } from '../../api/client';
 import { useToast } from './Toast';
 
 /**
@@ -80,7 +80,7 @@ export default function MediaPicker({ mode = 'cover', onSelect, onClose }) {
                 onClick={() => onSelect(m)}
                 onKeyDown={(e) => e.key === 'Enter' && onSelect(m)}
               >
-                <img src={m.url} alt={m.alt} loading="lazy" />
+                <img src={assetUrl(m.url)} alt={m.alt} loading="lazy" />
                 <div className="media-body">
                   <div className="media-name" title={m.originalName}>{m.originalName}</div>
                 </div>

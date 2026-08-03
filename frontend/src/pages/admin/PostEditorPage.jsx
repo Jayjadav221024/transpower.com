@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { adminApi } from '../../api/client';
+import { adminApi, assetUrl } from '../../api/client';
 import { useToast } from '../../components/admin/Toast';
 import MediaPicker from '../../components/admin/MediaPicker';
 import { formatDate } from '../../utils/format';
@@ -179,7 +179,7 @@ export default function PostEditorPage() {
             <h3>Cover Image</h3>
             <div className={`cover-preview${form.coverImage ? '' : ' empty'}`}>
               {form.coverImage
-                ? <img src={form.coverImage} alt="Cover preview" />
+                ? <img src={assetUrl(form.coverImage)} alt="Cover preview" />
                 : 'No cover image selected'}
             </div>
             <button type="button" className="btn btn-outline btn-block btn-sm" onClick={() => setPicker('cover')}>

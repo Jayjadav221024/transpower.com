@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { adminApi } from '../../api/client';
+import { adminApi, assetUrl } from '../../api/client';
 import { useToast } from '../../components/admin/Toast';
 import { formatDate } from '../../utils/format';
 
@@ -131,7 +131,7 @@ export default function PostsPage() {
             onKeyDown={(e) => e.key === 'Enter' && navigate(`/admin/posts/${post.id}`)}
           >
             {post.coverImage
-              ? <img className="post-thumb" src={post.coverImage} alt="" />
+              ? <img className="post-thumb" src={assetUrl(post.coverImage)} alt="" />
               : <div className="post-thumb placeholder">🖼</div>}
 
             <div className="post-info">

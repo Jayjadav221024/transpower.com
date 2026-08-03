@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { adminApi } from '../../api/client';
+import { adminApi, assetUrl } from '../../api/client';
 import { useToast } from '../../components/admin/Toast';
 import { formatDate, formatFileSize } from '../../utils/format';
 
@@ -117,7 +117,7 @@ export default function MediaPage() {
 
         {media.map((m) => (
           <div className="media-card" key={m.id}>
-            <img src={m.url} alt={m.alt} loading="lazy" />
+            <img src={assetUrl(m.url)} alt={m.alt} loading="lazy" />
             <div className="media-body">
               <div className="media-name" title={m.originalName}>{m.originalName}</div>
               <div className="media-sub">{formatFileSize(m.size)} · {formatDate(m.createdAt)}</div>
