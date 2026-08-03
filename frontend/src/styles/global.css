@@ -804,6 +804,18 @@ img { content-visibility: auto; max-width: 100%; height: auto; }
 
 .section-header p { color: var(--text-muted); font-size: 0.98rem; margin-top: 0.6rem; }
 
+/* Standalone section heading, for sections that lay out their own header row
+   (home blog, about, related posts). Matches .section-header h2 so every
+   section title on a page reads as the same level. */
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 5vw, 2.65rem);
+  text-transform: uppercase;
+  line-height: 1.1;
+  letter-spacing: 0.01em;
+  color: var(--text-main);
+}
+
 /* CATEGORY TABS */
 .product-tabs { display: flex; justify-content: center; gap: 0.8rem; margin-bottom: 2.5rem; flex-wrap: wrap; }
 
@@ -1622,7 +1634,7 @@ img { content-visibility: auto; max-width: 100%; height: auto; }
   padding: 14px 4px;
   border-radius: 6px 0 0 6px;
   font-weight: 700;
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   cursor: pointer;
@@ -2056,9 +2068,16 @@ section[id] {
    MOBILE-FIRST SITE-WIDE RESPONSIVE OVERHAULS
    ────────────────────────────────────────────────────────────────────────── */
 
-/* iOS Auto-zoom Prevention on Form inputs */
+/* iOS auto-zooms on focus when an input is under 16px. That only happens on
+   touch devices, so scope the guard there — otherwise it forces every desktop
+   field to 16px and breaks pairs like .blog-search next to .blog-categories-btn. */
 input, select, textarea {
-  font-size: 1rem !important; /* 16px */
+  font-size: 1rem;
+}
+@media (pointer: coarse) {
+  input, select, textarea {
+    font-size: 1rem !important; /* 16px */
+  }
 }
 
 /* Tap Target Enforcements */
