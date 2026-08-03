@@ -47,8 +47,31 @@ router.post('/inquiries', inquiryLimiter, inquiry.create);
 
 router.get('/health', (_req, res) => res.json({ ok: true, uptime: process.uptime() }));
 
+/* Guessing a six-digit code is only hard if guesses are scarce. The per-
+   challenge cap of 5 stops one attempt; this stops an attacker cycling through
+   fresh challenges to widen the window. */
+const otpVerifyLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many code attempts. Try again in 15 minutes.' },
+});
+
+/* Resending is a free way to make the server send mail — throttle it harder. */
+const otpResendLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many code requests. Try again in 15 minutes.' },
+});
+
 /* ─── Auth ───────────────────────────────────────────────────────────────── */
-router.post('/admin/login',  loginLimiter, auth.login);
+/* login only opens a challenge; /login/verify is what issues a session. */
+router.post('/admin/login',        loginLimiter,     auth.login);
+router.post('/admin/login/verify', otpVerifyLimiter, auth.verifyOtp);
+router.post('/admin/login/resend', otpResendLimiter, auth.resendOtp);
 router.post('/admin/logout', auth.logout);
 router.get('/admin/me',      protect, auth.me);
 router.post('/admin/change-password', protect, auth.changePassword);

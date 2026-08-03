@@ -6,7 +6,7 @@ import MediaPicker from '../../components/admin/MediaPicker';
 import { formatDate } from '../../utils/format';
 
 const BLANK = {
-  title: '', excerpt: '', content: '', tags: '', slug: '', coverImage: '', status: 'draft',
+  title: '', excerpt: '', content: '', tags: '', slug: '', coverImage: '', coverAlt: '', status: 'draft',
 };
 
 export default function PostEditorPage() {
@@ -36,7 +36,7 @@ export default function PostEditorPage() {
         setForm({
           title: post.title, excerpt: post.excerpt, content: post.content,
           tags: post.tags.join(', '), slug: post.slug,
-          coverImage: post.coverImage, status: post.status,
+          coverImage: post.coverImage, coverAlt: post.coverAlt || '', status: post.status,
         });
         setMeta(post);
       })
@@ -179,7 +179,7 @@ export default function PostEditorPage() {
             <h3>Cover Image</h3>
             <div className={`cover-preview${form.coverImage ? '' : ' empty'}`}>
               {form.coverImage
-                ? <img src={assetUrl(form.coverImage)} alt="Cover preview" />
+                ? <img src={assetUrl(form.coverImage)} alt={form.coverAlt || 'Cover preview'} />
                 : 'No cover image selected'}
             </div>
             <button type="button" className="btn btn-outline btn-block btn-sm" onClick={() => setPicker('cover')}>
@@ -187,10 +187,23 @@ export default function PostEditorPage() {
             </button>
             <button
               type="button" className="btn btn-ghost btn-block btn-sm"
-              onClick={() => setForm((f) => ({ ...f, coverImage: '' }))}
+              onClick={() => setForm((f) => ({ ...f, coverImage: '', coverAlt: '' }))}
             >
               Remove cover
             </button>
+
+            <label className="field" style={{ marginTop: '0.75rem' }}>
+              <span>Alt Text <em>optional — falls back to the post title</em></span>
+              <input
+                type="text" className="input" maxLength={200}
+                placeholder="e.g. FRP grating walkway installed at a chemical plant"
+                value={form.coverAlt} onChange={update('coverAlt')}
+              />
+            </label>
+            <p className="muted small">
+              Describes the image for screen readers and search engines. Skip phrases like
+              “image of” — just say what is shown.
+            </p>
           </div>
 
           <div className="panel">
@@ -233,7 +246,15 @@ export default function PostEditorPage() {
           mode={picker}
           onClose={() => setPicker(null)}
           onSelect={(image) => {
-            if (picker === 'cover') setForm((f) => ({ ...f, coverImage: image.url }));
+            /* Seed the alt from the library entry, but never clobber alt text
+               the author has already written for this post. */
+            if (picker === 'cover') {
+              setForm((f) => ({
+                ...f,
+                coverImage: image.url,
+                coverAlt: f.coverAlt || image.alt || '',
+              }));
+            }
             else insertIntoContent(image);
             setPicker(null);
           }}

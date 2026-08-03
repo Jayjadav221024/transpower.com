@@ -19,7 +19,7 @@ export default function BlogCard({ post, index = 0 }) {
     <Link className="blog-card" to={`/blog/${cleanSlug}`}>
       <div className="blog-card-media">
         {post.coverImage ? (
-          <img src={assetUrl(post.coverImage)} alt={post.title} loading="lazy" />
+          <img src={assetUrl(post.coverImage)} alt={post.coverAlt || post.title} loading="lazy" />
         ) : (
           <div className="blog-card-media-fallback">⚙️</div>
         )}

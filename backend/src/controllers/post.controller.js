@@ -19,6 +19,7 @@ function shape(doc, { withContent = true } = {}) {
     title:       p.title,
     excerpt:     p.excerpt,
     coverImage:  p.coverImage,
+    coverAlt:    p.coverAlt || '',
     tags:        p.tags || [],
     status:      p.status,
     views:       p.views,
@@ -185,6 +186,7 @@ const create = asyncHandler(async (req, res) => {
     content,
     excerpt:    autoExcerpt(String(b.excerpt ?? '').trim(), content),
     coverImage: String(b.coverImage ?? '').trim(),
+    coverAlt:   String(b.coverAlt ?? '').trim().slice(0, 200),
     tags:       normaliseTags(b.tags),
     status:     b.status === 'published' ? 'published' : 'draft',
     author:     req.user._id,
@@ -210,6 +212,7 @@ const update = asyncHandler(async (req, res) => {
   }
   if (has('content'))    post.content    = String(b.content);
   if (has('coverImage')) post.coverImage = String(b.coverImage).trim();
+  if (has('coverAlt'))   post.coverAlt   = String(b.coverAlt).trim().slice(0, 200);
   if (has('tags'))       post.tags       = normaliseTags(b.tags);
   if (has('status') && ['draft', 'published'].includes(b.status)) post.status = b.status;
 

@@ -8,6 +8,7 @@ const postSchema = new mongoose.Schema(
     excerpt:    { type: String, default: '', maxlength: 400 },
     content:    { type: String, default: '' },
     coverImage: { type: String, default: '' },
+    coverAlt:   { type: String, default: '', maxlength: 200 },
     tags:       { type: [String], default: [] },
     status:     { type: String, enum: ['draft', 'published'], default: 'draft', index: true },
     views:      { type: Number, default: 0 },

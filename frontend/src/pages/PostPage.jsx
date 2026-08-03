@@ -89,7 +89,7 @@ export default function PostPage() {
 
           {post.coverImage && (
             <div className="post-cover">
-              <img src={assetUrl(post.coverImage)} alt={post.title} width="800" height="450" decoding="async" />
+              <img src={assetUrl(post.coverImage)} alt={post.coverAlt || post.title} width="800" height="450" decoding="async" />
             </div>
           )}
 

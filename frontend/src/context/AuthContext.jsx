@@ -29,8 +29,17 @@ export function AuthProvider({ children }) {
     return () => { alive = false; };
   }, []);
 
-  const login = useCallback(async (username, password) => {
-    const { user: u } = await adminApi.login(username, password);
+  /* Two-step by design: the password only opens an emailed-code challenge, and
+     `completeLogin` is the call that actually produces a session. There is
+     deliberately no single-call login() any more — having one would make it
+     easy to reintroduce a path that skips the second factor. */
+  const beginLogin = useCallback(
+    (username, password) => adminApi.login(username, password),
+    [],
+  );
+
+  const completeLogin = useCallback(async (challengeId, code) => {
+    const { user: u } = await adminApi.verifyOtp(challengeId, code);
     setUser(u);
     setEndedReason(null);
     return u;
@@ -43,7 +52,9 @@ export function AuthProvider({ children }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, setUser, endedReason }}>
+    <AuthContext.Provider
+      value={{ user, loading, beginLogin, completeLogin, logout, setUser, endedReason }}
+    >
       {children}
     </AuthContext.Provider>
   );

@@ -463,3 +463,20 @@ code { background: #eef2f7; padding: 1px 5px; border-radius: 4px; font-size: .82
   .waiting-bar span { animation: none; width: 100%; }
   .access-request-card { animation: none; }
 }
+
+/* ── One-time login code ─────────────────────────────────────────────────── */
+.otp-input {
+  font-family: var(--font-sans);
+  font-size: 1.65rem;
+  font-weight: 800;
+  letter-spacing: .5em;
+  /* The trailing letter-space pushes 6 digits off-centre without this. */
+  text-indent: .5em;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.otp-input::-webkit-outer-spin-button,
+.otp-input::-webkit-inner-spin-button { appearance: none; margin: 0; }
+
+.login-card .alert-success { margin-bottom: .9rem; }

@@ -134,7 +134,15 @@ export const publicApi = {
 };
 
 export const adminApi = {
+  /* Password step only. Never returns a session — on success it resolves with
+     { code: 'OTP_REQUIRED', challengeId, sentTo } and the code must be
+     verified next. Throws with code 'SESSION_ACTIVE' if the panel is occupied,
+     or 'OTP_SEND_FAILED' if the code could not be emailed. */
   login:  (username, password) => api.post('/api/admin/login', { username, password }),
+
+  /* The call that actually signs you in. */
+  verifyOtp: (challengeId, code) => api.post('/api/admin/login/verify', { challengeId, code }),
+  resendOtp: (challengeId)       => api.post('/api/admin/login/resend', { challengeId }),
   logout: ()                   => api.post('/api/admin/logout'),
   me:     ()                   => api.get('/api/admin/me'),
   changePassword: (currentPassword, newPassword) =>
