@@ -114,16 +114,20 @@
   text-decoration: none; color: inherit;
 }
 
+/* Covers are ~880x350 banners with the headline set inside the artwork, so the
+   whole frame has to stay visible: object-fit is contain, and the box matches
+   the source ratio so there are no letterbox bars on a correctly sized image. */
 .blog-card-media {
   position: relative; overflow: hidden;
-  aspect-ratio: 16 / 11; border-radius: var(--radius-md);
+  aspect-ratio: 880 / 350; border-radius: var(--radius-md);
   background: var(--bg-secondary);
 }
 .blog-card-media img {
-  width: 100%; height: 100%; object-fit: cover; display: block;
+  width: 100%; height: 100%; object-fit: contain; display: block;
   transition: var(--transition-normal);
 }
-.blog-card:hover .blog-card-media img { transform: scale(1.04); }
+/* Not a zoom — scaling a contained image would crop the edges it exists to show. */
+.blog-card:hover .blog-card-media img { filter: brightness(1.04); }
 .blog-card-media-fallback {
   width: 100%; height: 100%; display: grid; place-items: center;
   font-size: 2.4rem; color: var(--text-faint);
