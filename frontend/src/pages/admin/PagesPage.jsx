@@ -157,7 +157,8 @@ export default function PagesPage() {
           target.classList.add('cms-selected-edit');
 
           // Compute unique selector path
-          const selector = getUniqueSelector(target);
+          const editKey = target.getAttribute('data-edit-key');
+          const selector = editKey ? `[data-edit-key="${editKey}"]` : getUniqueSelector(target);
           setActiveSelector(selector);
 
           if (target.tagName === 'IMG') {

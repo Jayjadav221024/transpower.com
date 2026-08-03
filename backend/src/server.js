@@ -33,6 +33,32 @@ const User = require('./models/User');
     console.error('  Error auto-seeding admin user:', err);
   }
 
+  // Auto-clean any generic image overrides from page content to prevent visual customisation bugs clobbering slides
+  try {
+    const PageContent = require('./models/PageContent');
+    const pages = await PageContent.find({});
+    for (const page of pages) {
+      if (page.content && page.content.overrides) {
+        let changed = false;
+        const newOverrides = { ...page.content.overrides };
+        Object.keys(newOverrides).forEach((key) => {
+          if (key.includes('img') || key.includes('is-active')) {
+            delete newOverrides[key];
+            changed = true;
+          }
+        });
+        if (changed) {
+          page.content.overrides = newOverrides;
+          page.markModified('content');
+          await page.save();
+          console.log(`  Cleaned generic image overrides from page: ${page.key}`);
+        }
+      }
+    }
+  } catch (err) {
+    console.error('  Error cleaning up page overrides:', err);
+  }
+
   app.listen(PORT, () => {
     console.log(`\n  Transpower API listening on http://localhost:${PORT}`);
     console.log(`  Health check              http://localhost:${PORT}/api/health`);
