@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { scrollToHash } from '../../utils/scroll';
 
 const BRAND_NAME = 'TRANSPOWER';
 
@@ -63,6 +64,27 @@ export default function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [isProductsHovered, setIsProductsHovered] = useState(false);
   const [hoveredCategory, setHoveredCategory] = useState(null);
+  const brandRef = useRef(null);
+
+  /* Mouse-tracked 3D tilt on the logo. Written straight to CSS custom
+     properties rather than state — this fires on every mousemove and must not
+     re-render the header. */
+  const tiltBrand = useCallback((e) => {
+    const el = brandRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const dx = (e.clientX - rect.left) / rect.width - 0.5;
+    const dy = (e.clientY - rect.top) / rect.height - 0.5;
+    el.style.setProperty('--tilt-y', `${(dx * 18).toFixed(2)}deg`);
+    el.style.setProperty('--tilt-x', `${(-dy * 14).toFixed(2)}deg`);
+  }, []);
+
+  const resetBrandTilt = useCallback(() => {
+    const el = brandRef.current;
+    if (!el) return;
+    el.style.setProperty('--tilt-y', '0deg');
+    el.style.setProperty('--tilt-x', '0deg');
+  }, []);
 
   // Esc key & body scroll block
   useEffect(() => {
@@ -111,22 +133,43 @@ export default function SiteHeader() {
     return () => window.removeEventListener('keydown', handleTab);
   }, [menuOpen]);
 
-  function goToSection(e, hash) {
-    setMenuOpen(false);
-    if (!onHome) return;
+  /* Always handled client-side. Letting the browser follow href="/#quote" from
+     another route would reload the whole document just to reach an anchor. */
+  const goToSection = useCallback((e, hash) => {
     e.preventDefault();
-    const el = document.getElementById(hash);
-    if (el) {
-      window.scrollTo({ top: el.getBoundingClientRect().top + window.pageYOffset - 85, behavior: 'smooth' });
+    setMenuOpen(false);
+
+    if (onHome) {
+      scrollToHash(hash, { smooth: true });
       navigate(`/#${hash}`, { replace: true });
+      return;
     }
-  }
+    /* Off the home page: route there first — ScrollToTop picks up the hash. */
+    navigate(`/#${hash}`);
+  }, [onHome, navigate]);
 
   return (
     <header className="site-header-new">
       <div className="container header-container-new">
-        <Link to="/" className="brand-logo-new" onClick={() => setMenuOpen(false)}>
+        <Link
+          to="/"
+          className="brand-logo-new"
+          ref={brandRef}
+          onClick={() => setMenuOpen(false)}
+          onMouseMove={tiltBrand}
+          onMouseLeave={resetBrandTilt}
+          onBlur={resetBrandTilt}
+        >
+          {/* Decorative animation layers — all aria-hidden, the <img> alt and
+              the wordmark's aria-label carry the accessible name. */}
           <span className="logo-mark">
+            <span className="logo-ring" aria-hidden="true" />
+            <span className="logo-pulse" aria-hidden="true" />
+            <span className="logo-pulse logo-pulse-delayed" aria-hidden="true" />
+            <span className="logo-orbit" aria-hidden="true">
+              <i className="logo-spark" />
+              <i className="logo-spark logo-spark-alt" />
+            </span>
             <img
               className="logo-3d-svg"
               src="/favicon.png"
@@ -154,6 +197,7 @@ export default function SiteHeader() {
             </span>
             <span className="logo-subtext-new">Technologies Pvt. Ltd.</span>
           </div>
+          <span className="logo-beam" aria-hidden="true" />
         </Link>
 
         {/* Desktop Nav Links */}
@@ -387,7 +431,7 @@ export default function SiteHeader() {
 
       {/* Floating Bottom Teaser */}
       <div className="floating-teaser-container">
-        <a href="/#quote" className="floating-teaser-btn">
+        <a href="/#quote" className="floating-teaser-btn" onClick={(e) => goToSection(e, 'quote')}>
           Get a Free Quote <span className="arrow">→</span>
         </a>
       </div>

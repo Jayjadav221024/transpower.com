@@ -19,7 +19,7 @@ const PRODUCT_DEFAULTS = {
     detailsText: 'Non-conductive ladder and perforated trough cable management trays engineered for high-voltage power stations and marine offshore platforms.',
     benefitsText: 'Provides zero short-circuit risks, runs maintenance-free, and handles high physical load and spans in highly corrosive zones.',
     useText: 'Commonly utilized in chemical walkways, oil & gas decks, electrical substations, and coastal installations.',
-    productImage: '/assets/images/cable_tray_product.png'
+    productImage: '/assets/images/cable_tray_product.webp'
   },
   'gear-boxes': {
     title: 'Industrial Gear Boxes',
@@ -70,7 +70,7 @@ const PRODUCT_DEFAULTS = {
     detailsText: 'Bi-directional strength molded fiberglass mesh panels for chemical plant walkways, trench covers, and platform flooring.',
     benefitsText: 'Features a quartz-grit anti-slip top coat. Lightweight panels cut and install on site with zero hot-work permits required.',
     useText: 'Ideal for refinery walkways, drainage trench covers, access stairs, and water treatment decks.',
-    productImage: '/assets/images/hero_frp_grating.png'
+    productImage: '/assets/images/hero_frp_grating.webp'
   },
   'electric-motors': {
     title: 'Electric Motors',
@@ -104,7 +104,7 @@ const PRODUCT_DEFAULTS = {
     detailsText: 'Composite I-Beams, Box Channels, Angles, Handrails, and custom structural sections replacing heavy traditional steel.',
     benefitsText: 'Provides incredible tensile strength at one-quarter the weight of steel, eliminating future corrosion and painting costs.',
     useText: 'Employed in building structural framing, safety handrails, structural stairways, and marine platforms.',
-    productImage: '/assets/images/industrial_walkway.png'
+    productImage: '/assets/images/industrial_walkway.webp'
   }
 };
 
@@ -382,6 +382,8 @@ export default function ProductPage() {
                   <img 
                     src={prod.image} 
                     alt={prod.title} 
+                    loading="lazy"
+                    decoding="async"
                     style={{ maxWidth: '100%', maxHeight: '300px', objectFit: 'contain' }}
                   />
                 </div>
@@ -603,6 +605,8 @@ export default function ProductPage() {
                   <img 
                     src={prod.image} 
                     alt={prod.title} 
+                    loading="lazy"
+                    decoding="async"
                     style={{ maxWidth: '100%', maxHeight: '300px', objectFit: 'contain' }}
                   />
                 </div>
@@ -837,6 +841,8 @@ export default function ProductPage() {
                   <img 
                     src={prod.image} 
                     alt={prod.title} 
+                    loading="lazy"
+                    decoding="async"
                     style={{ maxWidth: '100%', maxHeight: '300px', objectFit: 'contain' }}
                   />
                 </div>
@@ -1059,6 +1065,8 @@ export default function ProductPage() {
                   <img 
                     src={prod.image} 
                     alt={prod.title} 
+                    loading="lazy"
+                    decoding="async"
                     style={{ maxWidth: '100%', maxHeight: '300px', objectFit: 'contain' }}
                   />
                 </div>
@@ -1250,6 +1258,8 @@ export default function ProductPage() {
                   <img 
                     src={prod.image} 
                     alt={prod.title} 
+                    loading="lazy"
+                    decoding="async"
                     style={{ maxWidth: '100%', maxHeight: '300px', objectFit: 'contain' }}
                   />
                 </div>
@@ -1404,6 +1414,8 @@ export default function ProductPage() {
                 data-edit-key="productImage"
                 src={getFullImageUrl(data.productImage)} 
                 alt="Product" 
+                fetchpriority="high"
+                decoding="async"
                 style={{ maxWidth: '100%', maxHeight: '320px', objectFit: 'contain' }} 
               />
             </div>
@@ -1412,13 +1424,13 @@ export default function ProductPage() {
           {/* Thumbnail Gallery Row */}
           <div style={{ display: 'flex', gap: '1rem', marginLeft: '95px' }}>
             <div style={{ width: '70px', height: '70px', border: '2px solid var(--accent-orange)', borderRadius: '8px', overflow: 'hidden', cursor: 'pointer', padding: '4px', background: '#fff' }}>
-              <img src={getFullImageUrl(data.productImage)} alt="Thumb 1" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              <img src={getFullImageUrl(data.productImage)} alt="Thumb 1" loading="lazy" decoding="async" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             </div>
             <div style={{ width: '70px', height: '70px', border: '1px solid var(--border)', borderRadius: '8px', overflow: 'hidden', cursor: 'pointer', padding: '4px', background: '#fff' }}>
-              <img src="https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?auto=format&fit=crop&w=150&q=80" alt="Thumb 2" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              <img src="https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?auto=format&fit=crop&w=150&q=80" alt="Thumb 2" loading="lazy" decoding="async" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             </div>
             <div style={{ width: '70px', height: '70px', border: '1px solid var(--border)', borderRadius: '8px', overflow: 'hidden', cursor: 'pointer', padding: '4px', background: '#fff' }}>
-              <img src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=150&q=80" alt="Thumb 3" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              <img src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=150&q=80" alt="Thumb 3" loading="lazy" decoding="async" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             </div>
           </div>
 

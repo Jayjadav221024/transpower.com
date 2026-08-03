@@ -67,6 +67,9 @@
 
 html {
   scroll-behavior: smooth;
+  /* Native "#anchor" jumps stop under the sticky header without this. Kept in
+     sync with HEADER_OFFSET in src/utils/scroll.js. */
+  scroll-padding-top: 90px;
   font-family: var(--font-sans);
   background-color: var(--bg-primary);
   color: var(--text-main);
@@ -83,7 +86,10 @@ body {
 
 a { color: inherit; text-decoration: none; }
 button, input, select, textarea { font-family: inherit; font-size: inherit; }
-img { content-visibility: auto; max-width: 100%; height: auto; }
+/* `content-visibility: auto` on <img> was skipping layout for images the
+   browser had already decoded, so each one shifted the page as it scrolled in.
+   Skipping work belongs on the *sections*, further down this file. */
+img { max-width: 100%; height: auto; }
 
 :focus-visible {
   outline: 3px solid var(--accent-orange);
@@ -179,20 +185,31 @@ img { content-visibility: auto; max-width: 100%; height: auto; }
 }
 
 /* ===== Animated brand logo =====
-   Three layers, all pure CSS: a 3D mark that flips in and idles, a wordmark
-   that assembles letter by letter, and a shine that sweeps once on load and
-   again on every hover. */
+   Pure CSS apart from a mouse-tracked tilt. Layers, outermost first:
+     .brand-logo-new  3D tilt that follows the cursor + lift
+     .logo-mark       halo, spinning ring, energy pulses, orbiting sparks
+     .logo-3d-svg     the cube: flips in, idles, spins on hover
+     .logo-char       per-letter assemble + hover ripple
+     .logo-shine      light sweep on load, on a 7s idle loop, and on hover
+     .logo-beam       energy line that races under the whole lockup */
 
 .brand-logo-new {
+  position: relative;
   perspective: 600px;
-  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transform: perspective(700px)
+             translateY(var(--lift, 0px))
+             rotateX(var(--tilt-x, 0deg))
+             rotateY(var(--tilt-y, 0deg));
+  transform-style: preserve-3d;
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  will-change: transform;
 }
 
-/* Hover-capable pointers only — the <768px rule below scales .brand-logo-new,
-   and a sticky touch "hover" would otherwise wipe that scale out. */
+/* Only the --lift variable changes on hover, never `transform` itself — the
+   <768px rule further down owns that property to scale the lockup down. */
 @media (hover: hover) {
-  .brand-logo-new:hover {
-    transform: translateY(-1px);
+  .brand-logo-new:is(:hover, :focus-visible) {
+    --lift: -2px;
   }
 }
 
@@ -206,22 +223,144 @@ img { content-visibility: auto; max-width: 100%; height: auto; }
   transform-style: preserve-3d;
 }
 
-/* Glow halo that blooms out from behind the mark on hover */
+/* Halo that blooms out from behind the mark, breathing gently at rest */
 .logo-mark::before {
   content: '';
   position: absolute;
-  inset: -30%;
+  inset: -35%;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(225, 89, 11, 0.35) 0%, rgba(225, 89, 11, 0) 70%);
+  background: radial-gradient(circle, rgba(225, 89, 11, 0.4) 0%, rgba(225, 89, 11, 0) 70%);
   opacity: 0;
   transform: scale(0.5);
   transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation: logoHaloBreathe 5s ease-in-out 1.5s infinite;
   pointer-events: none;
 }
 
-.brand-logo-new:hover .logo-mark::before {
+@keyframes logoHaloBreathe {
+  0%, 100% { opacity: 0;    transform: scale(0.55); }
+  50%      { opacity: 0.45; transform: scale(0.85); }
+}
+
+.brand-logo-new:is(:hover, :focus-visible) .logo-mark::before {
+  animation: none;
   opacity: 1;
   transform: scale(1);
+}
+
+/* Contact shadow on the floor, breathing in sync with the cube's float */
+.logo-mark::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -7px;
+  width: 26px;
+  height: 5px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(15, 23, 42, 0.28) 0%, rgba(15, 23, 42, 0) 72%);
+  transform: translateX(-50%);
+  animation: logoShadowFloat 4.5s ease-in-out 1s infinite;
+  pointer-events: none;
+}
+
+@keyframes logoShadowFloat {
+  0%, 100% { opacity: 0.9; transform: translateX(-50%) scaleX(1); }
+  50%      { opacity: 0.5; transform: translateX(-50%) scaleX(0.78); }
+}
+
+/* Conic sweep tracing the border of the mark on hover */
+.logo-ring {
+  position: absolute;
+  inset: -7px;
+  /* Circular so the spin shows only as a travelling highlight — a rounded
+     square would visibly wobble as it turns. */
+  border-radius: 50%;
+  padding: 1.5px;
+  background: conic-gradient(
+    from 0deg,
+    rgba(225, 89, 11, 0) 0deg,
+    rgba(225, 89, 11, 0) 200deg,
+    var(--accent-orange) 320deg,
+    rgba(255, 255, 255, 0.9) 352deg,
+    rgba(225, 89, 11, 0) 360deg
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+          mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.brand-logo-new:is(:hover, :focus-visible) .logo-ring {
+  opacity: 1;
+  animation: logoRingSpin 1.8s linear infinite;
+}
+
+@keyframes logoRingSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* Power pulses radiating outward — the brand is an electricals company, so the
+   mark reads as a source pushing energy out. */
+.logo-pulse {
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 1.5px solid var(--accent-orange);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.brand-logo-new:is(:hover, :focus-visible) .logo-pulse {
+  animation: logoPulseOut 1.6s cubic-bezier(0.16, 0.9, 0.3, 1) infinite;
+}
+
+.brand-logo-new:is(:hover, :focus-visible) .logo-pulse-delayed {
+  animation-delay: 0.8s;
+}
+
+@keyframes logoPulseOut {
+  0%   { opacity: 0.7; transform: scale(0.85); }
+  70%  { opacity: 0;   transform: scale(1.85); }
+  100% { opacity: 0;   transform: scale(1.85); }
+}
+
+/* Two sparks orbiting the cube, opposite sides of the same ring */
+.logo-orbit {
+  position: absolute;
+  inset: -9px;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+}
+
+.brand-logo-new:is(:hover, :focus-visible) .logo-orbit {
+  opacity: 1;
+  animation: logoRingSpin 2.6s linear infinite;
+}
+
+.logo-spark {
+  position: absolute;
+  top: -2px;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  margin-left: -2.5px;
+  border-radius: 50%;
+  background: var(--accent-orange);
+  box-shadow: 0 0 8px 2px rgba(225, 89, 11, 0.75);
+}
+
+.logo-spark-alt {
+  top: auto;
+  bottom: -2px;
+  width: 3.5px;
+  height: 3.5px;
+  margin-left: -1.75px;
+  background: #fbbf24;
+  box-shadow: 0 0 7px 2px rgba(251, 191, 36, 0.7);
 }
 
 .logo-3d-svg {
@@ -231,22 +370,25 @@ img { content-visibility: auto; max-width: 100%; height: auto; }
   animation:
     logoMarkIntro 1s cubic-bezier(0.22, 1.2, 0.36, 1) both,
     logoMarkFloat 4.5s ease-in-out 1s infinite;
-  transition: transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.55s ease;
+  transition: filter 0.55s ease, transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 /* Mark drops in with a 3D flip on first paint */
 @keyframes logoMarkIntro {
   0% {
     opacity: 0;
-    transform: translateY(-14px) rotateY(-110deg) scale(0.6);
+    transform: translateY(-16px) rotateY(-120deg) scale(0.55);
+    filter: blur(3px);
   }
   60% {
     opacity: 1;
-    transform: translateY(0) rotateY(12deg) scale(1.08);
+    transform: translateY(0) rotateY(14deg) scale(1.1);
+    filter: blur(0);
   }
   100% {
     opacity: 1;
     transform: translateY(0) rotateY(0deg) scale(1);
+    filter: blur(0);
   }
 }
 
@@ -256,17 +398,24 @@ img { content-visibility: auto; max-width: 100%; height: auto; }
   50%      { transform: translateY(-3px) rotate(2deg); }
 }
 
-.brand-logo-new:hover .logo-3d-svg {
-  animation-play-state: paused;
-  transform: scale(1.18) rotate(-8deg) rotateY(14deg);
-  filter: drop-shadow(0 10px 20px rgba(217, 101, 59, 0.35)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+/* Hover: one full 3D revolution, settling slightly enlarged */
+.brand-logo-new:is(:hover, :focus-visible) .logo-3d-svg {
+  animation: logoMarkSpin 0.9s cubic-bezier(0.55, 0, 0.25, 1) both;
+  filter: drop-shadow(0 10px 20px rgba(217, 101, 59, 0.4)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.12));
+}
+
+@keyframes logoMarkSpin {
+  0%   { transform: rotateY(0deg) scale(1) rotate(0deg); }
+  50%  { transform: rotateY(180deg) scale(1.24) rotate(-6deg); }
+  100% { transform: rotateY(360deg) scale(1.16) rotate(0deg); }
 }
 
 /* --- The wordmark --- */
 .logo-text-new {
   position: relative;
   display: inline-flex;
-  overflow: hidden; /* clips the shine sweep to the wordmark */
+  overflow: hidden; /* masks the letter rise and clips the shine sweep */
+  padding-bottom: 1px;
 }
 
 .logo-char {
@@ -275,7 +424,6 @@ img { content-visibility: auto; max-width: 100%; height: auto; }
   transform-origin: 50% 100%;
   animation: logoCharIn 0.55s cubic-bezier(0.22, 1.2, 0.36, 1) both;
   animation-delay: calc(0.25s + var(--char-index) * 0.045s);
-  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.35s ease;
 }
 
 @keyframes logoCharIn {
@@ -289,18 +437,30 @@ img { content-visibility: auto; max-width: 100%; height: auto; }
   }
 }
 
-/* Hover: the letters ripple upward left-to-right */
-.brand-logo-new:hover .logo-char {
-  animation: logoCharHop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
-  animation-delay: calc(var(--char-index) * 0.028s);
+/* Hover: the letters ripple upward left-to-right, flashing orange as they go */
+.brand-logo-new:is(:hover, :focus-visible) .logo-char {
+  animation: logoCharHop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation-delay: calc(var(--char-index) * 0.03s);
 }
 
 @keyframes logoCharHop {
-  0%, 100% { transform: translateY(0); }
-  40%      { transform: translateY(-4px); }
+  0% {
+    transform: translateY(0) scale(1);
+    color: var(--text-main);
+  }
+  40% {
+    transform: translateY(-5px) scale(1.08);
+    color: var(--accent-orange);
+    text-shadow: 0 6px 14px rgba(225, 89, 11, 0.45);
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    color: var(--text-main);
+    text-shadow: none;
+  }
 }
 
-/* Light sweep across the wordmark: once on load, again on every hover */
+/* Light sweep: fires on load, then loops every 7s, and again on every hover */
 .logo-shine {
   position: absolute;
   top: 0;
@@ -310,21 +470,29 @@ img { content-visibility: auto; max-width: 100%; height: auto; }
   background: linear-gradient(
     100deg,
     rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0.85) 50%,
+    rgba(255, 255, 255, 0.9) 50%,
     rgba(255, 255, 255, 0) 100%
   );
   mix-blend-mode: overlay;
   pointer-events: none;
-  animation: logoShine 1.1s ease-in-out 0.75s both;
+  animation: logoShineLoop 7s ease-in-out 0.75s infinite;
 }
 
-.brand-logo-new:hover .logo-shine {
+/* One sweep occupies the first ~14% of the cycle; the rest is dwell time. */
+@keyframes logoShineLoop {
+  0%     { transform: translateX(-160%) skewX(-18deg); opacity: 1; }
+  14%    { transform: translateX(330%) skewX(-18deg);  opacity: 1; }
+  14.01% { opacity: 0; }
+  100%   { transform: translateX(330%) skewX(-18deg);  opacity: 0; }
+}
+
+.brand-logo-new:is(:hover, :focus-visible) .logo-shine {
   animation: logoShine 0.9s ease-in-out both;
 }
 
 @keyframes logoShine {
-  0%   { transform: translateX(-160%) skewX(-18deg); }
-  100% { transform: translateX(330%) skewX(-18deg); }
+  0%   { opacity: 1; transform: translateX(-160%) skewX(-18deg); }
+  100% { opacity: 1; transform: translateX(330%) skewX(-18deg); }
 }
 
 /* --- The tagline --- */
@@ -347,36 +515,80 @@ img { content-visibility: auto; max-width: 100%; height: auto; }
   bottom: -3px;
   width: 100%;
   height: 1.5px;
-  background: var(--accent-orange);
+  background: linear-gradient(90deg, var(--accent-orange), rgba(225, 89, 11, 0.15));
   border-radius: 2px;
   transform: scaleX(0);
   transform-origin: left center;
   transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.brand-logo-new:hover .logo-subtext-new {
+.brand-logo-new:is(:hover, :focus-visible) .logo-subtext-new {
   color: var(--accent-orange-deep);
 }
 
-.brand-logo-new:hover .logo-subtext-new::after {
+.brand-logo-new:is(:hover, :focus-visible) .logo-subtext-new::after {
   transform: scaleX(1);
+}
+
+/* --- Energy beam under the whole lockup --- */
+.logo-beam {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -8px;
+  height: 2px;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.logo-beam::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 55%;
+  height: 100%;
+  border-radius: 2px;
+  background: linear-gradient(90deg, rgba(225, 89, 11, 0) 0%, var(--accent-orange) 50%, rgba(225, 89, 11, 0) 100%);
+  transform: translateX(-110%);
+}
+
+.brand-logo-new:is(:hover, :focus-visible) .logo-beam {
+  opacity: 1;
+}
+
+.brand-logo-new:is(:hover, :focus-visible) .logo-beam::before {
+  animation: logoBeamRun 1.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes logoBeamRun {
+  0%   { transform: translateX(-110%); }
+  100% { transform: translateX(290%); }
 }
 
 /* Respect the OS motion preference: keep the styling, drop the movement. */
 @media (prefers-reduced-motion: reduce) {
-  .logo-3d-svg,
-  .logo-char,
-  .logo-shine,
-  .logo-subtext-new,
-  .brand-logo-new:hover .logo-3d-svg,
-  .brand-logo-new:hover .logo-char,
-  .brand-logo-new:hover .logo-shine {
+  .brand-logo-new,
+  .brand-logo-new *,
+  .brand-logo-new *::before,
+  .brand-logo-new *::after {
     animation: none !important;
+    transition: none !important;
     opacity: 1;
-    transform: none;
+    transform: none !important;
   }
-  .logo-shine {
+  .logo-shine,
+  .logo-beam,
+  .logo-ring,
+  .logo-pulse,
+  .logo-orbit {
     display: none;
+  }
+  .logo-mark::before,
+  .logo-mark::after {
+    opacity: 0;
   }
 }
 
@@ -2025,9 +2237,19 @@ img { content-visibility: auto; max-width: 100%; height: auto; }
    Engineering Tool & Responsive Comparison Table Additions
    ========================================================================== */
 
-/* Header Scroll Margin Offset */
-section[id] {
-  scroll-margin-top: 120px;
+/* Header Scroll Margin Offset — any anchorable element, not just <section>. */
+section[id], div[id], article[id], h2[id], h3[id] {
+  scroll-margin-top: 100px;
+}
+
+/* Scrolling containers get their own momentum + snap rather than dragging the
+   page along with them (hero chip strip, mobile tables, carousels). */
+.dots-container,
+.table-scroll-wrapper,
+.horizontal-scroll {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
 }
 
 /* Site Header z-index Fix */
@@ -2494,4 +2716,45 @@ p {
 @keyframes fadeInTestimonial {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+/* ==========================================================================
+   Rendering performance
+   ========================================================================== */
+
+/* Placeholder while a lazily-loaded route chunk arrives. Reserving a viewport
+   keeps the footer from flashing up into the middle of the screen. */
+.route-fallback {
+  min-height: 70vh;
+}
+
+/* Below-the-fold sections are laid out and painted only once they approach the
+   viewport. `contain-intrinsic-size` supplies a placeholder height so the
+   scrollbar stays honest and nothing jumps as sections are realised.
+   Sections carrying an id are excluded: an anchor jump measures their offset
+   before they have been realised, which lands the scroll in the wrong place. */
+main > section:not([id]):not(:first-of-type) {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 600px;
+}
+
+/* Compositor-only animation for the elements that actually move, so scrolling
+   past them does not force a repaint of everything underneath. */
+.sticky-actions-container,
+.vertical-brochure-tab,
+.floating-teaser-container,
+.hero-product-image {
+  will-change: transform, opacity;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Touch scrolling should not chain into the page behind an open overlay. */
+.mobile-nav-drawer,
+.brochure-modal-overlay {
+  overscroll-behavior: contain;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
 }

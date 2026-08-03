@@ -189,7 +189,7 @@ export default function HeroCarousel({ pageData }) {
                   width="490"
                   height="390"
                   decoding="async"
-                  fetchPriority={layer === 'a' ? 'high' : undefined}
+                  fetchpriority={layer === "a" ? "high" : undefined}
                   aria-hidden={activeLayer !== layer}
                 />
               );

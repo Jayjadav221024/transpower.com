@@ -18,7 +18,22 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Loaded as a print stylesheet first so it never blocks the first paint,
+       then flipped to "all" once it arrives. The <noscript> copy keeps the
+       fonts for anyone without JS. Trimmed to the weights actually used. -->
+  <link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap"
+    media="print"
+    onload="this.media='all';this.onload=null">
+  <noscript>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap">
+  </noscript>
+
+  <!-- The hero image is the LCP element on the landing page; start it before
+       the JS bundle has even parsed. -->
+  <link rel="preload" as="image" href="/assets/images/hero_frp_grating.webp" fetchpriority="high">
 
   <link rel="icon" type="image/png" href="/favicon.png">
 

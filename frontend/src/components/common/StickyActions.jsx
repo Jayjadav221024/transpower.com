@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { publicApi } from '../../api/client';
+import { scrollToTop as scrollWindowToTop } from '../../utils/scroll';
 
 export default function StickyActions() {
   const [showScrollTop, setShowScrollTop] = useState(false);
@@ -10,18 +11,32 @@ export default function StickyActions() {
   const [emailStatus, setEmailStatus] = useState('pending');   // pending | sent | failed
   const [error, setError] = useState('');
 
+  /* A bare scroll handler fires dozens of times per frame and each call used to
+     setState, re-rendering this whole tree mid-scroll. Coalesce into one
+     animation frame and only commit when the boolean actually flips. */
   useEffect(() => {
-    const handleScroll = () => {
+    let frame = null;
+
+    const measure = () => {
+      frame = null;
       // Show scroll-to-top button only after scrolling past 1.5 viewport heights
-      setShowScrollTop(window.scrollY > window.innerHeight * 1.5);
+      const next = window.scrollY > window.innerHeight * 1.5;
+      setShowScrollTop((prev) => (prev === next ? prev : next));
     };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+
+    const handleScroll = () => {
+      if (frame === null) frame = requestAnimationFrame(measure);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    measure();
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (frame !== null) cancelAnimationFrame(frame);
+    };
   }, []);
 
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  const scrollToTop = () => scrollWindowToTop({ smooth: true });
 
   const handleInputChange = (field) => (e) => {
     setFormData({ ...formData, [field]: e.target.value });
