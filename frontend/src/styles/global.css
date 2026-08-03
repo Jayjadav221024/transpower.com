@@ -1765,18 +1765,18 @@ img { content-visibility: auto; max-width: 100%; height: auto; }
 /* Mobile-first overrides (defined without queries) */
 .sticky-actions-container {
   position: fixed;
-  right: 16px;
-  bottom: 72px;
+  right: 24px;
+  bottom: 24px;
   z-index: 90;
   display: flex;
   flex-direction: column;
   gap: 0.8rem;
 }
 .sticky-actions-container .whatsapp-btn {
-  display: none;
+  display: flex;
 }
 .vertical-brochure-tab {
-  display: none;
+  display: flex;
 }
 .brochure-modal-card {
   padding: 2rem 1.25rem;
@@ -2088,55 +2088,7 @@ input, select, textarea {
   justify-content: center;
 }
 
-/* Mobile Bottom Sticky Action Bar */
-.mobile-bottom-bar {
-  display: flex;
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 56px;
-  height: calc(56px + env(safe-area-inset-bottom));
-  padding-bottom: env(safe-area-inset-bottom);
-  background: #ffffff;
-  border-top: 1px solid var(--border-color);
-  z-index: 90; /* --z-sticky-bar: 90 */
-  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
-}
 
-.mobile-bar-btn {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 0.95rem;
-  text-decoration: none;
-  min-height: 44px;
-}
-
-.mobile-bar-btn.whatsapp-btn {
-  background: #25D366;
-  color: #ffffff;
-}
-
-.mobile-bar-btn.quote-btn {
-  background: var(--accent-orange);
-  color: #ffffff;
-}
-
-body {
-  padding-bottom: calc(56px + env(safe-area-inset-bottom));
-}
-
-@media (min-width: 768px) {
-  .mobile-bottom-bar {
-    display: none;
-  }
-  body {
-    padding-bottom: 0;
-  }
-}
 
 /* Header Compression below 768px */
 @media (max-width: 767px) {

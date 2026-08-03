@@ -116,21 +116,7 @@ export default function StickyActions() {
         </button>
       </div>
 
-      {/* ── Mobile-First Bottom Sticky Bar ── */}
-      <div className="mobile-bottom-bar">
-        <a
-          href="https://wa.me/919825507527?text=Hi,%20I'm%20interested%20in%20FRP%20Composite%20products."
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mobile-bar-btn whatsapp-btn"
-          aria-label="Call or WhatsApp sales team"
-        >
-          Call / WhatsApp
-        </a>
-        <a href="#quote" className="mobile-bar-btn quote-btn">
-          Get Quote
-        </a>
-      </div>
+
 
       {/* ── Lead Form Dialog / Modal ── */}
       {modalOpen && (
