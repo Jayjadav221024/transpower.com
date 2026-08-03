@@ -5,6 +5,8 @@ dist/
 *.log
 .transpower.txt
 transpower.txt
+google-credentials.json
+backend/google-credentials.json
 
 # Uploaded content — back this up, don't commit it
 backend/uploads/*
