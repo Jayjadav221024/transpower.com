@@ -12,11 +12,15 @@ const cache = {
 const CACHE_HISTORICAL_MS = 5 * 60 * 1000;
 const CACHE_REALTIME_MS = 5 * 1000;
 
-// Initialize GA4 client if credentials are set up
+const fs = require('node:fs');
+
+// Initialize GA4 client if credentials are set up and exist on disk
 let gaClient = null;
 const propertyId = process.env.GA_PROPERTY_ID;
+const credentialsPath = process.env.GOOGLE_APPLICATION_CREDENTIALS;
+const hasCredentialsFile = credentialsPath && fs.existsSync(credentialsPath);
 
-if (process.env.GOOGLE_APPLICATION_CREDENTIALS && propertyId) {
+if (hasCredentialsFile && propertyId) {
   try {
     gaClient = new BetaAnalyticsDataClient();
     console.log('  Google Analytics 4 Data API client initialized.');
@@ -24,7 +28,11 @@ if (process.env.GOOGLE_APPLICATION_CREDENTIALS && propertyId) {
     console.error('  Error initializing GA4 client:', err.message);
   }
 } else {
-  console.log('  GA4 credentials not set. Running Analytics in simulation mode.');
+  if (propertyId && !hasCredentialsFile) {
+    console.warn(`  Analytics Warning: Credentials file not found at: ${credentialsPath}. Running in simulation mode.`);
+  } else {
+    console.log('  GA4 credentials not set. Running Analytics in simulation mode.');
+  }
 }
 
 /**
