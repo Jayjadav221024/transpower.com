@@ -99,8 +99,15 @@ const listTags = asyncHandler(async (_req, res) => {
 
 /* GET /api/posts/:slug */
 const getBySlug = asyncHandler(async (req, res) => {
+  const s = req.params.slug;
   const post = await Post.findOneAndUpdate(
-    { slug: req.params.slug, status: 'published' },
+    { 
+      $or: [
+        { slug: s },
+        { slug: `https-www-transpower-net-in-${s}` }
+      ],
+      status: 'published' 
+    },
     { $inc: { views: 1 } },
     { new: true }
   ).populate('author', 'name');

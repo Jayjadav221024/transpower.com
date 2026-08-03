@@ -6,9 +6,9 @@ export const HERO_PRODUCTS = [
     rest: '& CABLE TRAYS',
     desc: 'Heavy-duty molded fiberglass mesh panels with superior chemical resistance, anti-slip grit top, and zero maintenance life — the backbone of industrial walkways.',
     pills: [
-      { icon: '⚡', text: '100% Non-Conductive Insulation' },
-      { icon: '🛡️', text: 'Corrosion & Acid Proof Surface' },
-      { icon: '🔥', text: 'ASTM E84 Class 1 Fire Rated' },
+      { icon: '⚡', text: 'Non-Conductive / Electrically Insulating' },
+      { icon: '🛡️', text: 'Corrosion & Chemical Resistant Surface' },
+      { icon: '🔥', text: 'Fire Retardant Surface' },
     ],
     image: '/assets/images/hero_frp_grating.webp',
     imgAlt: 'Transpower FRP Molded Gratings & Cable Trays',
@@ -66,9 +66,9 @@ export const HERO_PRODUCTS = [
     rest: 'FRP PROFILES',
     desc: 'High-load composite I-beams, box channels, angles, and handrails replacing structural steel — 75% lighter with zero corrosion and zero painting required.',
     pills: [
-      { icon: '🏋️', text: '75% Lighter than Structural Steel' },
+      { icon: '🏋️', text: 'High Strength-to-Weight Ratio' },
       { icon: '🔧', text: 'Custom Cut to Length On-Site' },
-      { icon: '♻️', text: 'Zero Maintenance for 30+ Years' },
+      { icon: '♻️', text: 'Low Maintenance — No Painting Required' },
     ],
     image: '/assets/images/industrial_walkway.webp',
     imgAlt: 'Transpower Pultruded Structural FRP Profiles',
@@ -266,11 +266,7 @@ export const APPLICATIONS = [
   },
 ];
 
-export const CERTIFICATIONS = [
-  { icon: '🏅', title: 'ISO 9001:2015',       sub: 'Certified Quality Management' },
-  { icon: '🔥', title: 'ASTM E84 CLASS 1',    sub: 'Flame Spread Index < 25' },
-  { icon: '🛡️', title: 'ABS COMPLIANT',       sub: 'International Marine Standards' },
-];
+export const CERTIFICATIONS = [];
 
 /* Load calculator profiles — EI in N·mm². */
 export const MESH_PROFILES = [

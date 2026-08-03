@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 
 const CATEGORIES = [
@@ -61,6 +61,53 @@ export default function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [isProductsHovered, setIsProductsHovered] = useState(false);
   const [hoveredCategory, setHoveredCategory] = useState(null);
+
+  // Esc key & body scroll block
+  useEffect(() => {
+    function handleKeyDown(e) {
+      if (e.key === 'Escape') {
+        setMenuOpen(false);
+      }
+    }
+    if (menuOpen) {
+      window.addEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = '';
+    };
+  }, [menuOpen]);
+
+  // Focus trapping inside mobile drawer
+  useEffect(() => {
+    if (!menuOpen) return;
+    const drawer = document.getElementById('mobile-nav-drawer');
+    if (!drawer) return;
+    const focusable = drawer.querySelectorAll('a, button');
+    if (focusable.length === 0) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+
+    function handleTab(e) {
+      if (e.key !== 'Tab') return;
+      if (e.shiftKey) {
+        if (document.activeElement === first) {
+          last.focus();
+          e.preventDefault();
+        }
+      } else {
+        if (document.activeElement === last) {
+          first.focus();
+          e.preventDefault();
+        }
+      }
+    }
+    window.addEventListener('keydown', handleTab);
+    return () => window.removeEventListener('keydown', handleTab);
+  }, [menuOpen]);
 
   function goToSection(e, hash) {
     setMenuOpen(false);
@@ -289,6 +336,8 @@ export default function SiteHeader() {
           className={`menu-toggle-btn ${menuOpen ? 'open' : ''}`}
           onClick={() => setMenuOpen(!menuOpen)}
           aria-label="Toggle navigation menu"
+          aria-expanded={menuOpen}
+          aria-controls="mobile-nav-drawer"
         >
           <span className="bar"></span>
           <span className="bar"></span>
@@ -296,8 +345,28 @@ export default function SiteHeader() {
         </button>
       </div>
 
+      {/* Mobile Backdrop */}
+      {menuOpen && (
+        <div 
+          className="mobile-nav-backdrop open" 
+          onClick={() => setMenuOpen(false)} 
+        />
+      )}
+
       {/* Mobile Drawer Menu Overlay */}
-      <div className={`mobile-nav-drawer ${menuOpen ? 'open' : ''}`}>
+      <div 
+        id="mobile-nav-drawer" 
+        className={`mobile-nav-drawer ${menuOpen ? 'open' : ''}`}
+      >
+        <div className="drawer-header">
+          <button 
+            className="drawer-close-btn" 
+            onClick={() => setMenuOpen(false)}
+            aria-label="Close navigation menu"
+          >
+            &times;
+          </button>
+        </div>
         <ul className="mobile-nav-links">
           <li>
             <NavLink to="/" className={({ isActive }) => (isActive ? 'active-mobile' : 'mobile-link')} onClick={() => setMenuOpen(false)} end>

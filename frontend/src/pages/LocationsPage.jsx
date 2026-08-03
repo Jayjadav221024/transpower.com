@@ -92,7 +92,7 @@ export default function LocationsPage() {
           <div className="locations-product-strip">
             {PRODUCT_CARDS.map((p) => (
               <Link to={`/product/${p.id}`} className="locations-product-chip" key={p.id}>
-                <img src={p.image} alt={p.title} loading="lazy" />
+                <img src={p.image} alt={p.title} width="160" height="120" loading="lazy" decoding="async" />
                 <span>{p.title}</span>
               </Link>
             ))}

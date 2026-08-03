@@ -170,6 +170,7 @@ export default function LoadCalculator() {
               <input
                 type="number"
                 id="calc-span"
+                inputMode="numeric"
                 className={`form-control ${validation.spanError ? 'input-error' : ''}`}
                 value={span}
                 min="300"
@@ -177,22 +178,24 @@ export default function LoadCalculator() {
                 step="50"
                 onChange={(e) => setSpan(e.target.value)}
               />
-              {validation.spanError ? (
-                <span className="calc-error-text">{validation.spanError}</span>
-              ) : (
-                surfaceKey !== 'chequered' && (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.1rem', marginTop: '0.2rem' }}>
-                    <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
-                      Max recommended span for this profile: {maxSpan} mm
-                    </span>
-                    {spanWarning && (
-                      <span className="calc-error-text" style={{ color: '#d97706', fontSize: '0.74rem' }}>
-                        {spanWarning}
+              <div style={{ minHeight: '40px', marginTop: '0.2rem' }}>
+                {validation.spanError ? (
+                  <span className="calc-error-text">{validation.spanError}</span>
+                ) : (
+                  surfaceKey !== 'chequered' && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.1rem' }}>
+                      <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
+                        Max recommended span for this profile: {maxSpan} mm
                       </span>
-                    )}
-                  </div>
-                )
-              )}
+                      {spanWarning && (
+                        <span className="calc-error-text" style={{ color: '#d97706', fontSize: '0.74rem' }}>
+                          {spanWarning}
+                        </span>
+                      )}
+                    </div>
+                  )
+                )}
+              </div>
             </div>
 
             {/* Load Input */}
@@ -201,6 +204,7 @@ export default function LoadCalculator() {
               <input
                 type="number"
                 id="calc-load"
+                inputMode="numeric"
                 className={`form-control ${validation.loadError ? 'input-error' : ''}`}
                 value={load}
                 min="100"
@@ -208,9 +212,11 @@ export default function LoadCalculator() {
                 step="100"
                 onChange={(e) => setLoad(e.target.value)}
               />
-              {validation.loadError && (
-                <span className="calc-error-text">{validation.loadError}</span>
-              )}
+              <div style={{ minHeight: '20px', marginTop: '0.2rem' }}>
+                {validation.loadError && (
+                  <span className="calc-error-text">{validation.loadError}</span>
+                )}
+              </div>
             </div>
           </div>
 

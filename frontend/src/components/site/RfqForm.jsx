@@ -40,6 +40,12 @@ export default function RfqForm() {
       setTimeout(() => setSent(false), 8000);
     } catch (ex) {
       setError(ex.message);
+      // Scroll the first invalid field/error into view if needed
+      const formEl = e.target;
+      const invalidField = formEl.querySelector(':invalid') || formEl.querySelector('.form-control');
+      if (invalidField) {
+        invalidField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
     } finally {
       setSending(false);
     }
@@ -57,14 +63,17 @@ export default function RfqForm() {
           <div className="rfq-contact-details">
             <div>
               <strong>📞 Call / WhatsApp</strong>
-              <span>+91 98255 07517 / 37</span>
+              <span style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                <a href="tel:+919825507517" style={{ minHeight: '44px', display: 'inline-flex', alignItems: 'center' }}>+91 98255 07517</a>
+                <a href="tel:+919825507537" style={{ minHeight: '44px', display: 'inline-flex', alignItems: 'center' }}>+91 98255 07537</a>
+              </span>
             </div>
             <div>
               <strong>✉️ Email Address</strong>
-              <span style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem', fontSize: '0.92rem' }}>
-                <a href="mailto:sales@transpower.com" style={{ color: 'inherit' }}>sales@transpower.com</a>
-                <a href="mailto:baroda@transpower.net.in" style={{ color: 'inherit' }}>baroda@transpower.net.in</a>
-                <a href="mailto:frp@transpower.net.in" style={{ color: 'inherit' }}>frp@transpower.net.in</a>
+              <span style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', fontSize: '0.92rem' }}>
+                <a href="mailto:sales@transpower.com" style={{ minHeight: '44px', display: 'inline-flex', alignItems: 'center', color: 'inherit' }}>sales@transpower.com</a>
+                <a href="mailto:baroda@transpower.net.in" style={{ minHeight: '44px', display: 'inline-flex', alignItems: 'center', color: 'inherit' }}>baroda@transpower.net.in</a>
+                <a href="mailto:frp@transpower.net.in" style={{ minHeight: '44px', display: 'inline-flex', alignItems: 'center', color: 'inherit' }}>frp@transpower.net.in</a>
               </span>
             </div>
           </div>
@@ -76,9 +85,14 @@ export default function RfqForm() {
             <div className="form-group" style={{ marginBottom: '1rem' }}>
               <label htmlFor="rfq-name">Full Name / Company Name</label>
               <input
-                type="text" id="rfq-name" className="form-control" required
+                type="text" 
+                id="rfq-name" 
+                className="form-control" 
+                required
                 placeholder="e.g. John Doe - Apex Engineering"
-                value={values.name} onChange={update('name')}
+                value={values.name} 
+                onChange={update('name')}
+                autoComplete="name"
               />
             </div>
 
@@ -86,17 +100,30 @@ export default function RfqForm() {
               <div className="form-group">
                 <label htmlFor="rfq-email">Business Email</label>
                 <input
-                  type="email" id="rfq-email" className="form-control" required
+                  type="email" 
+                  id="rfq-email" 
+                  className="form-control" 
+                  required
                   placeholder="john@company.com"
-                  value={values.email} onChange={update('email')}
+                  value={values.email} 
+                  onChange={update('email')}
+                  inputMode="email"
+                  autoComplete="email"
+                  autoCapitalize="none"
                 />
               </div>
               <div className="form-group">
                 <label htmlFor="rfq-phone">Phone / WhatsApp</label>
                 <input
-                  type="tel" id="rfq-phone" className="form-control" required
+                  type="tel" 
+                  id="rfq-phone" 
+                  className="form-control" 
+                  required
                   placeholder="+91 98765 43210"
-                  value={values.phone} onChange={update('phone')}
+                  value={values.phone} 
+                  onChange={update('phone')}
+                  inputMode="tel"
+                  autoComplete="tel"
                 />
               </div>
             </div>
@@ -114,9 +141,12 @@ export default function RfqForm() {
               <div className="form-group">
                 <label htmlFor="rfq-qty">Estimated Quantity / Area</label>
                 <input
-                  type="text" id="rfq-qty" className="form-control"
+                  type="text" 
+                  id="rfq-qty" 
+                  className="form-control"
                   placeholder="e.g. 500 Sq. Meters / 10 Units"
-                  value={values.quantity} onChange={update('quantity')}
+                  value={values.quantity} 
+                  onChange={update('quantity')}
                 />
               </div>
             </div>
@@ -124,9 +154,13 @@ export default function RfqForm() {
             <div className="form-group" style={{ marginBottom: '1.5rem' }}>
               <label htmlFor="rfq-msg">Project Requirements &amp; Specifications</label>
               <textarea
-                id="rfq-msg" className="form-control" rows="3"
+                id="rfq-msg" 
+                className="form-control" 
+                rows="3"
                 placeholder="Detail your resin requirements, gear ratio, power rating, or target timeline..."
-                value={values.message} onChange={update('message')}
+                value={values.message} 
+                onChange={update('message')}
+                style={{ minHeight: '120px', resize: 'vertical' }}
               />
             </div>
 
@@ -139,12 +173,14 @@ export default function RfqForm() {
               {sending ? 'Processing Inquiry…' : 'Submit Inquiry For Instant Quote'}
             </button>
 
-            {sent && (
-              <div className="rfq-feedback rfq-feedback-success">
-                ✓ Thank you! Your RFQ has been received. Our technical team will reach out shortly.
-              </div>
-            )}
-            {error && <div className="rfq-feedback rfq-feedback-error">{error}</div>}
+            <div aria-live="polite" style={{ marginTop: '0.5rem' }}>
+              {sent && (
+                <div className="rfq-feedback rfq-feedback-success">
+                  ✓ Thank you! Your RFQ has been received. Our technical team will reach out shortly.
+                </div>
+              )}
+              {error && <div className="rfq-feedback rfq-feedback-error">{error}</div>}
+            </div>
           </form>
         </div>
       </div>

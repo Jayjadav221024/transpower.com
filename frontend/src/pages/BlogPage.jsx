@@ -97,7 +97,7 @@ export default function BlogPage() {
             </p>
           </div>
           <div className="blog-hero-art">
-            <img src="/assets/images/blog_hero_art.svg" alt="" aria-hidden="true" />
+            <img src="/assets/images/blog_hero_art.svg" alt="" aria-hidden="true" width="400" height="300" decoding="async" />
           </div>
         </div>
       </section>

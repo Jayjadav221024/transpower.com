@@ -90,6 +90,10 @@ export default function AboutPage() {
                 src={data.leaderImg1 || '/assets/images/hemant_patel.png'} 
                 alt={data.leaderName1} 
                 className="leader-photo"
+                width="320"
+                height="320"
+                loading="lazy"
+                decoding="async"
               />
               <div className="leader-info">
                 <h3 data-edit-page="aboutpage" data-edit-key="leaderName1">{data.leaderName1}</h3>
@@ -108,6 +112,10 @@ export default function AboutPage() {
                 src={data.leaderImg2 || '/assets/images/kiran_parekh.png'} 
                 alt={data.leaderName2} 
                 className="leader-photo"
+                width="320"
+                height="320"
+                loading="lazy"
+                decoding="async"
               />
               <div className="leader-info">
                 <h3 data-edit-page="aboutpage" data-edit-key="leaderName2">{data.leaderName2}</h3>
@@ -135,7 +143,7 @@ export default function AboutPage() {
                 <div className="timeline-year">{item.year}</div>
                 {item.logo ? (
                   <div style={{ background: '#fff', padding: '0.4rem', borderRadius: '8px', marginBottom: '0.8rem', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '60px', width: '100%', border: '1px solid #e2e8f0' }}>
-                    <img src={item.logo} alt={item.name} style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }} />
+                    <img src={item.logo} alt={item.name} style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }} width="120" height="60" loading="lazy" decoding="async" />
                   </div>
                 ) : (
                   <div className="timeline-logo-name" style={{ marginBottom: '0.8rem' }}>{item.name}</div>
@@ -188,7 +196,7 @@ export default function AboutPage() {
           <div className="brands-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem', alignItems: 'center' }}>
             {BRANDS.map((brand) => (
               <div className="brand-card" key={brand.name} style={{ background: '#fff', padding: '1.25rem', borderRadius: '12px', border: '1px solid #e2e8f0', height: '110px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 10px rgba(0,0,0,0.01)' }}>
-                <img src={brand.logo} alt={brand.name} style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }} />
+                <img src={brand.logo} alt={brand.name} style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }} width="150" height="80" loading="lazy" decoding="async" />
               </div>
             ))}
           </div>

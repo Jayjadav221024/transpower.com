@@ -8,8 +8,8 @@
 .brands-strip,
 .clients-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-  gap: 1.2rem;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.8rem;
   align-items: stretch;
 }
 
@@ -17,13 +17,26 @@
 .client-chip {
   display: grid;
   place-items: center;
-  min-height: 110px;
-  padding: 1.25rem;
+  min-height: 80px;
+  padding: 0.9rem;
   background: #ffffff;
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-card);
   transition: var(--transition-fast);
+}
+
+@media (min-width: 768px) {
+  .brands-strip,
+  .clients-grid {
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 1.2rem;
+  }
+  .brand-chip,
+  .client-chip {
+    min-height: 110px;
+    padding: 1.25rem;
+  }
 }
 
 .brand-chip:hover,
@@ -133,17 +146,6 @@
   color: var(--text-faint);
 }
 
-@media (max-width: 600px) {
-  .brands-strip,
-  .clients-grid {
-    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-    gap: 0.8rem;
-  }
-  .brand-chip,
-  .client-chip { min-height: 88px; padding: 0.9rem; }
-  .brand-chip img,
-  .client-chip img { max-height: 44px; }
-}
 
 /* ── Brochure Download Section ────────────────────────────────────────────── */
 .brochure-section {
@@ -165,18 +167,19 @@
 
 .brochure-grid {
   display: grid;
-  grid-template-columns: 1.1fr 0.9fr;
-  gap: 4rem;
+  grid-template-columns: 1fr;
+  gap: 3rem;
   align-items: center;
 }
 
 .brochure-preview-box {
   display: flex;
-  gap: 2.5rem;
-  align-items: center;
+  gap: 1.5rem;
+  align-items: flex-start;
+  flex-direction: column;
   margin-top: 2rem;
   background: rgba(255, 255, 255, 0.03);
-  padding: 2rem;
+  padding: 2.25rem 1.5rem;
   border-radius: var(--radius-lg, 12px);
   border: 1px solid rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(10px);
@@ -238,7 +241,7 @@
 }
 
 .book-footer {
-  font-size: 0.55rem;
+  font-size: 0.75rem;
   font-weight: 500;
   color: rgba(255, 255, 255, 0.7);
   text-transform: uppercase;
@@ -296,7 +299,7 @@
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: var(--radius-lg, 12px);
-  padding: 2.5rem;
+  padding: 1.5rem;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(10px);
 }
@@ -373,24 +376,22 @@
   margin-top: 0.5rem;
 }
 
-/* Responsive */
-@media (max-width: 900px) {
+/* Responsive Overrides */
+@media (min-width: 768px) {
   .brochure-grid {
-    grid-template-columns: 1fr;
-    gap: 3rem;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 4rem;
   }
-}
-
-@media (max-width: 600px) {
   .brochure-preview-box {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1.5rem;
+    flex-direction: row;
+    align-items: center;
+    gap: 2.5rem;
+    padding: 2rem;
   }
   .brochure-mockup-book {
-    margin: 0 auto;
+    margin: 0;
   }
   .brochure-form-card {
-    padding: 1.5rem;
+    padding: 2.5rem;
   }
 }

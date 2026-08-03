@@ -12,7 +12,8 @@ export default function StickyActions() {
 
   useEffect(() => {
     const handleScroll = () => {
-      setShowScrollTop(window.scrollY > 300);
+      // Show scroll-to-top button only after scrolling past 1.5 viewport heights
+      setShowScrollTop(window.scrollY > window.innerHeight * 1.5);
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
@@ -41,9 +42,6 @@ export default function StickyActions() {
     setError('');
     setEmailStatus('pending');
 
-    /* The download is a local file — hand it over straight away. Saving the
-       lead and mailing a copy happen behind it, so a slow or broken SMTP can
-       never leave the visitor stuck on "Sending...". */
     triggerDownload();
     setSuccess(true);
 
@@ -118,6 +116,22 @@ export default function StickyActions() {
         </button>
       </div>
 
+      {/* ── Mobile-First Bottom Sticky Bar ── */}
+      <div className="mobile-bottom-bar">
+        <a
+          href="https://wa.me/919825507527?text=Hi,%20I'm%20interested%20in%20FRP%20Composite%20products."
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mobile-bar-btn whatsapp-btn"
+          aria-label="Call or WhatsApp sales team"
+        >
+          Call / WhatsApp
+        </a>
+        <a href="#quote" className="mobile-bar-btn quote-btn">
+          Get Quote
+        </a>
+      </div>
+
       {/* ── Lead Form Dialog / Modal ── */}
       {modalOpen && (
         <div className="brochure-modal-overlay">
@@ -146,6 +160,7 @@ export default function StickyActions() {
                   placeholder="e.g. John Doe"
                   value={formData.name}
                   onChange={handleInputChange('name')}
+                  autoComplete="name"
                 />
               </div>
 
@@ -159,6 +174,8 @@ export default function StickyActions() {
                   placeholder="+91 98765 43210"
                   value={formData.phone}
                   onChange={handleInputChange('phone')}
+                  inputMode="tel"
+                  autoComplete="tel"
                 />
               </div>
 
@@ -172,6 +189,9 @@ export default function StickyActions() {
                   placeholder="john@company.com"
                   value={formData.email}
                   onChange={handleInputChange('email')}
+                  inputMode="email"
+                  autoComplete="email"
+                  autoCapitalize="none"
                 />
               </div>
 
@@ -185,12 +205,13 @@ export default function StickyActions() {
                   placeholder="e.g. Apex Composites"
                   value={formData.company}
                   onChange={handleInputChange('company')}
+                  autoComplete="organization"
                 />
               </div>
 
               {error && <div className="modal-error">{error}</div>}
               {success && (
-                <div className="modal-success">
+                <div className="modal-success" aria-live="polite">
                   {emailStatus === 'sent'
                     ? '✓ Downloading brochure now — a copy is on its way to your inbox.'
                     : emailStatus === 'failed'

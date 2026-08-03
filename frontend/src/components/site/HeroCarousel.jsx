@@ -15,37 +15,78 @@ export default function HeroCarousel({ pageData }) {
   const [paused, setPaused]   = useState(false);
 
   const textTimer = useRef(null);
+  const dotsContainerRef = useRef(null);
+  const touchStartX = useRef(0);
+  const touchEndX = useRef(0);
 
   /* Crossfade: paint the incoming image on the hidden layer, flip which layer
      is visible, and swap the text at the midpoint of the fade. */
   function goTo(next) {
-    if (next === imgIndex) return;
-    const incoming = activeLayer === 'a' ? 'b' : 'a';
-
-    setLayers((prev) => ({ ...prev, [incoming]: HERO_PRODUCTS[next] }));
+    if (next === imgIndex || fading) return;
     setFading(true);
     setImgIndex(next);
 
-    // One frame so the browser paints the new src before opacity flips.
-    requestAnimationFrame(() => setActiveLayer(incoming));
+    const incoming = activeLayer === 'a' ? 'b' : 'a';
+    setLayers((prev) => ({ ...prev, [incoming]: HERO_PRODUCTS[next] }));
 
-    clearTimeout(textTimer.current);
+    // midpoint: swap text content
     textTimer.current = setTimeout(() => {
       setIndex(next);
-      setFading(false);
+      setActiveLayer(incoming);
     }, TEXT_SWAP_MS);
+
+    // end of 0.5s transition: declare done
+    setTimeout(() => {
+      setFading(false);
+    }, 500);
   }
 
-  /* Auto-advance, paused while the pointer rests on the hero. Restarting on
-     imgIndex means a manual dot click also resets the countdown. */
+  // Auto-advance loop (3s)
   useEffect(() => {
-    if (paused) return undefined;
+    if (paused || fading) return;
     const id = setTimeout(() => goTo((imgIndex + 1) % HERO_PRODUCTS.length), AUTO_MS);
     return () => clearTimeout(id);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [paused, imgIndex]);
+  }, [imgIndex, paused, fading]);
 
-  useEffect(() => () => clearTimeout(textTimer.current), []);
+  // Clean up timers on unmount
+  useEffect(() => {
+    return () => clearTimeout(textTimer.current);
+  }, []);
+
+  // Auto-scroll active chip into view on mobile
+  useEffect(() => {
+    if (!dotsContainerRef.current) return;
+    const activeChip = dotsContainerRef.current.querySelector('.dot.active');
+    if (activeChip) {
+      activeChip.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+        inline: 'center'
+      });
+    }
+  }, [imgIndex]);
+
+  // Touch handlers for swipes
+  const handleTouchStart = (e) => {
+    touchStartX.current = e.changedTouches[0].screenX;
+  };
+
+  const handleTouchMove = (e) => {
+    touchEndX.current = e.changedTouches[0].screenX;
+  };
+
+  const handleTouchEnd = () => {
+    const diff = touchStartX.current - touchEndX.current;
+    if (Math.abs(diff) > 50) {
+      if (diff > 0) {
+        // swipe left -> next slide
+        goTo((imgIndex + 1) % HERO_PRODUCTS.length);
+      } else {
+        // swipe right -> previous slide
+        goTo((imgIndex - 1 + HERO_PRODUCTS.length) % HERO_PRODUCTS.length);
+      }
+    }
+  };
 
   const product = HERO_PRODUCTS[index];
   const pause  = () => setPaused(true);
@@ -57,7 +98,12 @@ export default function HeroCarousel({ pageData }) {
 
   return (
     <section id="hero" className="hero-section">
-      <div className="container hero-grid">
+      <div 
+        className="container hero-grid"
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
         {/* ── Left: animated product copy ─────────────────────────────── */}
         <div
           className={`hero-left-content${fading ? ' is-fading' : ''}`}
@@ -79,17 +125,23 @@ export default function HeroCarousel({ pageData }) {
             ))}
           </div>
 
-          <div className="carousel-dots">
+          {/* Chip Row slide selector */}
+          <div 
+            className="carousel-dots" 
+            ref={dotsContainerRef} 
+            role="tablist"
+          >
             {HERO_PRODUCTS.map((p, i) => (
-              <span
+              <button
                 key={p.accent + p.rest}
                 className={`dot${i === imgIndex ? ' active' : ''}`}
-                role="button"
-                tabIndex={0}
+                role="tab"
+                aria-selected={i === imgIndex}
                 aria-label={`Show ${p.accent} ${p.rest}`}
                 onClick={() => goTo(i)}
-                onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && goTo(i)}
-              />
+              >
+                <span className="dot-text">{p.accent} {p.rest}</span>
+              </button>
             ))}
           </div>
 

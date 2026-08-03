@@ -13,9 +13,10 @@ const BLOB_PAIRS = [
 
 export default function BlogCard({ post, index = 0 }) {
   const [blobA, blobB] = BLOB_PAIRS[index % BLOB_PAIRS.length];
+  const cleanSlug = post.slug ? post.slug.replace(/^https-www-transpower-net-in-/, '') : '';
 
   return (
-    <Link className="blog-card" to={`/blog/${post.slug}`}>
+    <Link className="blog-card" to={`/blog/${cleanSlug}`}>
       <div className="blog-card-media">
         {post.coverImage ? (
           <img src={assetUrl(post.coverImage)} alt={post.title} loading="lazy" />

@@ -10,6 +10,12 @@ export default function PostPage() {
   const [state, setState] = useState({ status: 'loading', post: null, related: [] });
 
   useEffect(() => {
+    if (slug && slug.startsWith('https-www-transpower-net-in-')) {
+      const clean = slug.replace(/^https-www-transpower-net-in-/, '');
+      window.location.replace(`/blog/${clean}`);
+      return undefined;
+    }
+
     let alive = true;
     setState({ status: 'loading', post: null, related: [] });
 
@@ -83,7 +89,7 @@ export default function PostPage() {
 
           {post.coverImage && (
             <div className="post-cover">
-              <img src={assetUrl(post.coverImage)} alt={post.title} />
+              <img src={assetUrl(post.coverImage)} alt={post.title} width="800" height="450" decoding="async" />
             </div>
           )}
 

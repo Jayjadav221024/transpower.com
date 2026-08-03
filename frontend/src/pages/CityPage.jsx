@@ -157,7 +157,14 @@ export default function CityPage() {
             {products.map((product, i) => (
               <article className="city-product-card" key={product.id}>
                 <div className="city-product-media">
-                  <img src={product.image} alt={`${product.title} supplied in ${city.name}`} loading="lazy" />
+                  <img 
+                    src={product.image} 
+                    alt={`${product.title} supplied in ${city.name}`} 
+                    width="300" 
+                    height="200" 
+                    loading="lazy" 
+                    decoding="async" 
+                  />
                   {i < city.focus.length && <span className="city-product-flag">Most specified here</span>}
                 </div>
                 <div className="city-product-body">
