@@ -178,57 +178,206 @@ img { content-visibility: auto; max-width: 100%; height: auto; }
   white-space: nowrap;
 }
 
-/* 3D Animations */
+/* ===== Animated brand logo =====
+   Three layers, all pure CSS: a 3D mark that flips in and idles, a wordmark
+   that assembles letter by letter, and a shine that sweeps once on load and
+   again on every hover. */
+
+.brand-logo-new {
+  perspective: 600px;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Hover-capable pointers only — the <768px rule below scales .brand-logo-new,
+   and a sticky touch "hover" would otherwise wipe that scale out. */
+@media (hover: hover) {
+  .brand-logo-new:hover {
+    transform: translateY(-1px);
+  }
+}
+
+/* --- The cube mark --- */
+.logo-mark {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transform-style: preserve-3d;
+}
+
+/* Glow halo that blooms out from behind the mark on hover */
+.logo-mark::before {
+  content: '';
+  position: absolute;
+  inset: -30%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(225, 89, 11, 0.35) 0%, rgba(225, 89, 11, 0) 70%);
+  opacity: 0;
+  transform: scale(0.5);
+  transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  pointer-events: none;
+}
+
+.brand-logo-new:hover .logo-mark::before {
+  opacity: 1;
+  transform: scale(1);
+}
+
 .logo-3d-svg {
   overflow: visible;
   flex-shrink: 0;
-  transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.6s ease;
+  transform-origin: center;
+  animation:
+    logoMarkIntro 1s cubic-bezier(0.22, 1.2, 0.36, 1) both,
+    logoMarkFloat 4.5s ease-in-out 1s infinite;
+  transition: transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.55s ease;
+}
+
+/* Mark drops in with a 3D flip on first paint */
+@keyframes logoMarkIntro {
+  0% {
+    opacity: 0;
+    transform: translateY(-14px) rotateY(-110deg) scale(0.6);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(0) rotateY(12deg) scale(1.08);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) rotateY(0deg) scale(1);
+  }
+}
+
+/* Idle: a slow, barely-there hover in space so the header never feels static */
+@keyframes logoMarkFloat {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50%      { transform: translateY(-3px) rotate(2deg); }
 }
 
 .brand-logo-new:hover .logo-3d-svg {
-  transform: scale(1.15) rotate(-6deg);
+  animation-play-state: paused;
+  transform: scale(1.18) rotate(-8deg) rotateY(14deg);
   filter: drop-shadow(0 10px 20px rgba(217, 101, 59, 0.35)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
 }
 
-.block-grey {
-  animation: floatGrey 3.5s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
-  transform-origin: center;
-  transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+/* --- The wordmark --- */
+.logo-text-new {
+  position: relative;
+  display: inline-flex;
+  overflow: hidden; /* clips the shine sweep to the wordmark */
 }
 
-.block-orange {
-  animation: floatOrange 3.5s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
-  transform-origin: center;
-  transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+.logo-char {
+  display: inline-block;
+  white-space: pre; /* keeps any spacing inside the name intact */
+  transform-origin: 50% 100%;
+  animation: logoCharIn 0.55s cubic-bezier(0.22, 1.2, 0.36, 1) both;
+  animation-delay: calc(0.25s + var(--char-index) * 0.045s);
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.35s ease;
 }
 
-@keyframes floatGrey {
+@keyframes logoCharIn {
   0% {
-    transform: translate(0, 0);
+    opacity: 0;
+    transform: translateY(90%) rotateX(-70deg);
   }
   100% {
-    transform: translate(-4px, -3px);
+    opacity: 1;
+    transform: translateY(0) rotateX(0deg);
   }
 }
 
-@keyframes floatOrange {
-  0% {
-    transform: translate(0, 0);
-  }
-  100% {
-    transform: translate(4px, 3px);
-  }
+/* Hover: the letters ripple upward left-to-right */
+.brand-logo-new:hover .logo-char {
+  animation: logoCharHop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation-delay: calc(var(--char-index) * 0.028s);
 }
 
-/* Dramatic separation on hover to show off 3D depth and fit */
-.brand-logo-new:hover .block-grey {
-  animation-play-state: paused;
-  transform: translate(-14px, -10px) scale(0.95);
+@keyframes logoCharHop {
+  0%, 100% { transform: translateY(0); }
+  40%      { transform: translateY(-4px); }
 }
 
-.brand-logo-new:hover .block-orange {
-  animation-play-state: paused;
-  transform: translate(14px, 10px) scale(1.05);
+/* Light sweep across the wordmark: once on load, again on every hover */
+.logo-shine {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 45%;
+  height: 100%;
+  background: linear-gradient(
+    100deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.85) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  mix-blend-mode: overlay;
+  pointer-events: none;
+  animation: logoShine 1.1s ease-in-out 0.75s both;
+}
+
+.brand-logo-new:hover .logo-shine {
+  animation: logoShine 0.9s ease-in-out both;
+}
+
+@keyframes logoShine {
+  0%   { transform: translateX(-160%) skewX(-18deg); }
+  100% { transform: translateX(330%) skewX(-18deg); }
+}
+
+/* --- The tagline --- */
+.logo-subtext-new {
+  position: relative;
+  animation: logoSubIn 0.6s ease-out 0.7s both;
+  transition: color 0.3s ease;
+}
+
+@keyframes logoSubIn {
+  0%   { opacity: 0; transform: translateY(6px); letter-spacing: 0.18em; }
+  100% { opacity: 1; transform: translateY(0); letter-spacing: 0.02em; }
+}
+
+/* Orange rule wipes in under the tagline on hover */
+.logo-subtext-new::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  width: 100%;
+  height: 1.5px;
+  background: var(--accent-orange);
+  border-radius: 2px;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.brand-logo-new:hover .logo-subtext-new {
+  color: var(--accent-orange-deep);
+}
+
+.brand-logo-new:hover .logo-subtext-new::after {
+  transform: scaleX(1);
+}
+
+/* Respect the OS motion preference: keep the styling, drop the movement. */
+@media (prefers-reduced-motion: reduce) {
+  .logo-3d-svg,
+  .logo-char,
+  .logo-shine,
+  .logo-subtext-new,
+  .brand-logo-new:hover .logo-3d-svg,
+  .brand-logo-new:hover .logo-char,
+  .brand-logo-new:hover .logo-shine {
+    animation: none !important;
+    opacity: 1;
+    transform: none;
+  }
+  .logo-shine {
+    display: none;
+  }
 }
 
 /* The pill padding already separates the links, so the gap stays tight — with

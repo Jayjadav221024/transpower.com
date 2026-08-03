@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 
+const BRAND_NAME = 'TRANSPOWER';
+
 const CATEGORIES = [
   {
     key: 'switchgears',
@@ -124,16 +126,32 @@ export default function SiteHeader() {
     <header className="site-header-new">
       <div className="container header-container-new">
         <Link to="/" className="brand-logo-new" onClick={() => setMenuOpen(false)}>
-          <img 
-            className="logo-3d-svg" 
-            src="/favicon.png" 
-            alt="Transpower Logo" 
-            width="40" 
-            height="40" 
-            style={{ objectFit: 'contain' }}
-          />
+          <span className="logo-mark">
+            <img
+              className="logo-3d-svg"
+              src="/favicon.png"
+              alt="Transpower Logo"
+              width="40"
+              height="40"
+              style={{ objectFit: 'contain' }}
+            />
+          </span>
           <div className="logo-text-wrapper">
-            <span className="logo-text-new">TRANSPOWER</span>
+            {/* Each letter animates on its own delay, so the wordmark assembles
+                itself on load and re-shines on hover. */}
+            <span className="logo-text-new" aria-label={BRAND_NAME}>
+              {BRAND_NAME.split('').map((char, i) => (
+                <span
+                  key={`${char}-${i}`}
+                  className="logo-char"
+                  style={{ '--char-index': i }}
+                  aria-hidden="true"
+                >
+                  {char}
+                </span>
+              ))}
+              <span className="logo-shine" aria-hidden="true" />
+            </span>
             <span className="logo-subtext-new">Technologies Pvt. Ltd.</span>
           </div>
         </Link>
