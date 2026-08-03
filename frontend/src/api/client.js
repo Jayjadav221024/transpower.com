@@ -27,15 +27,39 @@ export const assetUrl = (path) => {
 };
 
 export class ApiError extends Error {
-  constructor(message, status) {
+  /* `data` carries the whole error body. A plain message is not enough for
+     responses like the 409 from /admin/login, which names the admin holding
+     the panel and whether a request can be raised. */
+  constructor(message, status, data = {}) {
     super(message);
     this.name = 'ApiError';
     this.status = status;
+    this.data = data;
+    this.code = data?.code;
   }
 }
 
 /* Nothing here should ever hang the UI. Uploads get a longer leash. */
 const DEFAULT_TIMEOUT_MS = 30_000;
+
+/* A session can end mid-visit — it goes idle, or another admin's approval
+   flow revokes it. Every admin call funnels through request(), so one listener
+   here catches it wherever it happens instead of each page checking for 401. */
+let unauthorizedHandler = null;
+
+/** Registers the callback fired when the server reports the session is gone. */
+export function onUnauthorized(handler) {
+  unauthorizedHandler = handler;
+  return () => { if (unauthorizedHandler === handler) unauthorizedHandler = null; };
+}
+
+/* Sign-in and the access-request handshake legitimately return 401 while
+   nobody is signed in — those must not trigger the "you were signed out" path.
+   Anchored deliberately: a plain startsWith() also matches the protected
+   /access-requests poll, which would swallow the 401 that tells an admin their
+   session was revoked. */
+const AUTH_HANDSHAKE = /^\/api\/admin\/(login|access-request)(\/|$|\?)/;
+const isAuthHandshake = (path) => AUTH_HANDSHAKE.test(path);
 
 async function request(path, { method = 'GET', body, formData, signal, timeout } = {}) {
   const limit = timeout ?? (formData ? 120_000 : DEFAULT_TIMEOUT_MS);
@@ -77,7 +101,12 @@ async function request(path, { method = 'GET', body, formData, signal, timeout }
 
   const data = await res.json().catch(() => ({}));
 
-  if (!res.ok) throw new ApiError(data.error || `Request failed (${res.status})`, res.status);
+  if (!res.ok) {
+    if (res.status === 401 && !isAuthHandshake(path)) {
+      unauthorizedHandler?.(data.code || 'NO_SESSION', data.error);
+    }
+    throw new ApiError(data.error || `Request failed (${res.status})`, res.status, data);
+  }
   return data;
 }
 
@@ -110,6 +139,20 @@ export const adminApi = {
   me:     ()                   => api.get('/api/admin/me'),
   changePassword: (currentPassword, newPassword) =>
     api.post('/api/admin/change-password', { currentPassword, newPassword }),
+
+  /* ─── Single-occupancy lock ──────────────────────────────────────────────
+     login() throws ApiError with code 'SESSION_ACTIVE' when another admin
+     holds the panel; err.data.holder names them. */
+  requestAccess: (username, password) =>
+    api.post('/api/admin/access-request', { username, password }),
+  pollAccessRequest:   (ticket) => api.get(`/api/admin/access-request/${ticket}`),
+  cancelAccessRequest: (ticket) => api.del(`/api/admin/access-request/${ticket}`),
+
+  listAccessRequests: () => api.get('/api/admin/access-requests'),
+  approveAccessRequest: (id) => api.post(`/api/admin/access-requests/${id}/approve`),
+  denyAccessRequest:    (id) => api.post(`/api/admin/access-requests/${id}/deny`),
+
+  listSessions: () => api.get('/api/admin/sessions'),
 
   listPosts: (params = {}) => {
     const qs = new URLSearchParams(

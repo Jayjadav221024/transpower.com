@@ -222,7 +222,7 @@ export default function SiteHeader() {
               style={{ position: 'relative' }}
             >
               <NavLink to="/products" className={({ isActive }) => (isActive ? 'active-pill' : 'nav-link-new')}>
-                Products <span style={{ fontSize: '0.62rem', marginLeft: '2px', verticalAlign: 'middle' }}>▼</span>
+                Products
               </NavLink>
 
               {/* Main Dropdown Menu */}
@@ -239,8 +239,7 @@ export default function SiteHeader() {
                   display: 'flex',
                   flexDirection: 'column',
                   zIndex: 10000,
-                  border: '1px solid #e2e8f0',
-                  marginTop: '0.5rem'
+                  border: '1px solid #e2e8f0'
                 }}>
                   {CATEGORIES.map(cat => (
                     <div
@@ -254,7 +253,6 @@ export default function SiteHeader() {
                         color: hoveredCategory === cat.key ? 'var(--accent-orange)' : '#1e293b',
                         cursor: 'pointer',
                         display: 'flex',
-                        justifyContent: 'space-between',
                         alignItems: 'center',
                         background: hoveredCategory === cat.key ? '#f8fafc' : 'transparent',
                         transition: 'color 0.15s, background-color 0.15s'
@@ -265,7 +263,6 @@ export default function SiteHeader() {
                       }}
                     >
                       <span>{cat.label}</span>
-                      <span style={{ fontSize: '0.7rem', color: hoveredCategory === cat.key ? 'var(--accent-orange)' : '#cbd5e1' }}>▶</span>
 
                       {/* Sub flyout menu */}
                       {hoveredCategory === cat.key && (
@@ -281,8 +278,7 @@ export default function SiteHeader() {
                           display: 'flex',
                           flexDirection: 'column',
                           zIndex: 10001,
-                          border: '1px solid #e2e8f0',
-                          marginLeft: '4px'
+                          border: '1px solid #e2e8f0'
                         }}>
                           {cat.items.map(subItem => (
                             <Link

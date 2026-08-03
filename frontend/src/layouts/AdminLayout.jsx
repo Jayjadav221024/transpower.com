@@ -1,6 +1,7 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { ToastProvider } from '../components/admin/Toast';
+import AccessRequestPrompt from '../components/admin/AccessRequestPrompt';
 import '../styles/admin.css';
 
 const NAV = [
@@ -58,6 +59,10 @@ export default function AdminLayout() {
         <main className="content">
           <Outlet />
         </main>
+
+        {/* Fixed overlay — an admin must see a join request wherever they are
+            in the panel, not only on one page. */}
+        <AccessRequestPrompt />
       </div>
     </ToastProvider>
   );

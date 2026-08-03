@@ -53,6 +53,14 @@ router.post('/admin/logout', auth.logout);
 router.get('/admin/me',      protect, auth.me);
 router.post('/admin/change-password', protect, auth.changePassword);
 
+/* Raising and polling an access request happens while the requester has no
+   session yet, so these three sit outside `protect`. The request endpoint
+   re-checks the password and shares the login throttle; polling and cancelling
+   are guarded by an unguessable single-use ticket. */
+router.post('/admin/access-request', loginLimiter, auth.requestAccess);
+router.get('/admin/access-request/:ticket', auth.pollAccessRequest);
+router.delete('/admin/access-request/:ticket', auth.cancelAccessRequest);
+
 /* ─── Admin (every route below requires a session) ───────────────────────── */
 const admin = express.Router();
 admin.use(protect);
@@ -68,6 +76,13 @@ admin.get('/inquiries', inquiry.list);
 admin.route('/inquiries/:id').patch(inquiry.setStatus).delete(inquiry.remove);
 
 admin.route('/pages/:key').put(pages.updatePage);
+
+/* Approving or denying another admin's request to join, and seeing who else
+   is currently in the panel. */
+admin.get('/access-requests', auth.listAccessRequests);
+admin.post('/access-requests/:id/approve', auth.approveAccessRequest);
+admin.post('/access-requests/:id/deny',    auth.denyAccessRequest);
+admin.get('/sessions', auth.listSessions);
 
 router.use('/admin', admin);
 

@@ -1,11 +1,22 @@
 import { createContext, useContext, useEffect, useState, useCallback } from 'react';
-import { adminApi } from '../api/client';
+import { adminApi, onUnauthorized } from '../api/client';
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [user, setUser]       = useState(null);
   const [loading, setLoading] = useState(true);
+  /* Why the session ended, so the login screen can explain rather than just
+     dumping the visitor back on a blank form. */
+  const [endedReason, setEndedReason] = useState(null);
+
+  /* A session can be revoked or time out while the admin is mid-edit. Clearing
+     the user here lets RequireAuth bounce them to the login screen on the next
+     render, wherever in the panel they happen to be. */
+  useEffect(() => onUnauthorized((code) => {
+    setUser(null);
+    setEndedReason(code);
+  }), []);
 
   /* Resume an existing session on first mount — the cookie may still be valid. */
   useEffect(() => {
@@ -21,16 +32,18 @@ export function AuthProvider({ children }) {
   const login = useCallback(async (username, password) => {
     const { user: u } = await adminApi.login(username, password);
     setUser(u);
+    setEndedReason(null);
     return u;
   }, []);
 
   const logout = useCallback(async () => {
     await adminApi.logout().catch(() => {});
     setUser(null);
+    setEndedReason(null);
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, setUser }}>
+    <AuthContext.Provider value={{ user, loading, login, logout, setUser, endedReason }}>
       {children}
     </AuthContext.Provider>
   );
