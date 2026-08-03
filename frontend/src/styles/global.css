@@ -2107,21 +2107,23 @@ input, select, textarea {
   }
 }
 
-/* Fluid heading text sizes & line-height balances */
+/* Fluid heading text sizes & line-height balances.
+   No !important here: these are page-level defaults, so component rules such as
+   .blog-card h2 (1.2rem) and .post-body h2 keep their own scale. */
 h1, .hero-left-content h1 {
-  font-size: clamp(1.75rem, 6vw, 3.4rem) !important;
-  line-height: 1.15 !important;
-  text-wrap: balance !important;
+  font-size: clamp(1.75rem, 6vw, 3.4rem);
+  line-height: 1.15;
+  text-wrap: balance;
 }
 h2, .section-header h2, .rfq-info-col h2 {
-  font-size: clamp(1.5rem, 5vw, 2.65rem) !important;
-  line-height: 1.2 !important;
-  text-wrap: balance !important;
+  font-size: clamp(1.5rem, 5vw, 2.65rem);
+  line-height: 1.2;
+  text-wrap: balance;
 }
 h3, .product-body h3, .modal-header h3 {
-  font-size: clamp(1.15rem, 3.5vw, 1.9rem) !important;
-  line-height: 1.25 !important;
-  text-wrap: balance !important;
+  font-size: clamp(1.15rem, 3.5vw, 1.9rem);
+  line-height: 1.25;
+  text-wrap: balance;
 }
 p {
   hyphens: auto;

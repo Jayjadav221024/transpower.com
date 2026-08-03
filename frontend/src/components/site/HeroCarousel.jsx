@@ -53,17 +53,22 @@ export default function HeroCarousel({ pageData }) {
     return () => clearTimeout(textTimer.current);
   }, []);
 
-  // Auto-scroll active chip into view on mobile
+  // Keep the active chip centred inside its own strip on mobile.
+  // Scroll the strip directly instead of scrollIntoView(): scrollIntoView also
+  // walks up and scrolls the window, so every 3s auto-advance would yank the
+  // page back up to the hero while the visitor is reading further down.
   useEffect(() => {
-    if (!dotsContainerRef.current) return;
-    const activeChip = dotsContainerRef.current.querySelector('.dot.active');
-    if (activeChip) {
-      activeChip.scrollIntoView({
-        behavior: 'smooth',
-        block: 'nearest',
-        inline: 'center'
-      });
-    }
+    const strip = dotsContainerRef.current;
+    if (!strip) return;
+    if (strip.scrollWidth <= strip.clientWidth) return;   // nothing to scroll
+    const activeChip = strip.querySelector('.dot.active');
+    if (!activeChip) return;
+    const stripRect = strip.getBoundingClientRect();
+    const chipRect = activeChip.getBoundingClientRect();
+    const left = strip.scrollLeft + (chipRect.left - stripRect.left)
+               - (strip.clientWidth - chipRect.width) / 2;
+    const max = strip.scrollWidth - strip.clientWidth;
+    strip.scrollTo({ left: Math.min(Math.max(0, left), max), behavior: 'smooth' });
   }, [imgIndex]);
 
   // Touch handlers for swipes
