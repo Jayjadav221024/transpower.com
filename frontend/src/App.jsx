@@ -1,9 +1,6 @@
 import { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-
 import { AuthProvider } from './context/AuthContext';
-import ScrollToTop from './components/common/ScrollToTop';
-
 import PublicLayout from './layouts/PublicLayout';
 import HomePage from './pages/HomePage';
 import AboutPage from './pages/AboutPage';
@@ -109,7 +106,6 @@ export default function App() {
 
   return (
     <AuthProvider>
-      <ScrollToTop />
       <Routes>
         {/* ── Public site ─────────────────────────────────────────────── */}
         <Route element={<PublicLayout />}>
