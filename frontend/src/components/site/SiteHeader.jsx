@@ -342,7 +342,7 @@ export default function SiteHeader() {
       {/* Floating Bottom Teaser */}
       <div className="floating-teaser-container">
         <a href="/#quote" className="floating-teaser-btn">
-          Join us for free world <span className="arrow">→</span>
+          Get a Free Quote <span className="arrow">→</span>
         </a>
       </div>
     </header>

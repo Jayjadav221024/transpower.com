@@ -1712,3 +1712,173 @@ img { content-visibility: auto; max-width: 100%; height: auto; }
     margin-top: 0.1rem;
   }
 }
+
+/* ==========================================================================
+   Engineering Tool & Responsive Comparison Table Additions
+   ========================================================================== */
+
+/* Header Scroll Margin Offset */
+section[id] {
+  scroll-margin-top: 100px;
+}
+
+/* Site Header z-index Fix */
+.site-header-new {
+  z-index: 1000 !important;
+}
+
+/* Load Calculator Validation and Badges */
+.input-error {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15) !important;
+}
+
+.calc-error-text {
+  color: #ef4444;
+  font-size: 0.78rem;
+  font-weight: 600;
+  margin-top: 0.25rem;
+  text-align: left;
+}
+
+.calc-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #ffffff;
+}
+
+.badge-pass {
+  background: #10b981;
+}
+
+.badge-review {
+  background: #f59e0b;
+}
+
+.badge-fail {
+  background: #ef4444;
+}
+
+.calc-disclaimer {
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--text-muted);
+  margin-top: 1.5rem;
+  padding: 0.8rem 1.2rem;
+  background: var(--bg-secondary);
+  border-left: 3px solid var(--border-strong);
+  border-radius: 4px;
+  text-align: left;
+}
+
+.calc-disclaimer a {
+  color: var(--accent-orange);
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+/* Desktop Comparison Table min-width to force scrollbar */
+.comparison-table-desktop {
+  width: 100%;
+  min-width: 850px;
+}
+
+.table-responsive {
+  position: relative;
+  overflow-x: auto;
+  border-radius: var(--radius-md);
+}
+
+/* Scroll Hint for horizontal scroll */
+.table-responsive::after {
+  content: '';
+  position: absolute;
+  top: 0; right: 0; bottom: 0;
+  width: 15px;
+  background: linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(14,26,43,0.04) 100%);
+  pointer-events: none;
+}
+
+/* Mobile Stacked Comparison Cards */
+.comparison-cards-mobile {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .comparison-table-desktop {
+    display: none !important;
+  }
+  
+  .comparison-cards-mobile {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .comparison-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-card);
+  }
+  
+  .comparison-card h4 {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    color: var(--accent-orange);
+    margin-bottom: 1rem;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 0.4rem;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+  
+  .card-specs {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+  
+  .card-spec-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    border-bottom: 1px dashed var(--border-color);
+    padding-bottom: 0.6rem;
+  }
+  
+  .card-spec-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+  
+  .spec-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    letter-spacing: 0.03em;
+  }
+  
+  .spec-value {
+    font-size: 0.9rem;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+  
+  .spec-value.check-green {
+    color: #0e7c4a;
+  }
+  
+  .spec-value.cross-red {
+    color: #c0342b;
+  }
+}

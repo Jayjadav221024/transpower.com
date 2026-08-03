@@ -3,7 +3,7 @@ import { COMPARISON_ROWS } from '../../data/products';
 const toneClass = { good: 'check-green', bad: 'cross-red', neutral: undefined };
 
 const Cell = ({ cell }) => (
-  <td><span className={toneClass[cell.tone]}>{cell.text}</span></td>
+  <td><span className={toneClass[cell.tone] || ''}>{cell.text}</span></td>
 );
 
 export default function ComparisonTable() {
@@ -13,10 +13,11 @@ export default function ComparisonTable() {
         <div className="section-header">
           <div className="badge-tag">Technical Advantage</div>
           <h2>Why Choose <span className="text-orange">FRP vs. Steel</span></h2>
-          <p>Discover why industrial plants globally are replacing traditional steel with Transpower FRP composites.</p>
+          <p>Trusted across Indian process, power and chemical plants — 60+ years of Electro-Mechanical experience, 8000+ customers, 99% retention.</p>
         </div>
 
-        <div className="table-responsive">
+        {/* Desktop View Table */}
+        <div className="table-responsive comparison-table-desktop">
           <table className="comparison-table">
             <thead>
               <tr>
@@ -29,7 +30,7 @@ export default function ComparisonTable() {
             <tbody>
               {COMPARISON_ROWS.map((row) => (
                 <tr key={row.feature}>
-                  <td>{row.feature}</td>
+                  <td style={{ fontWeight: '700' }}>{row.feature}</td>
                   <Cell cell={row.frp} />
                   <Cell cell={row.galv} />
                   <Cell cell={row.ss} />
@@ -37,6 +38,48 @@ export default function ComparisonTable() {
               ))}
             </tbody>
           </table>
+        </div>
+
+        {/* Mobile View Stacked Cards */}
+        <div className="comparison-cards-mobile">
+          {/* FRP Card */}
+          <div className="comparison-card">
+            <h4>Transpower FRP Composites</h4>
+            <div className="card-specs">
+              {COMPARISON_ROWS.map((row) => (
+                <div key={row.feature} className="card-spec-item">
+                  <span className="spec-label">{row.feature}</span>
+                  <span className={`spec-value ${toneClass[row.frp.tone] || ''}`}>{row.frp.text}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Galvanized Steel Card */}
+          <div className="comparison-card">
+            <h4>Galvanized Steel</h4>
+            <div className="card-specs">
+              {COMPARISON_ROWS.map((row) => (
+                <div key={row.feature} className="card-spec-item">
+                  <span className="spec-label">{row.feature}</span>
+                  <span className={`spec-value ${toneClass[row.galv.tone] || ''}`}>{row.galv.text}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Stainless Steel Card */}
+          <div className="comparison-card">
+            <h4>Stainless Steel</h4>
+            <div className="card-specs">
+              {COMPARISON_ROWS.map((row) => (
+                <div key={row.feature} className="card-spec-item">
+                  <span className="spec-label">{row.feature}</span>
+                  <span className={`spec-value ${toneClass[row.ss.tone] || ''}`}>{row.ss.text}</span>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </section>
