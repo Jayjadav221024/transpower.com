@@ -353,9 +353,6 @@ img { content-visibility: auto; max-width: 100%; height: auto; }
   .floating-teaser-container {
     display: flex !important;
   }
-}
-
-@media (min-width: 1280px) {
   .desktop-nav, .desktop-actions {
     display: flex !important;
   }
@@ -2088,16 +2085,18 @@ input, select, textarea {
   justify-content: center;
 }
 
-.menu-toggle-btn {
-  width: 44px !important;
-  height: 44px !important;
-  padding: 13px 10px !important;
-  display: flex !important;
-  flex-direction: column;
-  justify-content: space-between;
-  background: transparent;
-  border: none;
-  cursor: pointer;
+@media (max-width: 1023px) {
+  .menu-toggle-btn {
+    width: 44px !important;
+    height: 44px !important;
+    padding: 13px 10px !important;
+    display: flex !important;
+    flex-direction: column;
+    justify-content: space-between;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+  }
 }
 
 .floating-teaser-btn {
