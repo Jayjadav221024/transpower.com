@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { adminApi } from '../../api/client';
+import { adminApi, publicApi } from '../../api/client';
 
 // Generate a deterministic and clean tag-based unique selector path
 function getUniqueSelector(el) {
@@ -68,7 +68,7 @@ export default function PagesPage() {
     setActiveSelector(null);
     setActiveValue('');
     try {
-      const res = await fetch(`/api/pages/${activeTab}`).then(r => r.json());
+      const res = await publicApi.getPageContent(activeTab);
       const pageData = res.content || {};
       
       if (!pageData.accentColor) pageData.accentColor = '#d9653b';
