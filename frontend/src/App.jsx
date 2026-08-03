@@ -28,6 +28,7 @@ const AdminLayout    = lazy(() => import('./layouts/AdminLayout'));
 const RequireAuth    = lazy(() => import('./components/admin/RequireAuth'));
 const LoginPage      = lazy(() => import('./pages/admin/LoginPage'));
 const PostsPage      = lazy(() => import('./pages/admin/PostsPage'));
+const AnalyticsPage  = lazy(() => import('./pages/admin/AnalyticsPage'));
 const PostEditorPage = lazy(() => import('./pages/admin/PostEditorPage'));
 const MediaPage      = lazy(() => import('./pages/admin/MediaPage'));
 const InquiriesPage  = lazy(() => import('./pages/admin/InquiriesPage'));
@@ -200,6 +201,7 @@ export default function App() {
             <Route path="media" element={<MediaPage />} />
             <Route path="inquiries" element={<InquiriesPage />} />
             <Route path="pages" element={<PagesPage />} />
+            <Route path="analytics" element={<AnalyticsPage />} />
             <Route path="settings" element={<SettingsPage />} />
           </Route>
         </Routes>

@@ -18,6 +18,7 @@
     "backfill-covers": "node src/scripts/backfillCovers.js"
   },
   "dependencies": {
+    "@google-analytics/data": "^6.1.0",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",

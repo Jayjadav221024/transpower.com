@@ -107,6 +107,8 @@ admin.post('/access-requests/:id/approve', auth.approveAccessRequest);
 admin.post('/access-requests/:id/deny',    auth.denyAccessRequest);
 admin.get('/sessions', auth.listSessions);
 
+admin.use('/analytics', require('./analytics.routes'));
+
 router.use('/admin', admin);
 
 module.exports = router;

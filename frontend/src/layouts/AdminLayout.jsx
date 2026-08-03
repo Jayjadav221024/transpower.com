@@ -9,6 +9,7 @@ const NAV = [
   { to: '/admin/media',     label: 'Image Library' },
   { to: '/admin/inquiries', label: 'RFQ Inquiries' },
   { to: '/admin/pages',     label: 'Page Content Manager' },
+  { to: '/admin/analytics', label: 'Analytics' },
   { to: '/admin/settings',  label: 'Settings' },
 ];
 

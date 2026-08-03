@@ -191,4 +191,10 @@ export const adminApi = {
   setInquiryStatus: (id, status) => api.patch(`/api/admin/inquiries/${id}`, { status }),
   deleteInquiry:  (id)     => api.del(`/api/admin/inquiries/${id}`),
   updatePageContent: (key, content) => api.put(`/api/admin/pages/${key}`, { content }),
+
+  getAnalyticsRealtime: () => api.get('/api/admin/analytics/realtime'),
+  getAnalyticsHistorical: (params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    return api.get(`/api/admin/analytics/historical?${qs}`);
+  },
 };
