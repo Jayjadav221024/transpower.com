@@ -654,44 +654,6 @@ img { max-width: 100%; height: auto; }
   transform: translateY(-1px);
 }
 
-/* Floating Bottom Teaser */
-.floating-teaser-container {
-  display: flex;
-  justify-content: center;
-  position: absolute;
-  bottom: -40px;
-  left: 0;
-  right: 0;
-  pointer-events: none;
-}
-
-.floating-teaser-btn {
-  pointer-events: auto;
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: var(--text-main);
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(10px);
-  padding: 0.45rem 1.2rem;
-  border-radius: 9999px;
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  transition: all 0.2s ease-in-out;
-}
-
-.floating-teaser-btn:hover {
-  background: #ffffff;
-  transform: translateY(2px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
-}
-
-.floating-teaser-btn .arrow {
-  transition: transform 0.2s ease;
-}
-
 /* Media Queries for responsive navbar */
 
 /* Narrow laptops: tighten the pills a step before collapsing to the hamburger,
@@ -703,17 +665,11 @@ img { max-width: 100%; height: auto; }
 .menu-toggle-btn {
   display: flex !important;
 }
-.floating-teaser-container {
-  display: none !important;
-}
 .header-container-new {
   padding: 0 1rem;
 }
 
 @media (min-width: 1024px) {
-  .floating-teaser-container {
-    display: flex !important;
-  }
   .desktop-nav, .desktop-actions {
     display: flex !important;
   }
@@ -874,10 +830,6 @@ img { max-width: 100%; height: auto; }
 .mobile-btn:hover {
   background: var(--accent-orange-deep);
   transform: translateY(-1px);
-}
-
-.floating-teaser-btn:hover .arrow {
-  transform: translateX(3px);
 }
 
 .btn {
@@ -2470,15 +2422,6 @@ input, select, textarea {
   }
 }
 
-.floating-teaser-btn {
-  min-height: 44px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-
-
 /* Header Compression below 768px */
 @media (max-width: 767px) {
   .header-container-new {
@@ -2742,7 +2685,6 @@ main > section:not([id]):not(:first-of-type) {
    past them does not force a repaint of everything underneath. */
 .sticky-actions-container,
 .vertical-brochure-tab,
-.floating-teaser-container,
 .hero-product-image {
   will-change: transform, opacity;
   transform: translateZ(0);

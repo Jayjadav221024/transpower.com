@@ -429,12 +429,6 @@ export default function SiteHeader() {
         </ul>
       </div>
 
-      {/* Floating Bottom Teaser */}
-      <div className="floating-teaser-container">
-        <a href="/#quote" className="floating-teaser-btn" onClick={(e) => goToSection(e, 'quote')}>
-          Get a Free Quote <span className="arrow">→</span>
-        </a>
-      </div>
     </header>
   );
 }
