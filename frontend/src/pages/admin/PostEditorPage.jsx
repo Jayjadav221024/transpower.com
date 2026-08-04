@@ -7,6 +7,7 @@ import RichTextEditor from '../../components/admin/RichTextEditor';
 import { escapeAttr } from '../../utils/contentHtml';
 import { formatDate } from '../../utils/format';
 import { slugify } from '../../utils/slugify';
+import { TrendingUp } from 'lucide-react';
 
 const BLANK = {
   title: '', excerpt: '', content: '', tags: '', slug: '', coverImage: '', coverAlt: '',
