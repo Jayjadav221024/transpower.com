@@ -49,6 +49,15 @@ export default defineConfig({
           if (/[\\/]node_modules[\\/](react|react-dom|scheduler)[\\/]/.test(id)) return 'react-vendor';
           if (/[\\/]node_modules[\\/]react-router/.test(id)) return 'router-vendor';
           if (/[\\/]node_modules[\\/]lucide-react[\\/]/.test(id)) return 'icons-vendor';
+          /* chart.js is imported by one admin page and weighs as much as React
+             itself. Inside the catch-all "vendor" chunk it was downloaded by
+             every visitor to the home page to draw nothing. Named separately,
+             it is fetched only when the analytics route loads.
+
+             Same reasoning for radix — it reaches the browser through a couple
+             of UI primitives, not the public pages. */
+          if (/[\\/]node_modules[\\/]chart\.js[\\/]/.test(id)) return 'charts-vendor';
+          if (/[\\/]node_modules[\\/]@radix-ui[\\/]/.test(id)) return 'radix-vendor';
           return 'vendor';
         },
         /* Content-hashed names, grouped by type, so a CDN can cache them

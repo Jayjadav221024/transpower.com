@@ -32,6 +32,18 @@ const LISTS = [
 /* The full heading range. H1 is offered even though the article title already
    renders as the page's h1 — imported posts use it inside the body and editing
    one should not silently rewrite the tag. */
+/* Text sizes for the selection, as opposed to the block-level headings below.
+   Given in rem so they scale with the reader's own base font size instead of
+   pinning a pixel value that overrides their browser settings. */
+const FONT_SIZES = [
+  { label: 'Small',    value: '0.875rem' },
+  { label: 'Normal',   value: '1rem' },
+  { label: 'Medium',   value: '1.15rem' },
+  { label: 'Large',    value: '1.35rem' },
+  { label: 'X-Large',  value: '1.6rem' },
+  { label: 'XX-Large', value: '2rem' },
+];
+
 const BLOCKS = [
   { tag: 'p',          label: 'Paragraph' },
   { tag: 'h1',         label: 'Heading 1' },
@@ -176,6 +188,63 @@ const RichTextEditor = forwardRef(function RichTextEditor(
     emit();
   }
 
+  /* Sets the size of the selected text.
+   *
+   * execCommand('fontSize') accepts only the legacy scale 1–7 and writes a
+   * <font size> tag, which predates CSS and cannot express "1.35rem". So it is
+   * run with a sentinel value purely to mark the selection, and the tags it
+   * produced are swapped for spans carrying the real size — long-standing
+   * practice for getting an arbitrary size out of this API. */
+  function applyFontSize(size) {
+    const box = focusBox();
+    if (!box) return;
+
+    const sel = window.getSelection();
+    if (!sel || sel.isCollapsed) {
+      window.alert('Select the text you want to resize first.');
+      return;
+    }
+
+    /* Imported WordPress markup can legitimately contain <font size="7">.
+       Noting what was already there keeps this from rewriting it. */
+    const preexisting = new Set(box.querySelectorAll('font[size="7"]'));
+
+    document.execCommand('fontSize', false, '7');
+
+    box.querySelectorAll('font[size="7"]').forEach((node) => {
+      if (preexisting.has(node)) return;
+      const span = document.createElement('span');
+      span.style.fontSize = size;
+      while (node.firstChild) span.appendChild(node.firstChild);
+      node.replaceWith(span);
+    });
+
+    emit();
+  }
+
+  /* Removes sizing from everything the selection touches. Whole elements are
+     unwrapped rather than split at the selection edges — predictable, and what
+     a "clear" control is expected to do. */
+  function clearFontSize() {
+    const box = boxRef.current;
+    const sel = window.getSelection();
+    if (!box || !sel?.rangeCount) return;
+
+    const range = sel.getRangeAt(0);
+    box.querySelectorAll('span[style*="font-size"], font[size]').forEach((node) => {
+      if (!range.intersectsNode(node)) return;
+      const parent = node.parentNode;
+      if (!parent) return;
+      while (node.firstChild) parent.insertBefore(node.firstChild, node);
+      parent.removeChild(node);
+    });
+
+    // Rejoins the text nodes left adjacent by unwrapping, so the saved markup
+    // does not accumulate fragments with every edit.
+    box.normalize();
+    emit();
+  }
+
   function addLink() {
     const sel = window.getSelection();
     if (!sel || sel.isCollapsed) {
@@ -257,6 +326,22 @@ const RichTextEditor = forwardRef(function RichTextEditor(
             >
               <option value="" disabled>Format</option>
               {BLOCKS.map(({ tag, label }) => <option key={tag} value={tag}>{label}</option>)}
+            </select>
+
+            <select
+              className="rte-select" title="Size of the selected text"
+              onMouseDown={(e) => e.stopPropagation()}
+              onChange={(e) => {
+                const picked = e.target.value;
+                if (picked === '__clear') clearFontSize();
+                else applyFontSize(picked);
+                e.target.selectedIndex = 0;
+              }}
+              defaultValue=""
+            >
+              <option value="" disabled>Size</option>
+              {FONT_SIZES.map(({ label, value }) => <option key={value} value={value}>{label}</option>)}
+              <option value="__clear">Clear size</option>
             </select>
 
             <span className="rte-sep" />

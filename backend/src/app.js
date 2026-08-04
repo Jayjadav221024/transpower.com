@@ -86,10 +86,101 @@ app.use(
 app.use('/api', routes);
 
 /* ─── Built React app (production) ───────────────────────────────────────── */
+
+/* Content types for the pre-compressed files below. Needed because the file on
+   disk is "index-abc123.js.br", and left to itself the static handler would
+   label that a binary download. */
+const TYPE_BY_EXT = {
+  '.js':   'text/javascript; charset=utf-8',
+  '.css':  'text/css; charset=utf-8',
+  '.html': 'text/html; charset=utf-8',
+  '.svg':  'image/svg+xml',
+  '.json': 'application/json; charset=utf-8',
+  '.txt':  'text/plain; charset=utf-8',
+  '.xml':  'application/xml; charset=utf-8',
+};
+
+/**
+ * Serves the .br / .gz written at build time by frontend/scripts/precompress.mjs.
+ *
+ * A first visit is a few hundred kB of JS and CSS; compressed it is roughly a
+ * quarter of that, which on a phone connection is most of the wait. Doing it at
+ * build time rather than per request costs no CPU here at all.
+ *
+ * Falls straight through when the file does not exist — which is also what
+ * makes it safe in front of the SPA fallback below. Rewriting the URL to a
+ * missing .br would otherwise have the catch-all answer a script request with
+ * index.html, and the page would break with a syntax error rather than a 404.
+ */
+function servePreCompressed(req, res, next) {
+  if (req.method !== 'GET' && req.method !== 'HEAD') return next();
+
+  const ext = path.extname(req.path).toLowerCase();
+  if (!TYPE_BY_EXT[ext]) return next();
+
+  const accepted = String(req.headers['accept-encoding'] || '');
+  const encoding = /\bbr\b/.test(accepted) ? 'br' : /\bgzip\b/.test(accepted) ? 'gzip' : null;
+  if (!encoding) return next();
+
+  let decoded;
+  try {
+    decoded = decodeURIComponent(req.path);
+  } catch {
+    return next();   // malformed escape — let the normal handler deal with it
+  }
+
+  const suffix = encoding === 'br' ? '.br' : '.gz';
+  const candidate = path.resolve(CLIENT_DIST, `.${decoded}${suffix}`);
+
+  // Confined to the build directory: a traversal attempt resolves outside it.
+  if (!candidate.startsWith(path.resolve(CLIENT_DIST) + path.sep)) return next();
+  if (!fs.existsSync(candidate)) return next();
+
+  /* Set before the rewrite: the static handler only reaches for its own mime
+     lookup when Content-Type has not been decided already. */
+  res.setHeader('Content-Type', TYPE_BY_EXT[ext]);
+  res.setHeader('Content-Encoding', encoding);
+  // Caches must key on the encoding, or a br body reaches a client wanting gzip.
+  res.setHeader('Vary', 'Accept-Encoding');
+
+  req.url = `${decoded}${suffix}`;
+  return next();
+}
+
+/* Vite writes content-hashed names, so a change to a file changes its URL and
+   the old one can be kept for as long as we like. Two exceptions: assets/images
+   comes from public/ with stable names and can be replaced in place, and
+   index.html must be re-read or a returning visitor keeps loading last week's
+   asset hashes forever. */
+function cacheHeaders(res, filePath) {
+  const relative = path.relative(path.resolve(CLIENT_DIST), filePath).replace(/\\/g, '/');
+
+  if (relative.startsWith('assets/images/')) {
+    res.setHeader('Cache-Control', 'public, max-age=86400');       // a day
+  } else if (relative.startsWith('assets/')) {
+    res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+  } else {
+    res.setHeader('Cache-Control', 'no-cache');
+  }
+}
+
 if (fs.existsSync(CLIENT_DIST)) {
-  app.use(express.static(CLIENT_DIST, { index: false }));
+  app.use(servePreCompressed);
+  app.use(express.static(CLIENT_DIST, { index: false, setHeaders: cacheHeaders }));
   app.get('*', (req, res, next) => {
     if (req.path.startsWith('/api/') || req.path.startsWith('/uploads/')) return next();
+
+    /* A path with a file extension is asking for a file, not an app route. Left
+       to the line below, a missing one is answered with index.html under a 200,
+       and the browser reports "Unexpected token '<'" while parsing HTML as
+       JavaScript — which is what a tab left open across a deploy does when it
+       requests an asset hash that no longer exists. A plain 404 says what
+       actually happened. No route in this app contains a dot. */
+    const ext = path.extname(req.path);
+    if (ext && ext !== '.html') return next();
+
+    // Revalidated every time, so a deploy is picked up on the next navigation.
+    res.setHeader('Cache-Control', 'no-cache');
     res.sendFile(path.join(CLIENT_DIST, 'index.html'));
   });
 }
