@@ -2,7 +2,12 @@ const PageContent = require('../models/PageContent');
 
 const DEFAULTS = {
   homepage: {
-    heroTitle: 'Pioneering Fiberglass Composites & Transmission Solutions',
+    /* Rendered after a hard-coded "FRP " in the hero, so it reads
+       "FRP Composites & Transmission Solutions" and fits two lines at every
+       width. The old value ("Pioneering Fiberglass Composites & Transmission
+       Solutions") ran to four, and repeated the "Fiberglass" that the F in FRP
+       already stands for. */
+    heroTitle: 'Composites & Transmission Solutions',
     heroSubtitle: 'High-performance industrial engineering for power systems, chemical plants, and heavy manufacturers globally.',
     specTitle: 'Technical Specifications',
     specBullets: [

@@ -129,8 +129,17 @@ export default function HeroCarousel({ pageData }) {
               meant the control a visitor was about to tap went invisible. */}
           <div className={`hero-copy${fading ? ' is-fading' : ''}`}>
             <div className="badge-tag">{product.badge}</div>
+            {/* `display: inline` overrides the shimmer's own inline-block.
+                An inline-block is sized shrink-to-fit against the *containing
+                block*, not the space left on the current line — so as soon as
+                the title was long enough to exceed the column, the shimmer
+                claimed the full width and shoved the "FRP" prefix onto a line
+                of its own. Inline lets the two flow as one sentence.
+                The prefix has to stay outside this element: the admin inline
+                editor writes back whatever is inside it, keyed on
+                data-edit-key, and would save the "FRP " along with the title. */}
             <h1>
-              FRP <GradientShimmer gradient="orange" duration={2} spread={4} baseColor="var(--text-main)" data-edit-page="homepage" data-edit-key="heroTitle">{displayTitle}</GradientShimmer>
+              FRP <GradientShimmer gradient="orange" duration={2} spread={4} baseColor="var(--text-main)" style={{ display: 'inline' }} data-edit-page="homepage" data-edit-key="heroTitle">{displayTitle}</GradientShimmer>
             </h1>
             <p data-edit-page="homepage" data-edit-key="heroSubtitle">{displayDesc}</p>
 

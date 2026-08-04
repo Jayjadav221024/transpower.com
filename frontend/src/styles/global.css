@@ -2611,65 +2611,62 @@ p {
   display: none;
 }
 
+/* Phones get the same dot indicator the desktop uses, not a strip of labelled
+   chips. The chip strip could never fit four product names on a phone, so it
+   always rendered clipped at both edges and had to be scrolled to be read —
+   and the active chip was broken outright: `.dot.active { width: 48px }` up at
+   line 1091 is specificity (0,2,0) with no media query, so it beat the chip
+   rule's `.dot { width: auto }` at (0,1,0). The active chip was pinned to a
+   48px square while its label spilled out over its neighbour.
+
+   The dot is drawn on ::after so the button itself can stay a 44px touch
+   target — the same construction .testimonial-dot already uses. Each button
+   keeps its aria-label ("Show FRP Cable Trays"), so hiding the text costs
+   nothing for screen readers. */
 @media (max-width: 767px) {
   .carousel-dots {
-    /* Bleeds to both screen edges and scrolls inside itself.
-       This was width:100vw with margin-left:-1.5rem. On mobile the parent
-       switches to align-items:center, so a 100vw child was centred *and then*
-       pulled left — it ended up hanging about 2.25rem off one side and 0.75rem
-       off the other. .hero-section clips its overflow, so the chips in that
-       margin were cut off with no way to scroll them into view.
-
-       align-self:stretch opts this one item out of the parent's centring, and
-       the gutter is cancelled with a symmetric negative margin rather than a
-       viewport unit, so it lands flush at every width. */
-    align-self: stretch;
-    width: auto;
-    max-width: none;
-    margin-inline: calc(var(--gutter) * -1);
-    padding-inline: var(--gutter);
-    overflow-x: auto;
-    overscroll-behavior-x: contain;
-    /* proximity, not mandatory: the component scrolls the active chip to the
-       centre itself, and mandatory snapping fought that programmatic scroll,
-       leaving chips parked half-clipped. */
-    scroll-snap-type: x proximity;
-    scroll-padding-inline: var(--gutter);
-    -webkit-overflow-scrolling: touch;
-    padding-block: 0 4px;
-    scrollbar-width: none;
+    align-self: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 100%;
+    margin: 0.5rem 0 0;
+    padding: 0;
+    gap: 0.15rem;
+    overflow: visible;
   }
 
-  .carousel-dots::-webkit-scrollbar {
-    display: none;
-  }
-
-  .dot {
-    width: auto;
-    height: 48px;
-    border-radius: var(--radius-pill);
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
-    padding: 0 1.2rem;
-    display: inline-flex;
+  .dot,
+  .dot.active {
+    display: flex;
     align-items: center;
     justify-content: center;
-    white-space: nowrap;
-    scroll-snap-align: start;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    transform: none;
     flex-shrink: 0;
   }
-  
-  .dot.active {
-    background: var(--accent-orange);
-    color: #ffffff;
-    border-color: var(--accent-orange);
-    transform: none;
+
+  .dot::after {
+    content: '';
+    width: 9px;
+    height: 9px;
+    border-radius: var(--radius-pill);
+    background: var(--border-strong);
+    transition: width 0.25s ease, background 0.25s ease;
   }
-  
+
+  /* The active dot stretches into a bar, matching the desktop indicator. */
+  .dot.active::after {
+    width: 26px;
+    background: var(--accent-orange);
+  }
+
   .dot-text {
-    display: inline;
-    font-size: 0.85rem;
-    font-weight: 700;
+    display: none;
   }
 }
 
