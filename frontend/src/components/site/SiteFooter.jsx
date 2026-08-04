@@ -52,7 +52,7 @@ export default function SiteFooter() {
           <div className="footer-brand-col">
             <h4 style={{ color: '#fff', fontSize: '0.9rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '1.2rem' }}>ABOUT US</h4>
             <p className="footer-description" style={{ fontSize: '0.85rem', lineHeight: '1.6', color: '#cbd5e1' }}>
-              "Transpower" is a Globally Leading Group and is amongst the few leading names in Electro-Mechanical Industry. With a presence of more than 7 decades, Transpower has achieved a consistent growth and a reputed clientele. The constant zest to learn, lead and innovate has earned the company a strong position in the Electro-Mechanical Industry.
+              "Transpower" is a Globally Leading Group and is amongst the few leading names in the Electro-Mechanical Industry. With a presence of over six decades, Transpower has achieved a consistent growth and a reputed clientele. The constant zest to learn, lead and innovate has earned the company a strong position in the Electro-Mechanical Industry.
             </p>
           </div>
 
@@ -61,12 +61,12 @@ export default function SiteFooter() {
             <h4 style={{ color: '#fff', fontSize: '0.9rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '1.2rem' }}>CONTACT US</h4>
             <div className="footer-contact-details-list" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: '0.85rem', color: '#cbd5e1' }}>
               <div>
-                <strong>Phone:</strong> <span style={{ marginLeft: '0.5rem' }}>+91 98255 07517 / 37</span>
+                <strong>Phone:</strong> <span style={{ marginLeft: '0.5rem' }}>+91 98255 07527 / 17 / +91 99099 57390</span>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column' }}>
                 <strong>Email:</strong>
                 <span style={{ paddingLeft: '0.5rem', fontSize: '0.82rem' }}>baroda@transpower.net.in</span>
-                <span style={{ paddingLeft: '0.5rem', fontSize: '0.82rem' }}>sales@transpower.com</span>
+                <span style={{ paddingLeft: '0.5rem', fontSize: '0.82rem' }}>sales@transpower.net.in</span>
                 <span style={{ paddingLeft: '0.5rem', fontSize: '0.82rem' }}>frp@transpower.net.in</span>
               </div>
               <div>
@@ -175,6 +175,7 @@ export default function SiteFooter() {
           <div className="footer-bottom-links">
             <Link to="/blog">Blog</Link>
             <Link to="/products">Products</Link>
+            <Link to="/our-teams">Our Teams</Link>
             <Link to="/privacy-policy">Privacy Policy</Link>
             <Link to="/terms">Terms of Use</Link>
           </div>

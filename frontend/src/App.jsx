@@ -24,6 +24,7 @@ const NotFoundPage  = lazy(() => import('./pages/NotFoundPage'));
 const ContactPage   = lazy(() => import('./pages/ContactPage'));
 const PrivacyPolicyPage = lazy(() => import('./pages/PrivacyPolicyPage'));
 const TermsPage     = lazy(() => import('./pages/TermsPage'));
+const OurTeamsPage   = lazy(() => import('./pages/OurTeamsPage'));
 
 /* The admin panel is never touched by public traffic — keep all of it out of
    the visitor's download. */
@@ -184,6 +185,8 @@ export default function App() {
             <Route path="/locations" element={<LocationsPage />} />
             <Route path="/locations/:citySlug" element={<CityPage />} />
             <Route path="/contact" element={<ContactPage />} />
+            <Route path="/our-teams" element={<OurTeamsPage />} />
+            <Route path="/our-team" element={<Navigate to="/our-teams" replace />} />
             <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
             <Route path="/terms" element={<TermsPage />} />
             <Route path="/feature-demo" element={<FeatureDemoPage />} />

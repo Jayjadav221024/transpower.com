@@ -6,7 +6,7 @@ import { SITE_NAME, absoluteUrl } from '../config/site';
 import { GROUP_OFFICES } from '../data/company';
 
 export default function LocationsPage() {
-  const title = 'Where We Supply - Transpower Technologies Pvt. Ltd.';
+  const title = 'Where We Supply';
   const description = 'Transpower Technologies Pvt. Ltd. supplies high-performance FRP molded gratings, cable trays, industrial gearboxes, and electrical switchgears through our offices in Vadodara, Ahmedabad, and Ankleshwar.';
 
   const jsonLd = [

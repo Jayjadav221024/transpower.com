@@ -17,8 +17,8 @@ const TIMELINE = [
 ];
 
 const DEFAULT_ABOUT = {
-  aboutText: 'Transpower is a globally leading group and one of the prominent names in Electro-Mechanical Industry. With over six decades of presence, Transpower has achieved consistent growth and built a reputable clientele. The company\'s unwavering commitment to learning, leadership, and innovation has secured its strong position in the Electro-Mechanical industry.',
-  phone: '+91 98255 07517 / 37',
+  aboutText: 'Transpower is a globally leading group and one of the prominent names in the Electro-Mechanical Industry. With over six decades of presence, Transpower has achieved consistent growth and built a reputable clientele. The company\'s unwavering commitment to learning, leadership, and innovation has secured its strong position in the Electro-Mechanical industry. We supply standard and certified switchgears, induction motors, and composite materials from our Vadodara Head Office, servicing industrial plants across chemical, marine, and power distribution projects.',
+  phone: '+91 98255 07527',
   emails: [
     'baroda@transpower.net.in',
     'sales@transpower.net.in',
@@ -60,7 +60,7 @@ export default function AboutPage() {
   return (
     <>
       <SEO 
-        title="About Us | Transpower Technologies" 
+        title="About Us" 
         description="Transpower is a globally leading group and one of the prominent names in Electro-Mechanical Industry with a presence of over six decades." 
         keywords="about Transpower, electro-mechanical group, FRP composites, Hemant Patel director, Kiran Parekh GM, Siemens Champions Club"
       />

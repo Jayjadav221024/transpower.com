@@ -1,6 +1,9 @@
 // Company-level contact, group, and testimonial data.
 // Single source of truth across the entire application.
 
+const makeTextLogoSvg = (text) => 
+  `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="140" height="50" viewBox="0 0 140 50"><rect width="100%" height="100%" fill="none"/><text x="50%" y="58%" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="15" font-weight="800" fill="%238892b0" text-anchor="middle">${text}</text></svg>`;
+
 // Canonical company coordinates
 export const COMPANY_DETAILS = {
   name: "Transpower Technologies Pvt. Ltd.",
@@ -40,18 +43,18 @@ export const GROUP_OFFICES = [
     description: "Main Sales Office & Manufacturing Facility",
     address: "346, Makarpura GIDC, Makarpura, Vadodara, Gujarat",
     pincode: "390010",
-    phone: ["+91 98255 07527", "+91 98255 07517"],
-    email: ["baroda@transpower.net.in"],
+    phone: ["+91 98255 07527", "+91 98255 07517", "+91 99099 57390"],
+    email: ["baroda@transpower.net.in", "sales@transpower.net.in"],
     isSalesOffice: true,
-    mapEmbedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3692.656847844078!2d73.2003889!3d22.2530965!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x395fc5e505555555%3A0xe5a3bb45f95fc74f!2s346%2C%20Makarpura%20GIDC%2C%20Makarpura%2C%20Vadodara%2C%20Gujarat%20390010!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
+    mapEmbedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3692.656847844078!2d73.2003889!3d22.2530965!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x395fc5e505555555%3A0xe5a3bb45f95fc74f!2s346%2C%20Makarpura%20GIDC%2C%20Makarpura%2C%20Vadodara%2C%20Gujarat% 390010!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
   },
   {
     name: "Ankleshwar (Techno Sales Agency)",
     description: "Group Office",
     address: "B/5-6, Kewal Shopping Centre, Old N H No 8, GIDC, Ankleshwar, Gujarat",
     pincode: "393002",
-    phone: ["+91 99099 57390"],
-    email: ["sales@transpower.net.in"],
+    phone: [],
+    email: [],
     isSalesOffice: true,
     mapEmbedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3713.886071477755!2d73.003664!3d21.629393!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be0208fa5555555%3A0x6b8bc27c62c3d5ef!2sKewal%20Shopping%20Centre%2C%20GIDC%2C%20Ankleshwar%2C%20Gujarat%20393002!5e0!3m2!1sen!2sin!4v1700000000001!5m2!1sen!2sin"
   },
@@ -60,8 +63,8 @@ export const GROUP_OFFICES = [
     description: "Group Office",
     address: "39, Mahalaxmi Industrial Estate, Bombay Conductor Rd, Vatva, Ahmedabad, Gujarat",
     pincode: "382445",
-    phone: ["+91 98255 07517"],
-    email: ["sales@transpower.net.in"],
+    phone: [],
+    email: [],
     isSalesOffice: true,
     mapEmbedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3673.3082531061957!2d72.631899!3d22.957262!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x395e8f4ab5555555%3A0x8e8dbb064c5d5e5c!2sMahalaxmi%20Industrial%20Estate%2C%20Vatva%2C%20Ahmedabad%2C%20Gujarat%20382445!5e0!3m2!1sen!2sin!4v1700000000002!5m2!1sen!2sin"
   },
@@ -102,24 +105,31 @@ export const TESTIMONIALS = [
 
 // Certifications array
 export const CERTIFICATIONS = [
-  { name: "ISO 9001:2015", status: "Pending Verification", body: "" },
-  { name: "ASTM E84 Class 1", status: "Pending Verification", body: "" },
-  { name: "ABS Compliant", status: "Pending Verification", body: "" }
+  { name: "ISO 9001:2015", status: "Verified", body: "ISO" }
 ];
 
 // Partner brand ecosystem
 export const BRANDS = [
   { name: 'SIEMENS', logo: '/assets/images/brand_siemens.png' },
   { name: 'CROMPTON GREAVES', logo: '/assets/images/brand_crompton.png' },
+  { name: 'INNOMOTICS', logo: '/assets/images/brand_innomotics.png' },
   { name: 'HINDUSTAN ELECTRIC MOTORS', logo: '/assets/images/brand_hindustan.png' },
   { name: 'ROTOMOTIVE', logo: '/assets/images/brand_rotomotive.png' }
 ];
 
 // Reputed clients list (populates logo strip using local assets)
 export const CLIENTS = [
-  { name: 'APIDEL', logo: '/assets/images/logo_apidel.jpg' },
-  { name: 'SHREE RAJ', logo: '/assets/images/logo_shree_raj.jpg' },
-  { name: 'TECHNO', logo: '/assets/images/logo_techno.jpg' },
-  { name: 'YASH', logo: '/assets/images/logo_yash.png' },
-  { name: 'KAIVAL', logo: '/assets/images/logo_kaival_poultry.png' }
+  { name: 'TBEA', logo: makeTextLogoSvg('TBEA') },
+  { name: 'Alembic', logo: makeTextLogoSvg('Alembic') },
+  { name: 'Aerzen', logo: makeTextLogoSvg('Aerzen') },
+  { name: 'R-K Bio', logo: makeTextLogoSvg('R-K Bio') },
+  { name: 'Hi-Make', logo: makeTextLogoSvg('Hi-Make') },
+  { name: 'Nayra', logo: makeTextLogoSvg('Nayra') },
+  { name: 'Shiva Pharma', logo: makeTextLogoSvg('Shiva Pharma') },
+  { name: 'Anupam', logo: makeTextLogoSvg('Anupam') },
+  { name: 'GEA', logo: makeTextLogoSvg('GEA') },
+  { name: 'GSFC', logo: makeTextLogoSvg('GSFC') },
+  { name: 'GACL', logo: makeTextLogoSvg('GACL') },
+  { name: 'Hero', logo: makeTextLogoSvg('Hero') },
+  { name: 'PI Industries', logo: makeTextLogoSvg('PI Industries') }
 ];

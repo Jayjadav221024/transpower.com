@@ -11,6 +11,11 @@ export default function PostPage() {
   const [state, setState] = useState({ status: 'loading', post: null, related: [] });
 
   useEffect(() => {
+    if (slug === 'mccb-vs-acb-siemens-switchgear') {
+      window.location.replace('/blog/mccb-vs-acb-switchgear-right-for-your-facility');
+      return undefined;
+    }
+
     if (slug && slug.startsWith('https-www-transpower-net-in-')) {
       const clean = slug.replace(/^https-www-transpower-net-in-/, '');
       window.location.replace(`/blog/${clean}`);

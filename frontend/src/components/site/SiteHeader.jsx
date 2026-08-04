@@ -213,6 +213,11 @@ export default function SiteHeader() {
                 About Us
               </NavLink>
             </li>
+            <li>
+              <NavLink to="/our-teams" className={({ isActive }) => (isActive ? 'active-pill' : 'nav-link-new')}>
+                Our Teams
+              </NavLink>
+            </li>
             <li 
               onMouseEnter={() => setIsProductsHovered(true)}
               onMouseLeave={() => {
@@ -398,6 +403,11 @@ export default function SiteHeader() {
           <li>
             <NavLink to="/about" className={({ isActive }) => (isActive ? 'active-mobile' : 'mobile-link')} onClick={() => setMenuOpen(false)}>
               About Us
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/our-teams" className={({ isActive }) => (isActive ? 'active-mobile' : 'mobile-link')} onClick={() => setMenuOpen(false)}>
+              Our Teams
             </NavLink>
           </li>
           <li>

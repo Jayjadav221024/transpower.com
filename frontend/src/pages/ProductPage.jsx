@@ -88,6 +88,244 @@ const PRODUCT_DEFAULTS = {
     benefitsText: 'Induction motor frames cut running costs on continuous-duty loads, with designs suitable for demanding chemical and engineering applications.',
     useText: 'Driving pumps, compressors, conveyors, agitators, fans and blowers across chemical, textile, water treatment and engineering plants.',
     productImage: '/assets/images/gearboxes_product.webp'
+  },
+  'meniscus-top': {
+    title: 'Meniscus Top FRP Grating',
+    category: 'FRP Composites',
+    badge: '🛡️ Slip Resistant',
+    feature1: 'Concave Top',
+    feature2: 'Corrosion Free',
+    feature3: 'Lightweight',
+    feature4: 'Low Maintenance',
+    benefit1: 'Slip Resistant',
+    benefit2: 'Long Life',
+    benefit3: 'Acid Resistant',
+    benefit4: 'Bidirectional',
+    detailsText: "Transpower's Meniscus Top FRP Gratings feature a concave slip-resistant surface designed specifically for wet, chemical, and oily environments. They deliver durable, low-maintenance performance for industrial walkways and drainage spans.",
+    benefitsText: 'Excellent resistance to industrial acids, non-conductive property for high-voltage zones, and fast field installation without welding.',
+    useText: 'Walkways, stairs, and chemical processing plants.',
+    productImage: '/assets/images/grating_meniscus_3d.jpg'
+  },
+  'grit-top': {
+    title: 'Grit Top FRP Grating',
+    category: 'FRP Composites',
+    badge: '🏋️ Coarse Texture',
+    feature1: 'Quartz Grit',
+    feature2: 'R13 Slip Rating',
+    feature3: 'Impact Proof',
+    feature4: 'Fire Retardant',
+    benefit1: 'Ultimate Grip',
+    benefit2: 'Rugged Wear',
+    benefit3: 'Chemical Proof',
+    benefit4: 'High Strength',
+    detailsText: "Grit Top FRP Gratings embed quartz grit into the surface resin matrix to provide maximum traction. They offer a highly durable traction grip for oily decks, wastewater plants, and marine environments.",
+    benefitsText: 'Provides robust slip safety meeting R13 standards, remains completely rust-proof in saltwater zones, and resists mechanical impacts.',
+    useText: 'Offshore oil platforms, marine docks, refinery flooring, and wastewater treatment platforms.',
+    productImage: '/assets/images/grating_grit_3d.jpg'
+  },
+  'chequered-plate': {
+    title: 'Chequered Plate FRP Grating',
+    category: 'FRP Composites',
+    badge: '🔒 Laminated Flat Top',
+    feature1: 'Solid Surface',
+    feature2: 'Diamond Pattern',
+    feature3: 'Gas/Odour Seal',
+    feature4: 'Corrosion Proof',
+    benefit1: 'Debris Guard',
+    benefit2: 'Non-Corrosive',
+    benefit3: 'No Denting',
+    benefit4: 'Odor Containment',
+    detailsText: "Chequered Plate FRP Gratings combine a standard molded grid with a solid laminated top sheet. Designed for inspection channels, loading platforms, and walkways requiring a completely closed floor.",
+    benefitsText: 'Prevents tools or small debris from falling through, contains industrial chemical vapors, and provides a dry diamond tread walkway surface.',
+    useText: 'Trench covers, inspection hatches, chemical storage zones, and pedestrian loading platforms.',
+    productImage: '/assets/images/grating_chequered_3d.jpg'
+  },
+  'ladder-tray': {
+    title: 'Ladder Type Cable Tray',
+    category: 'Cable Management',
+    badge: '⚡ High Load Span',
+    feature1: 'Side Rail Structure',
+    feature2: 'High Rung Load',
+    feature3: 'UV Stabilised',
+    feature4: 'Non-Conductive',
+    benefit1: 'Zero Sparking',
+    benefit2: 'Thermal Release',
+    benefit3: 'Corrosion Free',
+    benefit4: 'High Stability',
+    detailsText: 'FRP ladder type cable trays are built with rigid composite side profiles and rungs. They provide outstanding mechanical stability to route large, heavy high-voltage power cables in chemical plants.',
+    benefitsText: 'Ensures zero short-circuit risks, allows natural heat dissipation from cables, and operates without oxidation in acidic coastal zones.',
+    useText: 'Chemical processing units, power plants, and oil rigs.',
+    productImage: '/assets/images/cabletray_ladder_3d.jpg'
+  },
+  'perforated-tray': {
+    title: 'Perforated Cable Tray',
+    category: 'Cable Management',
+    badge: '🔌 Air Flow Pattern',
+    feature1: 'Precision Punched',
+    feature2: 'Air Ventilation',
+    feature3: 'Lightweight Build',
+    feature4: 'Easy Cable Tie',
+    benefit1: 'Heat Release',
+    benefit2: 'No Moisture',
+    benefit3: 'Simple Cut',
+    benefit4: 'Neat Routing',
+    detailsText: 'Perforated cable trays provide a lightweight, ventilating path for control and communication cabling. Features structured air-flow patterns for cooling and drainage.',
+    benefitsText: 'Minimizes heat buildup around instrumentation cables, avoids moisture trap zones, and installs easily around complex plant designs.',
+    useText: 'Control panels, instrumentation lines, server racks, and automation control rooms.',
+    productImage: '/assets/images/cabletray_perforated_3d.jpg'
+  },
+  'distribution': {
+    title: 'Low Voltage Power Distribution Product',
+    category: 'Power Distribution',
+    badge: '🔌 Main Intake',
+    feature1: 'IEC Compliant',
+    feature2: 'Modular Panels',
+    feature3: 'ACB Support',
+    feature4: 'High Short-Circuit',
+    benefit1: 'Overload Safety',
+    benefit2: 'Easy Busbar Fit',
+    benefit3: 'Modbus Support',
+    benefit4: 'Arc Protection',
+    detailsText: 'Designed for incoming plant electrical feeds, low voltage distribution panels organize main Air Circuit Breakers (ACB) and sub-distribution units.',
+    benefitsText: 'Provides reliable overcurrent safety limits, supports plant automation monitoring via Modbus, and ensures long-life substation durability.',
+    useText: 'Electrical sub-stations, factory intake boards, and main industrial panels.',
+    productImage: '/assets/images/switchgear_distribution_3d.png'
+  },
+  'control': {
+    title: 'Low Voltage Control Product',
+    category: 'Power Control',
+    badge: '⚡ Motor Protection',
+    feature1: 'Relays & Relays',
+    feature2: 'MPCB Systems',
+    feature3: 'Wide Voltage',
+    feature4: 'Tested Safety',
+    benefit1: 'Fast Trip Release',
+    benefit2: 'Thermal Sensor',
+    benefit3: 'Long Contact Life',
+    benefit4: 'Compact Fit',
+    detailsText: 'Low voltage control products protect critical plant motors. Features contactors, thermal overload relays, and Motor Protection Circuit Breakers (MPCB).',
+    benefitsText: 'Safeguards industrial motors from single-phasing or overload damage, and guarantees millions of trouble-free operations.',
+    useText: 'Motor Control Centers (MCC), pump houses, and machine automation desks.',
+    productImage: '/assets/images/switchgear_control_3d.png'
+  },
+  'mcb': {
+    title: 'MCB',
+    category: 'Circuit Protection',
+    badge: '🔒 Miniature Breaker',
+    feature1: 'Multiple Poles',
+    feature2: 'Trip Curve B/C/D',
+    feature3: 'IS/IEC Certified',
+    feature4: 'RoHS Compliant',
+    benefit1: 'Short Circuit Cut',
+    benefit2: 'Finger Safe',
+    benefit3: 'Quick Din Mount',
+    benefit4: 'Green Build',
+    detailsText: 'Miniature Circuit Breakers (MCB) offer reliable protection for electrical wiring and terminal machinery against overload and short-circuits.',
+    benefitsText: 'Provides fast short-circuit breaking capacity, simple Din-rail mounting, and fully finger-safe connection terminals.',
+    useText: 'Lighting circuits, control panel branch circuits, and auxiliary equipment runs.',
+    productImage: '/assets/images/switchgear_mcb_3d.png'
+  },
+  'sinova': {
+    title: 'Sinova Switchgears',
+    category: 'Siemens Partner Line',
+    badge: '⚡ Siemens Technology',
+    feature1: 'Siemens Partnered',
+    feature2: 'ACB to 4000A',
+    feature3: 'MCCB to 630A',
+    feature4: 'Fused Protections',
+    benefit1: 'Cost Effective',
+    benefit2: 'Global Standard',
+    benefit3: 'Easy Select',
+    benefit4: 'Reliable Life',
+    detailsText: 'The Sinova range represents Siemens partnered electrical protection. Provides robust, cost-effective ACBs, MCCBs, and load break switches for commercial utilities.',
+    benefitsText: 'Delivers trusted Siemens engineering performance at optimized pricing, with easy integration brackets.',
+    useText: 'Commercial distribution lines, machinery feeds, and infrastructure projects.',
+    productImage: '/assets/images/switchgear_sinova_3d.png'
+  },
+  'siemens-motor': {
+    title: 'Siemens Motor',
+    category: 'Induction Motors',
+    badge: '🔄 Authorized Channel Partner',
+    feature1: 'Cast Iron Frame',
+    feature2: 'IE2/IE3/IE4 Standard',
+    feature3: 'Efficient Cooling',
+    feature4: 'IP55 Enclosure',
+    benefit1: 'Energy Savings',
+    benefit2: 'Continuous Duty',
+    benefit3: 'Low Noise',
+    benefit4: 'Global Mounting',
+    detailsText: 'Authorized channel distribution of Siemens three-phase premium efficiency induction motors. Built with rugged cast iron bodies for continuous industrial drives.',
+    benefitsText: 'Reduces plant electricity costs, operates under severe dust and chemical moisture conditions, and matches standard frames globally.',
+    useText: 'Industrial fans, blowers, agitator drives, and centrifugal pumps.',
+    productImage: '/assets/images/motor_siemens_3d.png'
+  },
+  'crompton-motor': {
+    title: 'Crompton Greaves Motor',
+    category: 'Induction Motors',
+    badge: '🔄 Authorized Channel Partner',
+    feature1: 'TEFC Frame',
+    feature2: 'IE2/IE3 Premium',
+    feature3: 'Continuous Run',
+    feature4: 'Low Vibration',
+    benefit1: 'High Start Torque',
+    benefit2: 'Thermal Safety',
+    benefit3: 'Class F Insulation',
+    benefit4: 'Reliable Bearings',
+    detailsText: 'Totally Enclosed Fan Cooled (TEFC) three-phase induction motors from Crompton Greaves. Designed to handle mechanical loads in engineering setups.',
+    benefitsText: 'Delivers high starting torque, low running noise, Class F insulation limits, and long-life pre-lubricated bearings.',
+    useText: 'Machine tool drives, compressors, crushers, and chemical mixers.',
+    productImage: '/assets/images/motor_crompton_3d.jpg'
+  },
+  'hindustan-motor': {
+    title: 'Hindustan Electric Motor',
+    category: 'Induction Motors',
+    badge: '🔄 Authorized Channel Partner',
+    feature1: 'FG200 Cast Iron',
+    feature2: 'Class F Insulation',
+    feature3: 'S1 Duty Cycle',
+    feature4: 'Standard Frame',
+    benefit1: 'Durability',
+    benefit2: 'Stable Operations',
+    benefit3: 'High Thermal Limits',
+    benefit4: 'Wide Application',
+    detailsText: 'Hindustan Electric Motors (HEM) provide highly robust performance for heavy-duty industrial machinery. Constructed using high-grade cast iron housings.',
+    benefitsText: 'Built for continuous operating cycles, handles high operating temperatures, and offers modular mounting flexibility.',
+    useText: 'Conveyors, gear drive assemblies, industrial agitators, and fans.',
+    productImage: '/assets/images/motor_hindustan_3d.png'
+  },
+  'robus-gearbox': {
+    title: 'Rotomotive ROBUS Helical Gear Box',
+    category: 'Power Transmission',
+    badge: '⚙️ Helical Series',
+    feature1: 'Cast Iron Housing',
+    feature2: 'Monobloc Body',
+    feature3: 'Synthetic Oil',
+    feature4: 'IEC Flange',
+    benefit1: 'Up to 4300 Nm',
+    benefit2: 'Lifetime Lube',
+    benefit3: '0.5 to 425 hp',
+    benefit4: 'Extreme Durability',
+    detailsText: "The Rotomotive ROBUS helical gearbox series features a rigid cast iron monobloc body, base, and flange, providing extreme durability. Capacity runs up to 4300 Nm with output power ranging from 0.5 to 425 hp.",
+    benefitsText: 'Pre-filled with synthetic oil for lifetime lubrication, detachable output flange options for modular use, and hollow output shaft.',
+    useText: 'Mining conveyors, industrial mixers, wastewater agitators, and crane drives.',
+    productImage: '/assets/images/gearbox_rotomotive_3d.jpg'
+  },
+  'qubo-gearbox': {
+    title: 'Rotomotive QUBO Worm Gear Box',
+    category: 'Power Transmission',
+    badge: '⚙️ Worm Series',
+    feature1: 'Sizes 25 to 150',
+    feature2: 'Aluminium 25-90',
+    feature3: 'Cast Iron 110-150',
+    feature4: 'Flexible Mounting',
+    benefit1: 'Compact Fit',
+    benefit2: 'Maintenance Free',
+    benefit3: 'Smooth Operation',
+    benefit4: 'Modular Ratios',
+    detailsText: "The Rotomotive QUBO worm gearbox series is available in sizes 25 to 150. Constructed with die-cast aluminium for sizes 25-90 and cast iron for sizes 110-150. Highly compact and modular.",
+    benefitsText: 'Maintenance-free sizes 30 to 90 pre-filled with synthetic oil, mineral oil configurations for sizes 110-150, and flexible mounting options.',
+    useText: 'Conveyor belts, packaging machines, printing presses, and small-scale mixers.',
+    productImage: '/assets/images/gearbox_rotomotive_3d.jpg'
   }
 };
 
@@ -237,18 +475,36 @@ export default function ProductPage() {
   // Specifications and details for each gearbox sub-product
   const GEARBOX_SUB_PRODUCTS = [
     {
-      id: 'rotomotive-gearbox',
-      title: 'Gear Box',
-      desc: "Transpower Technologies Pvt. Ltd. provides high-quality gearboxes from Rotomotive, featuring the helical ROBUS series and the worm QUBO series. The ROBUS series, made from cast iron, boasts a capacity of up to 4300Nm and includes synthetic oil for long-lasting performance. These gearboxes are designed with a rigid, monobloc body, base, and flange, ensuring extreme durability and a modular design with a detachable output flange for versatile use. The QUBO series, available in sizes 25 to 150, combines die-cast aluminium and cast iron construction. The QUBO gearboxes are maintenance-free for sizes 30 to 90, using synthetic oil, while sizes 110 to 150 use mineral oil. Both series offer flexible mounting options, making them suitable for various industrial applications.",
+      id: 'robus-gearbox',
+      title: 'Rotomotive ROBUS Helical Gear Box',
+      desc: "The ROBUS series helical gearboxes are designed with a rigid cast iron monobloc body, base, and flange, ensuring extreme durability. Pre-filled with long-life synthetic oil for lifetime maintenance-free operation. Modular design with detachable output flange and hollow shaft allows versatile B2B applications.",
       image: '/assets/images/gearbox_rotomotive_3d.jpg',
       buttonLabel: 'Download Brochure',
+      downloadUrl: '/assets/rotomotive_qubo_gearboxes.pdf',
       specs: {
-        'Series / Models': 'Helical ROBUS series, Worm QUBO series',
-        'Torque Capacity': 'Up to 4300 Nm (ROBUS series)',
-        'QUBO Sizes': 'Sizes 25 to 150 (Maintenance-free sizes 30 to 90)',
-        'Construction': 'Monobloc Cast Iron housing & Die-cast Aluminium configurations',
-        'Lubrication': 'Synthetic oil (ROBUS & QUBO 30-90) / Mineral oil (QUBO 110-150)',
-        'Mounting': 'Flexible foot, shaft, and detachable output flange options'
+        'Series Type': 'ROBUS Helical Gearmotor Series',
+        'Torque Capacity': 'Up to 4300 Nm',
+        'Output Power': '0.5 to 425 hp',
+        'Housing Material': 'Monobloc Cast Iron housing',
+        'Lubrication': 'Long-life synthetic oil (Pre-filled)',
+        'Key Specs': 'Detachable output flange, hollow shaft, full plug set'
+      }
+    },
+    {
+      id: 'qubo-gearbox',
+      title: 'Rotomotive QUBO Worm Gear Box',
+      desc: "The QUBO series worm gearboxes are compact, modular power transmission drives. Available in sizes 25 to 150. Housing configurations use die-cast aluminium for sizes 25-90 and cast iron for sizes 110-150. Pre-lubricated with synthetic oil for sizes 30-90 (maintenance-free) and mineral oil for sizes 110-150.",
+      image: '/assets/images/gearbox_rotomotive_3d.jpg',
+      buttonLabel: 'Download Brochure',
+      downloadUrl: '/assets/rotomotive_qubo_gearboxes.pdf',
+      specs: {
+        'Series Type': 'QUBO Worm Gear Box',
+        'Sizes Range': 'Sizes 25 to 150',
+        'Housing (25-90)': 'Die-cast Aluminium (Lightweight & compact)',
+        'Housing (110-150)': ' FG200 Cast Iron',
+        'Lubrication (30-90)': 'Synthetic oil (Maintenance-free)',
+        'Lubrication (110-150)': 'Mineral oil',
+        'Mounting': 'Flexible foot, shaft, and output flange configurations'
       }
     }
   ];
@@ -293,61 +549,57 @@ export default function ProductPage() {
                   <p style={{ fontSize: '0.94rem', lineHeight: '1.6', color: 'var(--text-muted)', margin: 0 }}>
                     {prod.desc}
                   </p>
-                  <div>
-                    {prod.buttonLabel === 'Download Brochure' ? (
+                  <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                    {prod.downloadUrl && (
                       <a 
-                        href="/assets/rotomotive_qubo_gearboxes.pdf"
+                        href={prod.downloadUrl}
                         target="_blank"
                         rel="noopener noreferrer"
                         download
                         className="btn btn-primary"
                         style={{ 
-                          background: 'var(--accent-orange)', 
-                          color: '#fff', 
-                          border: 'none', 
-                          padding: '0.75rem 1.8rem', 
+                          background: 'transparent', 
+                          color: 'var(--accent-orange)', 
+                          border: '2px solid var(--accent-orange)', 
+                          padding: '0.75rem 1.5rem', 
                           borderRadius: '6px', 
                           fontWeight: '700',
                           fontSize: '0.88rem',
                           cursor: 'pointer',
-                          transition: 'background-color 0.2s',
-                          boxShadow: '0 2px 4px rgba(217, 101, 59, 0.2)',
                           display: 'inline-flex',
                           alignItems: 'center',
                           gap: '0.5rem',
                           textDecoration: 'none'
                         }}
-                        onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-orange-deep)'}
-                        onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-orange)'}
                       >
                         <span style={{ fontSize: '1rem' }}>📥</span>
-                        {prod.buttonLabel}
+                        Download Brochure
                       </a>
-                    ) : (
-                      <button 
-                        onClick={() => setSelectedProduct(prod)}
-                        className="btn btn-primary"
-                        style={{ 
-                          background: 'var(--accent-orange)', 
-                          color: '#fff', 
-                          border: 'none', 
-                          padding: '0.75rem 1.8rem', 
-                          borderRadius: '6px', 
-                          fontWeight: '700',
-                          fontSize: '0.88rem',
-                          cursor: 'pointer',
-                          transition: 'background-color 0.2s',
-                          boxShadow: '0 2px 4px rgba(217, 101, 59, 0.2)',
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: '0.5rem'
-                        }}
-                        onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-orange-deep)'}
-                        onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-orange)'}
-                      >
-                        {prod.buttonLabel || 'Click for More Details'}
-                      </button>
                     )}
+                    <Link 
+                      to={`/product/${prod.id}`}
+                      className="btn btn-primary"
+                      style={{ 
+                        background: 'var(--accent-orange)', 
+                        color: '#fff', 
+                        border: 'none', 
+                        padding: '0.75rem 1.8rem', 
+                        borderRadius: '6px', 
+                        fontWeight: '700',
+                        fontSize: '0.88rem',
+                        cursor: 'pointer',
+                        transition: 'background-color 0.2s',
+                        boxShadow: '0 2px 4px rgba(217, 101, 59, 0.2)',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.5rem',
+                        textDecoration: 'none'
+                      }}
+                      onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-orange-deep)'}
+                      onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-orange)'}
+                    >
+                      Click for More Details
+                    </Link>
                   </div>
                 </div>
 
@@ -551,8 +803,8 @@ export default function ProductPage() {
                     {prod.desc}
                   </p>
                   <div>
-                    <button 
-                      onClick={() => setSelectedProduct(prod)}
+                    <Link 
+                      to={`/product/${prod.id}`}
                       className="btn btn-primary"
                       style={{ 
                         background: 'var(--accent-orange)', 
@@ -564,13 +816,16 @@ export default function ProductPage() {
                         fontSize: '0.88rem',
                         cursor: 'pointer',
                         transition: 'background-color 0.2s',
-                        boxShadow: '0 2px 4px rgba(217, 101, 59, 0.2)'
+                        boxShadow: '0 2px 4px rgba(217, 101, 59, 0.2)',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        textDecoration: 'none'
                       }}
                       onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-orange-deep)'}
                       onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-orange)'}
                     >
                       Click for More Details
-                    </button>
+                    </Link>
                   </div>
                 </div>
 
@@ -787,8 +1042,8 @@ export default function ProductPage() {
                     {prod.desc}
                   </p>
                   <div>
-                    <button 
-                      onClick={() => setSelectedProduct(prod)}
+                    <Link 
+                      to={`/product/${prod.id}`}
                       className="btn btn-primary"
                       style={{ 
                         background: 'var(--accent-orange)', 
@@ -800,13 +1055,16 @@ export default function ProductPage() {
                         fontSize: '0.88rem',
                         cursor: 'pointer',
                         transition: 'background-color 0.2s',
-                        boxShadow: '0 2px 4px rgba(217, 101, 59, 0.2)'
+                        boxShadow: '0 2px 4px rgba(217, 101, 59, 0.2)',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        textDecoration: 'none'
                       }}
                       onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-orange-deep)'}
                       onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-orange)'}
                     >
                       Click for More Details
-                    </button>
+                    </Link>
                   </div>
                 </div>
 
@@ -979,8 +1237,8 @@ export default function ProductPage() {
                   <p style={{ fontSize: '0.94rem', lineHeight: '1.6', color: 'var(--text-muted)', margin: 0 }}>
                     {prod.desc}
                   </p>
-                  <div>
-                    {prod.buttonLabel === 'Download Brochure' ? (
+                  <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                    {prod.downloadUrl && (
                       <a 
                         href={prod.downloadUrl}
                         target="_blank"
@@ -988,49 +1246,48 @@ export default function ProductPage() {
                         download
                         className="btn btn-primary"
                         style={{ 
-                          background: 'var(--accent-orange)', 
-                          color: '#fff', 
-                          border: 'none', 
-                          padding: '0.75rem 1.8rem', 
+                          background: 'transparent', 
+                          color: 'var(--accent-orange)', 
+                          border: '2px solid var(--accent-orange)', 
+                          padding: '0.75rem 1.5rem', 
                           borderRadius: '6px', 
                           fontWeight: '700',
                           fontSize: '0.88rem',
                           cursor: 'pointer',
-                          transition: 'background-color 0.2s',
-                          boxShadow: '0 2px 4px rgba(217, 101, 59, 0.2)',
                           display: 'inline-flex',
                           alignItems: 'center',
                           gap: '0.5rem',
                           textDecoration: 'none'
                         }}
-                        onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-orange-deep)'}
-                        onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-orange)'}
                       >
                         <span style={{ fontSize: '1rem' }}>📥</span>
-                        {prod.buttonLabel}
+                        Download Brochure
                       </a>
-                    ) : (
-                      <button 
-                        onClick={() => setSelectedProduct(prod)}
-                        className="btn btn-primary"
-                        style={{ 
-                          background: 'var(--accent-orange)', 
-                          color: '#fff', 
-                          border: 'none', 
-                          padding: '0.75rem 1.8rem', 
-                          borderRadius: '6px', 
-                          fontWeight: '700',
-                          fontSize: '0.88rem',
-                          cursor: 'pointer',
-                          transition: 'background-color 0.2s',
-                          boxShadow: '0 2px 4px rgba(217, 101, 59, 0.2)'
-                        }}
-                        onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-orange-deep)'}
-                        onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-orange)'}
-                      >
-                        {prod.buttonLabel || 'Click for More Details'}
-                      </button>
                     )}
+                    <Link 
+                      to={`/product/${prod.id}`}
+                      className="btn btn-primary"
+                      style={{ 
+                        background: 'var(--accent-orange)', 
+                        color: '#fff', 
+                        border: 'none', 
+                        padding: '0.75rem 1.8rem', 
+                        borderRadius: '6px', 
+                        fontWeight: '700',
+                        fontSize: '0.88rem',
+                        cursor: 'pointer',
+                        transition: 'background-color 0.2s',
+                        boxShadow: '0 2px 4px rgba(217, 101, 59, 0.2)',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.5rem',
+                        textDecoration: 'none'
+                      }}
+                      onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-orange-deep)'}
+                      onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-orange)'}
+                    >
+                      Click for More Details
+                    </Link>
                   </div>
                 </div>
 
@@ -1204,8 +1461,8 @@ export default function ProductPage() {
                     {prod.desc}
                   </p>
                   <div>
-                    <button 
-                      onClick={() => setSelectedProduct(prod)}
+                    <Link 
+                      to={`/product/${prod.id}`}
                       className="btn btn-primary"
                       style={{ 
                         background: 'var(--accent-orange)', 
@@ -1217,13 +1474,16 @@ export default function ProductPage() {
                         fontSize: '0.88rem',
                         cursor: 'pointer',
                         transition: 'background-color 0.2s',
-                        boxShadow: '0 2px 4px rgba(217, 101, 59, 0.2)'
+                        boxShadow: '0 2px 4px rgba(217, 101, 59, 0.2)',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        textDecoration: 'none'
                       }}
                       onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-orange-deep)'}
                       onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-orange)'}
                     >
                       Click for More Details
-                    </button>
+                    </Link>
                   </div>
                 </div>
 
