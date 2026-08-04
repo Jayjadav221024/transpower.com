@@ -949,10 +949,23 @@ img { max-width: 100%; height: auto; }
   position: relative; z-index: 10;
   display: flex; flex-direction: column; gap: 1.2rem;
   opacity: 1;
+}
+
+/* Wraps only the copy that changes between slides. The crossfade used to be on
+   .hero-left-content, so the whole column — the chip row a visitor was reaching
+   for, and the stats, neither of which change — blinked to fully invisible on
+   every rotation. align-items:inherit keeps the parent's alignment, which
+   differs between mobile (centre) and desktop (start). */
+.hero-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  align-items: inherit;
+  opacity: 1;
   transition: opacity 0.25s ease-in-out;
 }
 
-.hero-left-content.is-fading {
+.hero-copy.is-fading {
   opacity: 0;
 }
 
@@ -2547,14 +2560,27 @@ p {
 
 @media (max-width: 767px) {
   .carousel-dots {
+    /* Fills the hero column and scrolls inside it.
+       This was width:100vw with margin-left:-1.5rem, to bleed the strip out to
+       the screen edges. On mobile the parent switches to align-items:center, so
+       a 100vw child was centred *and then* pulled left — it ended up hanging
+       about 2.25rem off one side and 0.75rem off the other. .hero-section clips
+       its overflow, so the chips in that margin were cut off with no way to
+       scroll them into view. align-self:stretch opts this one item out of the
+       parent's centring. */
+    align-self: stretch;
+    width: auto;
+    max-width: 100%;
+    margin-left: 0;
+    margin-right: 0;
     overflow-x: auto;
-    scroll-snap-type: x mandatory;
+    /* proximity, not mandatory: the component scrolls the active chip to the
+       centre itself, and mandatory snapping fought that programmatic scroll,
+       leaving chips parked half-clipped. */
+    scroll-snap-type: x proximity;
+    scroll-padding-inline: 0.25rem;
     -webkit-overflow-scrolling: touch;
-    padding-bottom: 4px;
-    width: 100vw;
-    margin-left: -1.5rem;
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
+    padding: 0 0 4px;
     scrollbar-width: none;
   }
   

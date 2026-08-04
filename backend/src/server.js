@@ -13,24 +13,37 @@ const User = require('./models/User');
 (async function start() {
   await connectDB();
 
-  // Auto-seed or update default admin credentials on startup
+  /* Seed the first admin only when no account exists.
+   *
+   * This used to reset the password to a literal written in this file on every
+   * single boot. Two problems, both of which matter once the site is public: the
+   * credential is readable by anyone with the repository, and it could not be
+   * changed — `npm run create-admin` worked, then the next restart or deploy
+   * silently put the old password back. */
   try {
-    const adminUser = await User.findOne({ username: 'admin' });
-    if (!adminUser) {
-      await User.create({
-        username: 'admin',
-        password: 'Transpower@2026',
-        name: 'Transpower Admin',
-        role: 'admin'
-      });
-      console.log('  Seeded default admin user successfully.');
+    const existing = await User.findOne({ username: 'admin' }).select('_id');
+
+    if (existing) {
+      console.log('  Admin account present — password left as it was set.');
     } else {
-      adminUser.password = 'Transpower@2026';
-      await adminUser.save();
-      console.log('  Admin credentials updated successfully.');
+      const seedPassword = process.env.ADMIN_SEED_PASSWORD;
+      if (!seedPassword || seedPassword.length < 8) {
+        console.warn(
+          '  No admin account exists yet. Set ADMIN_SEED_PASSWORD (8+ characters) and restart,\n' +
+          '  or create one directly:  node src/scripts/createAdmin.js <username> <password> "Name"'
+        );
+      } else {
+        await User.create({
+          username: 'admin',
+          password: seedPassword,   // hashed by the model's pre-save hook
+          name: 'Transpower Admin',
+          role: 'admin'
+        });
+        console.log('  Seeded the initial admin account from ADMIN_SEED_PASSWORD.');
+      }
     }
   } catch (err) {
-    console.error('  Error auto-seeding admin user:', err);
+    console.error('  Error seeding admin user:', err);
   }
 
   // Auto-clean any generic image overrides from page content to prevent visual customisation bugs clobbering slides

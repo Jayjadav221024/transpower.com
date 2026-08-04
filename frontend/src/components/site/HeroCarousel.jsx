@@ -3,7 +3,11 @@ import { HERO_PRODUCTS } from '../../data/products';
 import { GradientShimmer } from '../ui/gradient-shimmer';
 import { assetUrl } from '../../api/client';
 
-const AUTO_MS = 3000;
+/* 3s was not long enough to read a product name, let alone the description
+   under it — the slide changed while a visitor was still reaching for the chip
+   row. Six gives the copy time to be read and halves how often the crossfade
+   interrupts. */
+const AUTO_MS = 6000;
 const TEXT_SWAP_MS = 240;   // midpoint of the 0.5s image crossfade
 
 export default function HeroCarousel({ pageData }) {
@@ -15,6 +19,7 @@ export default function HeroCarousel({ pageData }) {
   const [paused, setPaused]   = useState(false);
 
   const textTimer = useRef(null);
+  const doneTimer = useRef(null);
   const dotsContainerRef = useRef(null);
   const touchStartX = useRef(0);
   const touchEndX = useRef(0);
@@ -36,7 +41,7 @@ export default function HeroCarousel({ pageData }) {
     }, TEXT_SWAP_MS);
 
     // end of 0.5s transition: declare done
-    setTimeout(() => {
+    doneTimer.current = setTimeout(() => {
       setFading(false);
     }, 500);
   }
@@ -48,9 +53,13 @@ export default function HeroCarousel({ pageData }) {
     return () => clearTimeout(id);
   }, [imgIndex, paused, fading]);
 
-  // Clean up timers on unmount
+  // Clean up timers on unmount — both, or a navigation mid-crossfade leaves a
+  // setState firing against a component that is gone.
   useEffect(() => {
-    return () => clearTimeout(textTimer.current);
+    return () => {
+      clearTimeout(textTimer.current);
+      clearTimeout(doneTimer.current);
+    };
   }, []);
 
   // Keep the active chip centred inside its own strip on mobile.
@@ -111,23 +120,28 @@ export default function HeroCarousel({ pageData }) {
       >
         {/* ── Left: animated product copy ─────────────────────────────── */}
         <div
-          className={`hero-left-content${fading ? ' is-fading' : ''}`}
+          className="hero-left-content"
           onMouseEnter={pause}
           onMouseLeave={resume}
         >
-          <div className="badge-tag">{product.badge}</div>
-          <h1>
-            FRP <GradientShimmer gradient="orange" duration={2} spread={4} baseColor="var(--text-main)" data-edit-page="homepage" data-edit-key="heroTitle">{displayTitle}</GradientShimmer>
-          </h1>
-          <p data-edit-page="homepage" data-edit-key="heroSubtitle">{displayDesc}</p>
+          {/* Only the per-slide copy crossfades. The chip row and the stats sit
+              outside it: they do not change between slides, and fading them
+              meant the control a visitor was about to tap went invisible. */}
+          <div className={`hero-copy${fading ? ' is-fading' : ''}`}>
+            <div className="badge-tag">{product.badge}</div>
+            <h1>
+              FRP <GradientShimmer gradient="orange" duration={2} spread={4} baseColor="var(--text-main)" data-edit-page="homepage" data-edit-key="heroTitle">{displayTitle}</GradientShimmer>
+            </h1>
+            <p data-edit-page="homepage" data-edit-key="heroSubtitle">{displayDesc}</p>
 
-          <div className="hero-feature-pills">
-            {product.pills.map((pill) => (
-              <div className="spec-pill" key={pill.text}>
-                <div className="spec-pill-icon">{pill.icon}</div>
-                <div>{pill.text}</div>
-              </div>
-            ))}
+            <div className="hero-feature-pills">
+              {product.pills.map((pill) => (
+                <div className="spec-pill" key={pill.text}>
+                  <div className="spec-pill-icon">{pill.icon}</div>
+                  <div>{pill.text}</div>
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* Chip Row slide selector */}

@@ -164,7 +164,12 @@ function cacheHeaders(res, filePath) {
   }
 }
 
-if (fs.existsSync(CLIENT_DIST)) {
+/* The entry file, not the directory: a build that failed part way through can
+   leave an empty dist behind, and serving from it would answer every deep link
+   with a 404 that looks exactly like a missing catch-all. */
+const CLIENT_INDEX = path.join(CLIENT_DIST, 'index.html');
+
+if (fs.existsSync(CLIENT_INDEX)) {
   app.use(servePreCompressed);
   app.use(express.static(CLIENT_DIST, { index: false, setHeaders: cacheHeaders }));
   app.get('*', (req, res, next) => {
@@ -181,7 +186,28 @@ if (fs.existsSync(CLIENT_DIST)) {
 
     // Revalidated every time, so a deploy is picked up on the next navigation.
     res.setHeader('Cache-Control', 'no-cache');
-    res.sendFile(path.join(CLIENT_DIST, 'index.html'));
+    res.sendFile(CLIENT_INDEX);
+  });
+} else {
+  /* Reaching here means the API is up but the React build is not on disk — the
+     usual cause is a host whose build step never ran `npm run build` from the
+     repository root, or whose root directory is set to backend/.
+
+     Without this branch the symptom is a bare 404 on every deep link with
+     nothing in the logs, which reads as a missing SPA fallback rather than a
+     missing build. Say so once at boot, and again in the response. */
+  console.warn(
+    `\n  No React build at ${CLIENT_DIST} — serving the API only.\n` +
+    '  Deep links such as /about will 404 until the front end is built:\n' +
+    '    npm run build   (from the repository root)\n'
+  );
+
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api/') || req.path.startsWith('/uploads/')) return next();
+    res.status(503).type('text/plain').send(
+      'The front-end build is missing on the server, so this page cannot be served.\n' +
+      'The API itself is running — try /api/health.'
+    );
   });
 }
 
