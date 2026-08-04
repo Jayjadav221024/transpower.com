@@ -232,6 +232,58 @@ code { background: #eef2f7; padding: 1px 5px; border-radius: 4px; font-size: .82
 .panel .btn + .btn { margin-top: .45rem; }
 .inline-actions { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; }
 
+/* ─── Rich text editor ───────────────────────────────────────────────────── */
+.rte { border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; }
+.rte:focus-within { border-color: var(--orange); }
+.rte-bar {
+  display: flex; align-items: center; gap: .2rem; flex-wrap: wrap;
+  padding: .4rem .5rem; background: #f7f9fc; border-bottom: 1px solid var(--border);
+}
+.rte-btn {
+  min-width: 30px; height: 30px; padding: 0 .45rem; border-radius: var(--radius-sm);
+  border: 1px solid transparent; background: transparent; color: var(--text);
+  font-size: .82rem; line-height: 1; cursor: pointer; transition: .15s ease;
+}
+.rte-btn:hover { background: rgba(14,26,43,.07); }
+/* Pressed state has a border as well as a fill — colour alone would not read
+   for anyone who cannot distinguish it. */
+.rte-btn.active { background: #fff; border-color: var(--orange); color: var(--orange); }
+.rte-sep { width: 1px; height: 20px; background: var(--border); margin: 0 .25rem; }
+.rte-select {
+  height: 30px; border: 1px solid var(--border); border-radius: var(--radius-sm);
+  background: #fff; color: var(--text); font-size: .78rem; padding: 0 .35rem; cursor: pointer;
+}
+.rte-tabs { margin-left: auto; display: flex; gap: .2rem; }
+.rte-tab {
+  height: 30px; padding: 0 .7rem; border-radius: var(--radius-sm); cursor: pointer;
+  border: 1px solid transparent; background: transparent; color: var(--muted); font-size: .78rem;
+}
+.rte-tab.active { background: #fff; border-color: var(--border); color: var(--text); font-weight: 600; }
+
+.rte-box {
+  min-height: 420px; max-height: 70vh; overflow-y: auto; padding: 1rem 1.1rem;
+  background: #fff; font-size: .92rem; line-height: 1.75; outline: none;
+}
+.rte-box:empty::before { content: 'Write the article here…'; color: var(--faint); }
+/* The editing surface previews the article, so mirror the public blog's rhythm. */
+.rte-box > * + * { margin-top: .85rem; }
+.rte-box h2 { font-size: 1.3rem; line-height: 1.3; }
+.rte-box h3 { font-size: 1.1rem; line-height: 1.35; }
+.rte-box ul, .rte-box ol { padding-left: 1.5rem; }
+.rte-box li + li { margin-top: .3rem; }
+.rte-box blockquote {
+  border-left: 3px solid var(--orange); padding-left: .9rem; color: var(--muted); font-style: italic;
+}
+.rte-box a { color: var(--cyan); text-decoration: underline; }
+.rte-box img { max-width: 100%; height: auto; border-radius: var(--radius-sm); }
+.rte-html { border: 0; border-radius: 0; width: 100%; resize: vertical; }
+.rte-html:focus { outline: none; }
+
+.permalink-preview {
+  font-size: .78rem; color: var(--muted); word-break: break-all; margin-bottom: .5rem;
+}
+.permalink-preview strong { color: var(--cyan); font-weight: 600; }
+
 .cover-preview {
   width: 100%; aspect-ratio: 16 / 9; border-radius: var(--radius-sm); overflow: hidden;
   background: #eef2f7; margin-bottom: .6rem; display: grid; place-items: center;

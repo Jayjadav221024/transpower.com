@@ -3,7 +3,9 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { adminApi, assetUrl } from '../../api/client';
 import { useToast } from '../../components/admin/Toast';
 import MediaPicker from '../../components/admin/MediaPicker';
+import RichTextEditor from '../../components/admin/RichTextEditor';
 import { formatDate } from '../../utils/format';
+import { slugify } from '../../utils/slugify';
 
 const BLANK = {
   title: '', excerpt: '', content: '', tags: '', slug: '', coverImage: '', coverAlt: '', status: 'draft',
@@ -14,7 +16,11 @@ export default function PostEditorPage() {
   const isNew  = !id;
   const navigate = useNavigate();
   const toast = useToast();
-  const contentRef = useRef(null);
+  const editorRef = useRef(null);
+
+  /* Once the slug is hand-edited it stops tracking the title, matching how
+     WordPress stops touching a permalink you have set yourself. */
+  const [slugTouched, setSlugTouched] = useState(false);
 
   const [form, setForm]       = useState(BLANK);
   const [meta, setMeta]       = useState(null);      // server-side details, edit mode only
@@ -47,6 +53,15 @@ export default function PostEditorPage() {
   }, [id, isNew]);
 
   const update = (field) => (e) => setForm((f) => ({ ...f, [field]: e.target.value }));
+
+  /* A published URL is left alone — changing it would break every existing
+     link to the article. Drafts keep following the title until edited. */
+  const slugFollowsTitle = form.status !== 'published' && !slugTouched;
+
+  const updateTitle = (e) => {
+    const title = e.target.value;
+    setForm((f) => ({ ...f, title, slug: slugFollowsTitle ? slugify(title) : f.slug }));
+  };
 
   const save = useCallback(
     async (status) => {
@@ -103,10 +118,8 @@ export default function PostEditorPage() {
 
   /* Insert an <img> tag at the caret, not blindly at the end. */
   function insertIntoContent(image) {
-    const tag = `\n<img src="${image.url}" alt="${image.alt}" loading="lazy">\n`;
-    const box = contentRef.current;
-    const at  = box ? box.selectionStart : form.content.length;
-    setForm((f) => ({ ...f, content: f.content.slice(0, at) + tag + f.content.slice(at) }));
+    const tag = `<img src="${image.url}" alt="${image.alt}" loading="lazy">`;
+    editorRef.current?.insertHtml(tag);
   }
 
   if (loading) return <div className="empty-state">Loading post…</div>;
@@ -144,7 +157,7 @@ export default function PostEditorPage() {
             <input
               type="text" className="input input-lg" maxLength={200}
               placeholder="e.g. Why FRP Gratings Outlast Steel in Chemical Plants"
-              value={form.title} onChange={update('title')}
+              value={form.title} onChange={updateTitle}
             />
           </label>
 
@@ -157,20 +170,21 @@ export default function PostEditorPage() {
             />
           </label>
 
-          <label className="field">
-            <span>Content <em>HTML allowed: &lt;p&gt; &lt;h2&gt; &lt;ul&gt; &lt;strong&gt; &lt;img&gt; &lt;a&gt;</em></span>
-            <textarea
-              ref={contentRef} className="input input-editor" rows="20"
-              placeholder="Write the article here…"
-              value={form.content} onChange={update('content')}
+          <div className="field">
+            <span>Content</span>
+            <RichTextEditor
+              ref={editorRef}
+              value={form.content}
+              onChange={(html) => setForm((f) => ({ ...f, content: html }))}
+              onRequestImage={() => setPicker('content')}
             />
-          </label>
+          </div>
 
           <div className="inline-actions">
             <button type="button" className="btn btn-outline btn-sm" onClick={() => setPicker('content')}>
               Insert image into content
             </button>
-            <span className="muted small">Drops an &lt;img&gt; tag at the cursor position.</span>
+            <span className="muted small">Drops the image at the cursor position.</span>
           </div>
         </div>
 
@@ -216,12 +230,30 @@ export default function PostEditorPage() {
           </div>
 
           <div className="panel">
-            <h3>URL Slug</h3>
+            <h3>Permalink</h3>
+            <p className="permalink-preview">
+              /blog/<strong>{form.slug || slugify(form.title) || '…'}</strong>
+            </p>
             <input
               type="text" className="input" placeholder="auto-generated from title"
-              value={form.slug} onChange={update('slug')}
+              value={form.slug}
+              onChange={(e) => { setSlugTouched(true); setForm((f) => ({ ...f, slug: e.target.value })); }}
+              /* Normalise on blur rather than per keystroke, so typing a space
+                 mid-word doesn't jump the caret over a hyphen. */
+              onBlur={(e) => setForm((f) => ({ ...f, slug: e.target.value.trim() ? slugify(e.target.value) : '' }))}
             />
-            <p className="muted small">The post lives at <code>/blog/&lt;slug&gt;</code>.</p>
+            {slugFollowsTitle ? (
+              <p className="muted small">Following the title. Edit to set it yourself.</p>
+            ) : form.status === 'published' ? (
+              <p className="muted small">Locked to the title no longer — changing this breaks existing links.</p>
+            ) : (
+              <button
+                type="button" className="btn btn-ghost btn-sm"
+                onClick={() => { setSlugTouched(false); setForm((f) => ({ ...f, slug: slugify(f.title) })); }}
+              >
+                Reset to title
+              </button>
+            )}
           </div>
 
           {meta && (
