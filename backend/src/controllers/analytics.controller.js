@@ -23,9 +23,25 @@ function loadInlineCredentials() {
   const raw = process.env.GOOGLE_CREDENTIALS_JSON;
   if (!raw || !raw.trim()) return null;
 
-  const text = raw.trim().startsWith('{')
-    ? raw
-    : Buffer.from(raw, 'base64').toString('utf8');
+  // Strip a BOM and any surrounding whitespace a copy/paste may have introduced
+  const cleaned = raw.replace(/^﻿/, '').trim();
+
+  let text;
+  if (cleaned.startsWith('{')) {
+    text = cleaned;
+  } else {
+    // Dashboard fields often wrap long values; drop whitespace so the base64
+    // stays byte-aligned. Node's decoder skips bad characters silently, which
+    // would otherwise turn a truncated paste into unreadable bytes.
+    const compact = cleaned.replace(/\s+/g, '');
+    if (compact.length % 4 !== 0) {
+      throw new Error(`base64 value looks truncated (${compact.length} chars, not a multiple of 4)`);
+    }
+    text = Buffer.from(compact, 'base64').toString('utf8');
+    if (!text.trimStart().startsWith('{')) {
+      throw new Error('decoded base64 is not JSON — the value was likely truncated or partially pasted');
+    }
+  }
 
   const parsed = JSON.parse(text);
   if (!parsed.client_email || !parsed.private_key) {
