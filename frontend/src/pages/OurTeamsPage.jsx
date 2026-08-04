@@ -28,16 +28,16 @@ export default function OurTeamsPage() {
       />
 
       {/* Hero Header */}
-      <section className="locations-hero" style={{ background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)', color: '#fff', padding: '5rem 1.5rem', textAlign: 'center', marginTop: '4.8rem' }}>
+      <section className="locations-hero" style={{ padding: '8rem 1.5rem 4rem', textAlign: 'center', background: '#090e18', color: '#fff' }}>
         <div className="container">
-          <nav className="city-breadcrumb" aria-label="Breadcrumb" style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem', fontSize: '0.88rem', opacity: 0.8, marginBottom: '1.5rem' }}>
-            <Link to="/" style={{ color: '#fff', textDecoration: 'none' }}>Home</Link>
-            <span>/</span>
-            <span style={{ color: 'var(--accent-orange)' }}>Our Teams</span>
+          <nav className="city-breadcrumb" aria-label="Breadcrumb" style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center', marginBottom: '1.5rem', fontSize: '0.85rem' }}>
+            <Link to="/" style={{ color: '#94a3b8', textDecoration: 'none' }}>Home</Link>
+            <span style={{ color: '#475569' }}>/</span>
+            <span style={{ color: '#f8fafc' }}>Our Teams</span>
           </nav>
-          <span className="badge-tag" style={{ background: 'rgba(217, 101, 59, 0.15)', color: 'var(--accent-orange)', padding: '4px 12px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '1px' }}>Corporate Structure</span>
-          <h1 style={{ fontSize: '2.5rem', fontWeight: '800', marginTop: '0.75rem', marginBottom: '1rem', color: '#fff' }}>Our Teams & Leadership</h1>
-          <p style={{ maxWidth: '600px', margin: '0 auto', fontSize: '1.05rem', color: '#94a3b8', lineHeight: '1.6' }}>
+          <span className="badge-tag" style={{ background: 'rgba(225, 89, 11, 0.15)', color: '#ff7a29', padding: '4px 12px', borderRadius: '99px', fontSize: '0.78rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Corporate Structure</span>
+          <h1 style={{ fontSize: '2.5rem', fontWeight: 900, marginTop: '1rem', letterSpacing: '-0.02em', color: '#fff' }}>Our Teams & Leadership</h1>
+          <p className="locations-hero-lead" style={{ maxWidth: '680px', margin: '1rem auto 0', color: '#94a3b8', fontSize: '1rem', lineHeight: 1.6 }}>
             Meet the professional Board of Management directing divisions across electrical systems, motors, and composite materials.
           </p>
         </div>

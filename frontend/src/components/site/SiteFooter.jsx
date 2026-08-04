@@ -6,7 +6,8 @@ const GROUP_COMPANIES = [
   { name: 'Apidel', logo: '/assets/images/logo_apidel.jpg' },
   { name: 'Shree Raj', logo: '/assets/images/logo_shree_raj.jpg' },
   { name: 'Techno', logo: '/assets/images/logo_techno.jpg' },
-  { name: 'Transpower Exports', logo: '/assets/images/logo_transpower.png' }
+  { name: 'Yash', logo: '/assets/images/logo_yash.png' },
+  { name: 'Kaival', logo: '/assets/images/logo_kaival_poultry.png' }
 ];
 
 export default function SiteFooter() {
@@ -60,8 +61,11 @@ export default function SiteFooter() {
           <div className="footer-contact-col">
             <h4 style={{ color: '#fff', fontSize: '0.9rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '1.2rem' }}>CONTACT US</h4>
             <div className="footer-contact-details-list" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: '0.85rem', color: '#cbd5e1' }}>
-              <div>
-                <strong>Phone:</strong> <span style={{ marginLeft: '0.5rem' }}>+91 98255 07527 / 17 / +91 99099 57390</span>
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <strong>Phone:</strong>
+                <span style={{ paddingLeft: '0.5rem', fontSize: '0.82rem' }}>+91 98255 07527</span>
+                <span style={{ paddingLeft: '0.5rem', fontSize: '0.82rem' }}>+91 98255 07517</span>
+                <span style={{ paddingLeft: '0.5rem', fontSize: '0.82rem' }}>+91 99099 57390</span>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column' }}>
                 <strong>Email:</strong>
@@ -103,9 +107,9 @@ export default function SiteFooter() {
             </div>
           </div>
 
-          {/* Col 3: Our Group of Company */}
+          {/* Col 3: Our Group of Companies */}
           <div className="footer-frameworks-col" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <h4 style={{ color: '#fff', fontSize: '0.9rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '1.2rem' }}>OUR GROUP OF COMPANY</h4>
+            <h4 style={{ color: '#fff', fontSize: '0.9rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '1.2rem' }}>OUR GROUP OF COMPANIES</h4>
             <div className="footer-group-grid">
               {GROUP_COMPANIES.map((company) => (
                 <div className="footer-group-logo" key={company.name}>
