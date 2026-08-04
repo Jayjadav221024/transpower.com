@@ -35,9 +35,9 @@ export default function OurTeamsPage() {
             <span style={{ color: '#475569' }}>/</span>
             <span style={{ color: '#f8fafc' }}>Our Teams</span>
           </nav>
-          <span className="badge-tag" style={{ background: 'rgba(225, 89, 11, 0.15)', color: '#ff7a29', padding: '4px 12px', borderRadius: '99px', fontSize: '0.78rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Corporate Structure</span>
-          <h1 style={{ fontSize: '2.5rem', fontWeight: 900, marginTop: '1rem', letterSpacing: '-0.02em', color: '#fff' }}>Our Teams & Leadership</h1>
-          <p className="locations-hero-lead" style={{ maxWidth: '680px', margin: '1rem auto 0', color: '#94a3b8', fontSize: '1rem', lineHeight: 1.6 }}>
+          <span className="badge-tag" style={{ display: 'inline-block', background: 'rgba(225, 89, 11, 0.15)', color: '#ff7a29', padding: '4px 12px', borderRadius: '99px', fontSize: '0.78rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', margin: '0 auto' }}>Corporate Structure</span>
+          <h1 style={{ fontSize: '2.5rem', fontWeight: 900, marginTop: '1rem', letterSpacing: '-0.02em', color: '#fff', textAlign: 'center', marginLeft: 'auto', marginRight: 'auto' }}>Our Teams & Leadership</h1>
+          <p className="locations-hero-lead" style={{ maxWidth: '680px', margin: '1rem auto 0', color: '#94a3b8', fontSize: '1rem', lineHeight: 1.6, textAlign: 'center' }}>
             Meet the professional Board of Management directing divisions across electrical systems, motors, and composite materials.
           </p>
         </div>
