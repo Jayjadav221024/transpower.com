@@ -31,6 +31,9 @@ function shape(doc, { withContent = true } = {}) {
     createdAt:   p.createdAt,
     updatedAt:   p.updatedAt,
     publishedAt: p.publishedAt,
+    metaTitle:   p.metaTitle || '',
+    metaDescription: p.metaDescription || '',
+    keywords:    p.keywords || '',
   };
   if (withContent) out.content = p.content;
   return out;
@@ -194,6 +197,9 @@ const create = asyncHandler(async (req, res) => {
     status:     b.status === 'published' ? 'published' : 'draft',
     author:     req.user._id,
     authorName: String(b.authorName ?? '').trim().slice(0, 120),
+    metaTitle:  String(b.metaTitle ?? '').trim().slice(0, 200),
+    metaDescription: String(b.metaDescription ?? '').trim().slice(0, 400),
+    keywords:   String(b.keywords ?? '').trim().slice(0, 300),
   });
 
   await post.populate('author', 'name');
@@ -220,6 +226,9 @@ const update = asyncHandler(async (req, res) => {
   if (has('authorName')) post.authorName = String(b.authorName).trim().slice(0, 120);
   if (has('tags'))       post.tags       = normaliseTags(b.tags);
   if (has('status') && ['draft', 'published'].includes(b.status)) post.status = b.status;
+  if (has('metaTitle'))  post.metaTitle  = String(b.metaTitle).trim().slice(0, 200);
+  if (has('metaDescription')) post.metaDescription = String(b.metaDescription).trim().slice(0, 400);
+  if (has('keywords'))   post.keywords   = String(b.keywords).trim().slice(0, 300);
 
   post.excerpt = autoExcerpt(has('excerpt') ? String(b.excerpt).trim() : post.excerpt, post.content);
 

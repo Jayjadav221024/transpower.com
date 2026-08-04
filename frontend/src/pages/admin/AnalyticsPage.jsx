@@ -1084,7 +1084,7 @@ export default function AnalyticsPage() {
           </div>
         </div>
 
-        <div className="chart-card" style={{ gridColumn: 'span 4' }}>
+        <div className="chart-card" style={{ gridColumn: 'span 6' }}>
           <div className="chart-card-header">
             <h3><Calendar size={16} /> Visitors by day of week</h3>
           </div>
@@ -1093,7 +1093,7 @@ export default function AnalyticsPage() {
           </div>
         </div>
 
-        <div className="chart-card" style={{ gridColumn: 'span 4' }}>
+        <div className="chart-card" style={{ gridColumn: 'span 6' }}>
           <div className="chart-card-header">
             <h3><Calendar size={16} /> Monthly visitors (last 12 months)</h3>
           </div>

@@ -17,6 +17,9 @@ const postSchema = new mongoose.Schema(
     // can be credited to someone who has no admin login.
     authorName: { type: String, default: '', trim: true, maxlength: 120 },
     publishedAt:{ type: Date, default: null },
+    metaTitle:  { type: String, default: '', trim: true, maxlength: 200 },
+    metaDescription: { type: String, default: '', trim: true, maxlength: 400 },
+    keywords:   { type: String, default: '', trim: true, maxlength: 300 },
   },
   { timestamps: true }
 );

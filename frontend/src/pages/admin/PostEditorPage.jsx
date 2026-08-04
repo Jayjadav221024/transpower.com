@@ -11,6 +11,7 @@ import { slugify } from '../../utils/slugify';
 const BLANK = {
   title: '', excerpt: '', content: '', tags: '', slug: '', coverImage: '', coverAlt: '',
   authorName: '', status: 'draft',
+  metaTitle: '', metaDescription: '', keywords: '',
 };
 
 export default function PostEditorPage() {
@@ -46,6 +47,9 @@ export default function PostEditorPage() {
           tags: post.tags.join(', '), slug: post.slug,
           coverImage: post.coverImage, coverAlt: post.coverAlt || '',
           authorName: post.authorName || '', status: post.status,
+          metaTitle: post.metaTitle || '',
+          metaDescription: post.metaDescription || '',
+          keywords: post.keywords || '',
         });
         setMeta(post);
       })
@@ -191,6 +195,46 @@ export default function PostEditorPage() {
               Insert image into content
             </button>
             <span className="muted small">Drops the image at the cursor position.</span>
+          </div>
+
+          {/* SEO & Search Metadata Card Section */}
+          <div className="panel" style={{ marginTop: '2rem' }}>
+            <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', margin: '0 0 1.25rem 0', fontSize: '1.1rem', color: '#e1590b' }}>
+              <TrendingUp size={18} /> SEO &amp; Search Metadata Settings
+            </h3>
+            
+            <label className="field" style={{ marginBottom: '1.25rem' }}>
+              <span>Meta Title <em>optional — falls back to Post Title (recommended: under 60 chars)</em></span>
+              <input
+                type="text" className="input" maxLength={200}
+                placeholder="Search engine title tag"
+                value={form.metaTitle} onChange={update('metaTitle')}
+              />
+              <span className="muted small" style={{ display: 'block', marginTop: '0.25rem', color: form.metaTitle.length > 60 ? '#ef4444' : '#8892b0' }}>
+                {form.metaTitle.length} / 60 characters recommended
+              </span>
+            </label>
+
+            <label className="field" style={{ marginBottom: '1.25rem' }}>
+              <span>Meta Description <em>optional — falls back to Excerpt (recommended: under 160 chars)</em></span>
+              <textarea
+                className="input" rows="3" maxLength={400}
+                placeholder="Summary snippet shown in search engine results."
+                value={form.metaDescription} onChange={update('metaDescription')}
+              />
+              <span className="muted small" style={{ display: 'block', marginTop: '0.25rem', color: form.metaDescription.length > 160 ? '#ef4444' : '#8892b0' }}>
+                {form.metaDescription.length} / 160 characters recommended
+              </span>
+            </label>
+
+            <label className="field">
+              <span>Focus SEO Keywords <em>optional — comma separated list</em></span>
+              <input
+                type="text" className="input" maxLength={300}
+                placeholder="e.g. frp gratings, industrial composite materials, acid resistance floor"
+                value={form.keywords} onChange={update('keywords')}
+              />
+            </label>
           </div>
         </div>
 
