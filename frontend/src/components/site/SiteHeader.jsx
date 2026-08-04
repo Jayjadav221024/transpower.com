@@ -197,7 +197,6 @@ export default function SiteHeader() {
             </span>
             <span className="logo-subtext-new">Technologies Pvt. Ltd.</span>
           </div>
-          <span className="logo-beam" aria-hidden="true" />
         </Link>
 
         {/* Desktop Nav Links */}
