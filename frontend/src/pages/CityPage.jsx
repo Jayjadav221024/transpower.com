@@ -15,9 +15,8 @@ export default function CityPage() {
   const city = getCityBySlug(citySlug);
   const [openFaq, setOpenFaq] = useState(0);
 
-  /* Unknown slug falls through to the 404 route rather than rendering an empty
-     shell that Google could index. */
-  if (!city) return <Navigate to="/404" replace />;
+  // Unconditionally redirect old fabricated per-city pages to the main locations page
+  return <Navigate to="/locations" replace />;
 
   const products = orderedProductIds(city).map(productById).filter(Boolean);
   const productTitles = products.map((p) => p.title);

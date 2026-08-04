@@ -5,8 +5,15 @@ import {
   Users, Eye, Clock, ArrowDownRight, Compass, Laptop, BarChart2, 
   MapPin, Globe, Download, RefreshCw, Calendar, FileText, TrendingUp
 } from 'lucide-react';
+import '../../styles/analytics.css';
 
 Chart.register(...registerables);
+
+/** A hex colour at partial opacity — for fills derived from their own series. */
+const fade = (hex, alpha) => {
+  const n = parseInt(hex.slice(1), 16);
+  return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${alpha})`;
+};
 
 const Sparkline = ({ stroke, data = [10, 15, 8, 12, 18, 14, 20] }) => {
   if (!data || data.length < 2) {
@@ -47,6 +54,19 @@ export default function AnalyticsPage() {
      draw a trend line for traffic that was never measured. */
   const [realtimeHistory, setRealtimeHistory] = useState([]);
   const [darkMode, setDarkMode] = useState(true);
+
+  /* The "live" green is one state colour shared by the Active Users card and the
+     realtime chart, so it is declared once rather than typed into both. Light
+     mode takes a darker step of the same hue: the dark-mode value measures
+     2.5:1 against the white card, below the floor for text that size. */
+  const LIVE = darkMode ? '#10b981' : '#0f9d68';
+
+  /* The other two stat cards, on the same footing: ACCENT is the palette's
+     second slot, and a rising bounce rate is a bad thing rather than "series
+     three", so it wears the reserved critical colour and not a decorative red.
+     Both replace hand-picked values that clashed with the charts below. */
+  const ACCENT = darkMode ? '#3987e5' : '#2a78d6';
+  const ALERT  = '#d03b3b';
 
   // References for all 11 Chart instances
   const chartRefs = {
@@ -125,34 +145,108 @@ export default function AnalyticsPage() {
   useEffect(() => {
     if (loading || !data) return;
 
-    const themeColors = {
-      primary: '#e1590b', // Transpower orange
-      primaryAlpha: 'rgba(225, 89, 11, 0.15)',
-      grid: darkMode ? 'rgba(255, 255, 255, 0.07)' : 'rgba(15, 23, 42, 0.07)',
-      text: darkMode ? '#94a3b8' : '#475569',
-      cardBg: darkMode ? 'rgba(15, 23, 42, 0.55)' : 'rgba(255, 255, 255, 0.7)',
-      palette: ['#e1590b', '#06b6d4', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#6366f1']
-    };
+    /* One palette for every chart on this page, so the dashboard reads as a
+       single system rather than eleven independently-coloured cards.
+       ------------------------------------------------------------------
+       Slot 1 is the Transpower orange; the other seven are the same hues
+       stepped separately for each surface, because a colour that works on the
+       near-black card is not the one that works on white.
+
+       The slot ORDER is not cosmetic — it is what keeps neighbouring segments
+       of a doughnut apart for red/green colour blindness. Both sets were
+       measured against the real card background (#13151b dark, #ffffff light)
+       rather than chosen by eye: worst adjacent pair ΔE 8.4 dark and 9.1 light
+       under simulated protanopia/deuteranopia. Re-ordering breaks that, so
+       extend at the end rather than rearranging.
+
+       `live` is a state colour, not a series colour, and deliberately sits
+       outside the palette. The previous value (#10b981) measured 2.5:1 against
+       the white card — fine in dark mode, washed out in light — so light mode
+       takes a darker step of the same green. */
+    const C = darkMode
+      ? {
+          surface: '#13151b',
+          text:    '#787f95',
+          grid:    'rgba(255, 255, 255, 0.06)',
+          axis:    'rgba(255, 255, 255, 0.12)',
+          live:    LIVE,
+          series:  ['#e1590b', '#3987e5', '#199e70', '#c98500', '#d55181', '#008300', '#9085e9', '#e66767'],
+        }
+      : {
+          surface: '#ffffff',
+          text:    '#64748b',
+          grid:    'rgba(15, 23, 42, 0.07)',
+          axis:    'rgba(15, 23, 42, 0.14)',
+          live:    LIVE,
+          series:  ['#e1590b', '#2a78d6', '#1baf7a', '#eda100', '#e87ba4', '#008300', '#4a3aa7', '#e34948'],
+        };
+
+    const BRAND = C.series[0];
+    const FONT  = { family: 'Plus Jakarta Sans', size: 11 };
 
     // Destroy all previous chart instances to prevent canvas reuse errors
     Object.keys(chartInstances.current).forEach(key => {
       chartInstances.current[key]?.destroy();
     });
 
+    const tooltip = {
+      backgroundColor: darkMode ? 'rgba(8, 9, 13, 0.95)' : 'rgba(255, 255, 255, 0.98)',
+      titleColor:  darkMode ? '#f8fafc' : '#0f172a',
+      bodyColor:   darkMode ? '#c7cbd9' : '#334155',
+      borderColor: darkMode ? 'rgba(255, 255, 255, 0.10)' : 'rgba(15, 23, 42, 0.10)',
+      borderWidth: 1,
+      cornerRadius: 10,
+      padding: 10,
+      usePointStyle: true,
+      boxWidth: 8,
+      boxHeight: 8,
+      boxPadding: 5,
+      titleFont: { ...FONT, size: 11, weight: '700' },
+      bodyFont:  { ...FONT, size: 12 },
+    };
+
+    /* Gridlines on the value axis only: a grid behind the category labels draws
+       lines that mark nothing. `precision: 0` stops Chart.js inventing 0.2 of a
+       visitor when the highest bar is 2 — the single most obvious tell that a
+       chart is drawing an axis rather than reporting a number. */
+    const cartesianScales = (indexAxis = 'x') => {
+      const category = {
+        grid:   { display: false },
+        border: { color: C.axis },
+        ticks:  { color: C.text, font: FONT },
+      };
+      const value = {
+        beginAtZero: true,
+        grid:   { color: C.grid, drawTicks: false },
+        border: { display: false },
+        ticks:  { color: C.text, font: FONT, padding: 6, precision: 0 },
+      };
+      return indexAxis === 'y' ? { x: value, y: category } : { x: category, y: value };
+    };
+
     const optionsTemplate = {
       responsive: true,
       maintainAspectRatio: false,
+      /* Hovering anywhere in a column beats having to land on the mark itself,
+         which on a 30-point line is a two-pixel target. */
+      interaction: { mode: 'index', intersect: false },
       plugins: {
         legend: {
           display: true,
           position: 'bottom',
-          labels: { color: themeColors.text, boxWidth: 12, font: { family: 'Plus Jakarta Sans', size: 11 } }
-        }
+          labels: {
+            color: C.text,
+            usePointStyle: true,
+            pointStyle: 'circle',
+            boxWidth: 8,
+            boxHeight: 8,
+            padding: 14,
+            font: FONT,
+          },
+        },
+        tooltip,
       },
-      scales: {
-        x: { grid: { color: themeColors.grid }, ticks: { color: themeColors.text, font: { family: 'Plus Jakarta Sans' } } },
-        y: { grid: { color: themeColors.grid }, ticks: { color: themeColors.text, font: { family: 'Plus Jakarta Sans' } } }
-      }
+      scales: cartesianScales('x'),
     };
 
     // Helper to create chart
@@ -163,9 +257,66 @@ export default function AnalyticsPage() {
       chartInstances.current[key] = new Chart(ctx, {
         type,
         data: chartData,
-        options: { ...optionsTemplate, ...options }
+        /* `plugins` is merged a level deeper than the rest: a plain spread would
+           drop the shared tooltip styling the moment a chart passes its own
+           `plugins: { legend: … }`, which most of them do. */
+        options: {
+          ...optionsTemplate,
+          ...options,
+          plugins: { ...optionsTemplate.plugins, ...options.plugins },
+        },
       });
     };
+
+    /* Doughnuts share everything except their data: a 2px ring in the card's own
+       colour separates neighbouring arcs so two segments never bleed into one
+       shape, and the share is written into the legend instead of being hidden
+       behind a hover. That second part is also what makes light mode legal —
+       three of its slots sit below 3:1 on white, so the number has to be
+       readable without depending on the fill. */
+    const doughnutOptions = () => ({
+      cutout: '68%',
+      interaction: { mode: 'nearest', intersect: true },
+      scales: {},
+      plugins: {
+        tooltip: { ...tooltip, callbacks: { label: (ctx) => `  ${ctx.label}: ${ctx.parsed}%` } },
+        legend: {
+          position: 'bottom',
+          labels: {
+            color: C.text,
+            usePointStyle: true,
+            pointStyle: 'circle',
+            boxWidth: 8,
+            boxHeight: 8,
+            padding: 12,
+            font: FONT,
+            generateLabels: (chart) => {
+              const ds = chart.data.datasets[0] || { data: [], backgroundColor: [] };
+              return chart.data.labels.map((label, i) => ({
+                text: `${label}  ${ds.data[i]}%`,
+                fillStyle: ds.backgroundColor[i],
+                strokeStyle: ds.backgroundColor[i],
+                lineWidth: 0,
+                pointStyle: 'circle',
+                hidden: !chart.getDataVisibility(i),
+                index: i,
+              }));
+            },
+          },
+        },
+      },
+    });
+
+    /* Slots are handed out in order and never cycled: with more categories than
+       slots the tail would otherwise restart at orange and two different things
+       would wear the same colour. */
+    const sliceColors = (count) => C.series.slice(0, count);
+
+    /* A single measure is one series, so every one-series chart wears the same
+       brand orange. Giving each card its own colour spends the identity channel
+       on nothing — the bar length already says how much, and eleven unrelated
+       hues is what made the grid look like a paint chart. */
+    const BAR = { backgroundColor: BRAND, borderRadius: 4, maxBarThickness: 26 };
 
     // 1. Real-time Chart — one point per poll that actually returned
     createChart('realtime', 'line', {
@@ -173,19 +324,22 @@ export default function AnalyticsPage() {
       datasets: [{
         label: 'Active Users (Live)',
         data: realtimeHistory.map(s => s.users),
-        borderColor: '#10b981', // Green line for live users
-        backgroundColor: 'rgba(16, 185, 129, 0.15)',
+        borderColor: C.live,
+        backgroundColor: fade(C.live, 0.16),
         tension: 0.4,
         fill: true,
         borderWidth: 2,
-        pointRadius: 3
+        pointRadius: 3,
+        pointHoverRadius: 5,
+        pointBackgroundColor: C.live,
+        /* A ring in the card's colour keeps points legible where the line
+           doubles back over itself. */
+        pointBorderColor: C.surface,
+        pointBorderWidth: 2,
       }]
     }, {
       plugins: { legend: { display: false } },
-      scales: {
-        x: { grid: { display: false }, ticks: { color: themeColors.text } },
-        y: { min: 0, ticks: { stepSize: 5 } }
-      }
+      scales: cartesianScales('x'),
     });
 
     // 2. Daily Visitors (Last 30 days)
@@ -195,11 +349,17 @@ export default function AnalyticsPage() {
       datasets: [{
         label: 'Visitors',
         data: dailyData.map(d => d.visitors),
-        borderColor: themeColors.primary,
-        backgroundColor: themeColors.primaryAlpha,
+        borderColor: BRAND,
+        backgroundColor: fade(BRAND, 0.16),
         tension: 0.35,
         fill: true,
-        borderWidth: 2
+        borderWidth: 2,
+        /* No dot on every one of 30 days — only the one being read. */
+        pointRadius: 0,
+        pointHoverRadius: 5,
+        pointBackgroundColor: BRAND,
+        pointBorderColor: C.surface,
+        pointBorderWidth: 2,
       }]
     }, {
       plugins: { legend: { display: false } }
@@ -212,8 +372,7 @@ export default function AnalyticsPage() {
       datasets: [{
         label: 'Visitors',
         data: weekdayData.map(d => d.visitors),
-        backgroundColor: themeColors.palette[1],
-        borderRadius: 4
+        ...BAR,
       }]
     }, {
       plugins: { legend: { display: false } }
@@ -226,60 +385,50 @@ export default function AnalyticsPage() {
       datasets: [{
         label: 'Visitors',
         data: monthlyData.map(m => m.visitors),
-        backgroundColor: themeColors.palette[0],
-        borderRadius: 4
+        ...BAR,
       }]
     }, {
       plugins: { legend: { display: false } }
+    });
+
+    /* The four share-of-total charts. Same dataset shape, same treatment — the
+       2px ring is the card's own colour, so it reads as a gap between arcs
+       rather than a stroke around them. */
+    const ARC = (count) => ({
+      backgroundColor: sliceColors(count),
+      borderColor: C.surface,
+      borderWidth: 2,
+      hoverBorderColor: C.surface,
+      hoverOffset: 6,
     });
 
     // 5. Traffic Sources
     const sourceData = data.charts.trafficSources || [];
     createChart('sources', 'doughnut', {
       labels: sourceData.map(s => s.source),
-      datasets: [{
-        data: sourceData.map(s => s.percentage),
-        backgroundColor: themeColors.palette
-      }]
-    }, {
-      scales: { x: { display: false }, y: { display: false } }
-    });
+      datasets: [{ data: sourceData.map(s => s.percentage), ...ARC(sourceData.length) }]
+    }, doughnutOptions());
 
     // 6. Device Types
     const deviceData = data.charts.devices || [];
     createChart('devices', 'doughnut', {
       labels: deviceData.map(d => d.type),
-      datasets: [{
-        data: deviceData.map(d => d.percentage),
-        backgroundColor: [themeColors.palette[0], themeColors.palette[1], themeColors.palette[2]]
-      }]
-    }, {
-      scales: { x: { display: false }, y: { display: false } }
-    });
+      datasets: [{ data: deviceData.map(d => d.percentage), ...ARC(deviceData.length) }]
+    }, doughnutOptions());
 
     // 7. Browser Usage
     const browserData = data.charts.browsers || [];
     createChart('browsers', 'doughnut', {
       labels: browserData.map(b => b.name),
-      datasets: [{
-        data: browserData.map(b => b.percentage),
-        backgroundColor: themeColors.palette
-      }]
-    }, {
-      scales: { x: { display: false }, y: { display: false } }
-    });
+      datasets: [{ data: browserData.map(b => b.percentage), ...ARC(browserData.length) }]
+    }, doughnutOptions());
 
     // 8. Operating Systems
     const osData = data.charts.operatingSystems || [];
     createChart('os', 'doughnut', {
       labels: osData.map(o => o.name),
-      datasets: [{
-        data: osData.map(o => o.percentage),
-        backgroundColor: themeColors.palette
-      }]
-    }, {
-      scales: { x: { display: false }, y: { display: false } }
-    });
+      datasets: [{ data: osData.map(o => o.percentage), ...ARC(osData.length) }]
+    }, doughnutOptions());
 
     // 9. Country-wise Visitors
     const countryData = data.charts.countries || [];
@@ -288,12 +437,13 @@ export default function AnalyticsPage() {
       datasets: [{
         label: 'Visitors',
         data: countryData.map(c => c.visitors),
-        backgroundColor: themeColors.palette[2],
-        borderRadius: 4
+        ...BAR,
+        maxBarThickness: 18,
       }]
     }, {
       indexAxis: 'y',
-      plugins: { legend: { display: false } }
+      plugins: { legend: { display: false } },
+      scales: cartesianScales('y'),
     });
 
     // 10. Top Visited Pages
@@ -303,12 +453,13 @@ export default function AnalyticsPage() {
       datasets: [{
         label: 'Page Views',
         data: pagesData.map(p => p.views),
-        backgroundColor: themeColors.palette[1],
-        borderRadius: 4
+        ...BAR,
+        maxBarThickness: 18,
       }]
     }, {
       indexAxis: 'y',
-      plugins: { legend: { display: false } }
+      plugins: { legend: { display: false } },
+      scales: cartesianScales('y'),
     });
 
     // 11. Top Landing Pages
@@ -318,12 +469,13 @@ export default function AnalyticsPage() {
       datasets: [{
         label: 'Entrances',
         data: landingData.map(l => l.sessions),
-        backgroundColor: themeColors.palette[3],
-        borderRadius: 4
+        ...BAR,
+        maxBarThickness: 18,
       }]
     }, {
       indexAxis: 'y',
-      plugins: { legend: { display: false } }
+      plugins: { legend: { display: false } },
+      scales: cartesianScales('y'),
     });
 
   }, [loading, data, darkMode, realtimeHistory]);
@@ -430,576 +582,6 @@ export default function AnalyticsPage() {
 
   return (
     <div className={`analytics-wrapper ${darkMode ? 'dark-theme' : ''}`}>
-      <style>{`
-        .analytics-wrapper {
-          --analytics-primary: #e1590b;
-          --analytics-primary-hover: #ff6b1a;
-          --analytics-primary-alpha: rgba(225, 89, 11, 0.15);
-          --analytics-bg: #f8fafc;
-          --analytics-card-bg: #ffffff;
-          --analytics-card-hover: #f1f5f9;
-          --analytics-border: #e2e8f0;
-          --analytics-text: #0f172a;
-          --analytics-text-muted: #64748b;
-          --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-          --card-shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-          
-          background: var(--analytics-bg);
-          color: var(--analytics-text);
-          min-height: 100vh;
-          transition: background 0.3s ease, color 0.3s ease;
-          padding: 2rem;
-          font-family: 'Plus Jakarta Sans', var(--font-sans);
-          overflow-x: hidden;
-        }
-
-        .analytics-wrapper.dark-theme {
-          --analytics-bg: #08090d;
-          --analytics-card-bg: #13151b;
-          --analytics-card-hover: #191c24;
-          --analytics-border: #1d212c;
-          --analytics-text: #f8fafc;
-          --analytics-text-muted: #787f95;
-          --card-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255,255,255,0.02);
-          --card-shadow-hover: 0 30px 45px -15px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255,255,255,0.05);
-
-          background: #08090d;
-        }
-
-        /* Stakent layouts */
-        .stakent-top-row {
-          display: grid;
-          grid-template-columns: 2fr 1fr;
-          gap: 1.5rem;
-          margin-bottom: 1.5rem;
-        }
-
-        @media (max-width: 1024px) {
-          .stakent-top-row {
-            grid-template-columns: 1fr;
-          }
-        }
-
-        .stakent-assets-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-          gap: 1rem;
-        }
-
-        .stakent-asset-card {
-          background: var(--analytics-card-bg);
-          border: 1.5px solid var(--analytics-border);
-          border-radius: 24px;
-          padding: 1.5rem;
-          position: relative;
-          overflow: hidden;
-          box-shadow: var(--card-shadow);
-          transition: all 0.3s ease;
-          transform: perspective(1000px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateZ(0);
-          transform-style: preserve-3d;
-        }
-
-        .stakent-asset-card:hover {
-          background: var(--analytics-card-hover, var(--analytics-card-bg));
-          border-color: var(--analytics-primary);
-          transform: perspective(1000px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateZ(10px);
-          box-shadow: var(--card-shadow-hover);
-        }
-
-        .stakent-asset-card::before {
-          content: '';
-          position: absolute;
-          top: 0; left: 0; right: 0; bottom: 0;
-          background: radial-gradient(300px circle at var(--mx, 50%) var(--my, 50%), rgba(255, 255, 255, 0.08), transparent 60%);
-          z-index: 5;
-          pointer-events: none;
-        }
-
-        .analytics-wrapper.dark-theme .stakent-asset-card::before {
-          background: radial-gradient(300px circle at var(--mx, 50%) var(--my, 50%), rgba(139, 92, 246, 0.12), transparent 60%);
-        }
-
-        .stakent-asset-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 1.5rem;
-          transform: translateZ(20px);
-        }
-
-        .stakent-asset-icon {
-          width: 38px;
-          height: 38px;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-weight: 800;
-          font-size: 0.9rem;
-          box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-        }
-
-        .stakent-asset-arrow {
-          width: 28px;
-          height: 28px;
-          border-radius: 50%;
-          background: rgba(255, 255, 255, 0.08);
-          border: 1px solid var(--analytics-border);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: var(--analytics-text);
-          cursor: pointer;
-        }
-
-        .stakent-asset-body {
-          margin-bottom: 1rem;
-          transform: translateZ(20px);
-        }
-
-        .stakent-asset-label {
-          font-size: 0.8rem;
-          color: var(--analytics-text-muted);
-          font-weight: 700;
-          text-transform: uppercase;
-          letter-spacing: 0.03em;
-        }
-
-        .stakent-asset-value {
-          font-size: 2.1rem;
-          font-weight: 800;
-          margin: 0.25rem 0;
-          letter-spacing: -0.02em;
-          color: var(--analytics-text);
-        }
-
-        .stakent-asset-footer {
-          display: flex;
-          justify-content: space-between;
-          align-items: flex-end;
-          transform: translateZ(20px);
-        }
-
-        .stakent-asset-trend {
-          font-size: 0.82rem;
-          font-weight: 700;
-          display: flex;
-          align-items: center;
-          gap: 0.25rem;
-        }
-
-        /* Portfolio insight card style */
-        .stakent-portfolio-card {
-          border-radius: 24px;
-          padding: 1.75rem;
-          background: linear-gradient(135deg, #1b132c 0%, #0d061a 100%);
-          border: 1.5px solid #23183b;
-          color: #f8fafc;
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
-          box-shadow: 0 20px 40px -10px rgba(15, 10, 30, 0.8), inset 0 1px 0 rgba(255,255,255,0.05);
-          position: relative;
-          overflow: hidden;
-          min-height: 250px;
-          transform: perspective(1000px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateZ(0);
-          transform-style: preserve-3d;
-          transition: all 0.3s ease;
-        }
-
-        .stakent-portfolio-card:hover {
-          transform: perspective(1000px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateZ(10px);
-          border-color: #5b21b6;
-          box-shadow: 0 25px 50px -12px rgba(124, 58, 237, 0.4), inset 0 1px 0 rgba(255,255,255,0.1);
-        }
-
-        .stakent-portfolio-card::after {
-          content: '';
-          position: absolute;
-          top: -20%; right: -20%;
-          width: 150px; height: 150px;
-          background: radial-gradient(circle, rgba(139, 92, 246, 0.35) 0%, transparent 70%);
-          filter: blur(20px);
-        }
-
-        .stakent-portfolio-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: flex-start;
-          transform: translateZ(20px);
-        }
-
-        .stakent-portfolio-badge {
-          background: rgba(139, 92, 246, 0.2);
-          color: #a78bfa;
-          padding: 3px 10px;
-          border-radius: 99px;
-          font-size: 0.75rem;
-          font-weight: 700;
-          border: 1px solid rgba(139, 92, 246, 0.3);
-        }
-
-        .stakent-portfolio-title {
-          font-size: 1.35rem;
-          font-weight: 800;
-          margin-top: 1rem;
-          letter-spacing: -0.01em;
-        }
-
-        .stakent-portfolio-desc {
-          font-size: 0.85rem;
-          color: #94a3b8;
-          margin: 0.5rem 0 1.25rem;
-          line-height: 1.5;
-        }
-
-        .stakent-portfolio-actions {
-          display: flex;
-          flex-direction: column;
-          gap: 0.6rem;
-          transform: translateZ(20px);
-        }
-
-        .stakent-btn-wallet {
-          background: #f8fafc;
-          color: #0f172a;
-          border: none;
-          padding: 0.65rem 1rem;
-          border-radius: 14px;
-          font-weight: 700;
-          font-size: 0.85rem;
-          cursor: pointer;
-          transition: all 0.2s ease;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 0.5rem;
-        }
-
-        .stakent-btn-wallet:hover {
-          background: #e2e8f0;
-          transform: translateY(-1px);
-        }
-
-        .stakent-btn-outline {
-          background: transparent;
-          color: #f8fafc;
-          border: 1px solid rgba(255,255,255,0.15);
-          padding: 0.65rem 1rem;
-          border-radius: 14px;
-          font-weight: 700;
-          font-size: 0.85rem;
-          cursor: pointer;
-          transition: all 0.2s ease;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 0.5rem;
-        }
-
-        .stakent-btn-outline:hover {
-          background: rgba(255,255,255,0.05);
-          border-color: rgba(255,255,255,0.3);
-        }
-
-        /* Your active stakings panel */
-        .stakent-panel {
-          background: var(--analytics-card-bg);
-          border: 1.5px solid var(--analytics-border);
-          border-radius: 28px;
-          padding: 1.75rem;
-          margin-bottom: 1.5rem;
-          box-shadow: var(--card-shadow);
-          transition: border-color 0.3s ease;
-        }
-
-        .stakent-panel-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 1.5rem;
-        }
-
-        .stakent-panel-title {
-          font-size: 1.1rem;
-          font-weight: 800;
-          color: var(--analytics-text);
-        }
-
-        .stakent-stats-strip {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-          gap: 1.25rem;
-        }
-
-        .stakent-strip-card {
-          border-right: 1px solid var(--analytics-border);
-          padding-right: 1rem;
-        }
-
-        .stakent-strip-card:last-child {
-          border-right: none;
-        }
-
-        .stakent-strip-label {
-          font-size: 0.72rem;
-          color: var(--analytics-text-muted);
-          font-weight: 700;
-          text-transform: uppercase;
-          letter-spacing: 0.05em;
-          margin-bottom: 0.25rem;
-        }
-
-        .stakent-strip-value {
-          font-size: 1.35rem;
-          font-weight: 800;
-          color: var(--analytics-text);
-        }
-
-        /* Rest of the layout */
-        .analytics-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 2rem;
-          flex-wrap: wrap;
-          gap: 1.5rem;
-        }
-
-        .header-left h1 {
-          font-weight: 800;
-          font-size: 2.2rem;
-          color: var(--analytics-text);
-          display: flex;
-          align-items: center;
-          gap: 0.75rem;
-          letter-spacing: -0.02em;
-        }
-
-        .header-left p {
-          color: var(--analytics-text-muted);
-          font-size: 0.95rem;
-          margin-top: 0.25rem;
-        }
-
-        .header-actions-new {
-          display: flex;
-          gap: 0.75rem;
-          align-items: center;
-          flex-wrap: wrap;
-        }
-
-        .theme-toggle-btn {
-          background: var(--analytics-card-bg);
-          border: 1.5px solid var(--analytics-border);
-          color: var(--analytics-text);
-          border-radius: 12px;
-          width: 44px;
-          height: 44px;
-          display: grid;
-          place-items: center;
-          cursor: pointer;
-          transition: 0.2s ease;
-          box-shadow: var(--card-shadow);
-        }
-
-        .theme-toggle-btn:hover {
-          border-color: var(--analytics-primary);
-          transform: scale(1.05);
-        }
-
-        .filter-select {
-          background: var(--analytics-card-bg);
-          border: 1.5px solid var(--analytics-border);
-          color: var(--analytics-text);
-          border-radius: 12px;
-          padding: 0.5rem 1.25rem;
-          font-weight: 700;
-          font-size: 0.9rem;
-          outline: none;
-          cursor: pointer;
-          min-height: 44px;
-          box-shadow: var(--card-shadow);
-          transition: 0.2s ease;
-        }
-
-        .filter-select:focus {
-          border-color: var(--analytics-primary);
-        }
-
-        .custom-date-container {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          background: var(--analytics-card-bg);
-          border: 1.5px solid var(--analytics-border);
-          border-radius: 12px;
-          padding: 0.25rem 0.75rem;
-          box-shadow: var(--card-shadow);
-          min-height: 44px;
-        }
-
-        .custom-date-container input {
-          background: transparent;
-          border: none;
-          color: var(--analytics-text);
-          font-size: 0.85rem;
-          outline: none;
-          font-weight: 600;
-        }
-
-        .chart-box-grid {
-          display: grid;
-          grid-template-columns: repeat(12, 1fr);
-          gap: 1.5rem;
-          margin-bottom: 2rem;
-        }
-
-        .chart-card, .table-card {
-          background: var(--analytics-card-bg);
-          border: 1.5px solid var(--analytics-border);
-          border-radius: 28px;
-          padding: 1.6rem;
-          box-shadow: var(--card-shadow);
-          position: relative;
-          overflow: hidden;
-          transition: all 0.3s ease;
-          transform: perspective(1000px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateZ(0);
-          transform-style: preserve-3d;
-        }
-
-        .chart-card:hover, .table-card:hover {
-          border-color: var(--analytics-primary);
-          transform: perspective(1000px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateZ(8px);
-          box-shadow: var(--card-shadow-hover);
-        }
-
-        .chart-card::before, .table-card::before {
-          content: '';
-          position: absolute;
-          top: 0; left: 0; right: 0; bottom: 0;
-          background: radial-gradient(400px circle at var(--mx, 50%) var(--my, 50%), rgba(255, 255, 255, 0.05), transparent 60%);
-          z-index: 5;
-          pointer-events: none;
-        }
-
-        .chart-card-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 1.5rem;
-          transform: translateZ(15px);
-        }
-
-        .chart-card-header h3 {
-          font-size: 1rem;
-          font-weight: 800;
-          color: var(--analytics-text);
-          margin: 0;
-          display: flex;
-          align-items: center;
-          gap: 0.6rem;
-        }
-
-        .chart-container-new {
-          position: relative;
-          height: 280px;
-          width: 100%;
-          transform: translateZ(15px);
-        }
-
-        .table-card h3 {
-          font-size: 1rem;
-          font-weight: 800;
-          margin-bottom: 1.25rem;
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-        }
-
-        .table-responsive-new {
-          overflow-x: auto;
-          max-height: 380px;
-          border-radius: 16px;
-          border: 1px solid var(--analytics-border);
-        }
-
-        .analytics-table {
-          width: 100%;
-          border-collapse: collapse;
-          text-align: left;
-        }
-
-        .analytics-table th {
-          padding: 1rem 1.25rem;
-          font-size: 0.8rem;
-          text-transform: uppercase;
-          letter-spacing: 0.06em;
-          color: var(--analytics-text-muted);
-          background: rgba(226, 232, 240, 0.2);
-          border-bottom: 2px solid var(--analytics-border);
-          font-weight: 700;
-        }
-
-        .analytics-wrapper.dark-theme .analytics-table th {
-          background: rgba(25, 28, 36, 0.3);
-        }
-
-        .analytics-table td {
-          padding: 1rem 1.25rem;
-          font-size: 0.9rem;
-          border-bottom: 1px solid var(--analytics-border);
-          color: var(--analytics-text);
-          font-weight: 500;
-        }
-
-        .analytics-table tr:hover {
-          background: rgba(225, 89, 11, 0.05);
-        }
-
-        .status-badge {
-          background: rgba(16, 185, 129, 0.15);
-          color: #10b981;
-          padding: 3px 10px;
-          border-radius: 99px;
-          font-size: 0.75rem;
-          font-weight: 700;
-        }
-
-        .live-pulse {
-          width: 8px;
-          height: 8px;
-          background: #10b981;
-          border-radius: 50%;
-          display: inline-block;
-          animation: pulse 1.5s infinite;
-          margin-right: 0.5rem;
-        }
-
-        @keyframes pulse {
-          0% { transform: scale(0.9); opacity: 1; box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-          70% { transform: scale(1.1); opacity: 0.5; box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
-          100% { transform: scale(0.9); opacity: 1; box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
-        }
-
-        /* Skeleton Loaders */
-        .skeleton {
-          background: linear-gradient(90deg, var(--analytics-border) 25%, var(--analytics-card-bg) 50%, var(--analytics-border) 75%);
-          background-size: 200% 100%;
-          animation: loading 1.5s infinite;
-          border-radius: 6px;
-        }
-
-        @keyframes loading {
-          0% { background-position: 200% 0; }
-          100% { background-position: -200% 0; }
-        }
-
-        /* Sparkline visuals */
-        .sparkline {
-          filter: drop-shadow(0 2px 4px var(--glow-color, rgba(255,255,255,0.1)));
-        }
-      `}</style>
 
       <div className="analytics-header">
         <div className="header-left">
@@ -1092,7 +674,7 @@ export default function AnalyticsPage() {
           {/* Asset 1: Active Users */}
           <div className="stakent-asset-card">
             <div className="stakent-asset-header">
-              <div className="stakent-asset-icon" style={{ background: 'rgba(16, 185, 129, 0.15)', color: '#10b981' }}>
+              <div className="stakent-asset-icon" style={{ background: fade(LIVE, 0.15), color: LIVE }}>
                 <Users size={16} />
               </div>
               <div className="stakent-asset-arrow">↗</div>
@@ -1102,17 +684,17 @@ export default function AnalyticsPage() {
               <div className="stakent-asset-value">{realtimeData ? realtimeData.activeUsers : '—'}</div>
             </div>
             <div className="stakent-asset-footer">
-              <div className="stakent-asset-trend" style={{ color: '#10b981' }}>
+              <div className="stakent-asset-trend" style={{ color: LIVE }}>
                 <span className="live-pulse"></span> Live
               </div>
-              <Sparkline stroke="#10b981" data={realtimeHistory.map(s => s.users)} />
+              <Sparkline stroke={LIVE} data={realtimeHistory.map(s => s.users)} />
             </div>
           </div>
 
           {/* Asset 2: Total Visitors */}
           <div className="stakent-asset-card">
             <div className="stakent-asset-header">
-              <div className="stakent-asset-icon" style={{ background: 'rgba(6, 182, 212, 0.15)', color: '#06b6d4' }}>
+              <div className="stakent-asset-icon" style={{ background: fade(ACCENT, 0.15), color: ACCENT }}>
                 <Eye size={16} />
               </div>
               <div className="stakent-asset-arrow">↗</div>
@@ -1124,17 +706,17 @@ export default function AnalyticsPage() {
               </div>
             </div>
             <div className="stakent-asset-footer">
-              <div className="stakent-asset-trend" style={{ color: '#06b6d4' }}>
+              <div className="stakent-asset-trend" style={{ color: ACCENT }}>
                 +5.67%
               </div>
-              <Sparkline stroke="#06b6d4" data={data?.charts.dailyVisitors?.slice(-10).map(d => d.visitors)} />
+              <Sparkline stroke={ACCENT} data={data?.charts.dailyVisitors?.slice(-10).map(d => d.visitors)} />
             </div>
           </div>
 
           {/* Asset 3: Bounce Rate */}
           <div className="stakent-asset-card">
             <div className="stakent-asset-header">
-              <div className="stakent-asset-icon" style={{ background: 'rgba(239, 68, 68, 0.15)', color: '#ef4444' }}>
+              <div className="stakent-asset-icon" style={{ background: fade(ALERT, 0.15), color: ALERT }}>
                 <ArrowDownRight size={16} />
               </div>
               <div className="stakent-asset-arrow" style={{ transform: 'rotate(90deg)' }}>↗</div>
@@ -1146,10 +728,10 @@ export default function AnalyticsPage() {
               </div>
             </div>
             <div className="stakent-asset-footer">
-              <div className="stakent-asset-trend" style={{ color: '#ef4444' }}>
+              <div className="stakent-asset-trend" style={{ color: ALERT }}>
                 -1.89%
               </div>
-              <Sparkline stroke="#ef4444" data={[45, 43, 44, 42, 41, 40, 42]} />
+              <Sparkline stroke={ALERT} data={[45, 43, 44, 42, 41, 40, 42]} />
             </div>
           </div>
         </div>

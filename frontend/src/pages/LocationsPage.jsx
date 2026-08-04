@@ -1,14 +1,13 @@
 import { Link } from 'react-router-dom';
-
 import SEO from '../components/common/SEO';
 import '../styles/locations.css';
-import { CITIES } from '../data/cities';
 import { PRODUCT_CARDS } from '../data/products';
 import { SITE_NAME, absoluteUrl } from '../config/site';
+import { GROUP_OFFICES } from '../data/company';
 
 export default function LocationsPage() {
-  const title = 'FRP Gratings, Cable Trays & Gearbox Suppliers Across Gujarat';
-  const description = `Transpower supplies FRP molded gratings, fiberglass cable trays, pultruded profiles, industrial gear boxes and power switchgears across ${CITIES.length} cities in Gujarat — including ${CITIES.slice(0, 6).map((c) => c.name).join(', ')}.`;
+  const title = 'Where We Supply - Transpower Technologies Pvt. Ltd.';
+  const description = 'Transpower Technologies Pvt. Ltd. supplies high-performance FRP molded gratings, cable trays, industrial gearboxes, and electrical switchgears through our offices in Vadodara, Ahmedabad, and Ankleshwar.';
 
   const jsonLd = [
     {
@@ -22,13 +21,13 @@ export default function LocationsPage() {
     {
       '@context': 'https://schema.org',
       '@type': 'ItemList',
-      name: `${SITE_NAME} service locations in Gujarat`,
-      numberOfItems: CITIES.length,
-      itemListElement: CITIES.map((c, i) => ({
+      name: `${SITE_NAME} Office Network`,
+      numberOfItems: GROUP_OFFICES.length,
+      itemListElement: GROUP_OFFICES.map((o, i) => ({
         '@type': 'ListItem',
         position: i + 1,
-        name: `FRP & industrial products in ${c.name}`,
-        url: absoluteUrl(`/locations/${c.slug}`),
+        name: o.name,
+        address: o.address
       })),
     },
   ];
@@ -38,62 +37,77 @@ export default function LocationsPage() {
       <SEO
         title={title}
         description={description}
-        keywords={`FRP gratings Gujarat, FRP cable trays Gujarat, industrial gear boxes Gujarat, power switchgears Gujarat, ${CITIES.map((c) => `FRP supplier ${c.name}`).join(', ')}`}
+        keywords="FRP gratings supplier Gujarat, industrial gear boxes Vadodara, switchgears Ankleshwar, Shreeraj Traders Ahmedabad, Techno Sales Agency Ankleshwar"
         canonical="/locations"
         jsonLd={jsonLd}
       />
 
-      <section className="locations-hero">
+      <section className="locations-hero" style={{ padding: '8rem 1.5rem 4rem', textAlign: 'center', background: '#090e18', color: '#fff' }}>
         <div className="container">
-          <nav className="city-breadcrumb" aria-label="Breadcrumb">
-            <Link to="/">Home</Link>
-            <span aria-hidden="true">/</span>
-            <span aria-current="page">Locations</span>
+          <nav className="city-breadcrumb" aria-label="Breadcrumb" style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center', marginBottom: '1.5rem', fontSize: '0.85rem' }}>
+            <Link to="/" style={{ color: '#94a3b8', textDecoration: 'none' }}>Home</Link>
+            <span style={{ color: '#475569' }}>/</span>
+            <span style={{ color: '#f8fafc' }}>Where We Supply</span>
           </nav>
 
-          <span className="badge-tag">Available Offline &amp; Online in Gujarat</span>
-          <h1>Where We Supply Across Gujarat</h1>
-          <p className="locations-hero-lead">
-            Every product is manufactured at our Makarpura, Vadodara facility and supplied to
-            industrial clients across {CITIES.length} cities in Gujarat. Choose your city to see the
-            product lines specified most often in that region, the industrial estates we cover, and
-            local enquiry details.
+          <span className="badge-tag" style={{ background: 'rgba(225, 89, 11, 0.15)', color: '#ff7a29', padding: '4px 12px', borderRadius: '99px', fontSize: '0.78rem', fontWeight: 800 }}>Our Office Network</span>
+          <h1 style={{ fontSize: '2.5rem', fontWeight: 900, marginTop: '1rem', letterSpacing: '-0.02em' }}>Where We Supply Across Gujarat</h1>
+          <p className="locations-hero-lead" style={{ maxWidth: '680px', margin: '1rem auto 0', color: '#94a3b8', fontSize: '1rem', lineHeight: 1.6 }}>
+            Transpower Technologies Pvt. Ltd. coordinates supply, B2B distribution, and engineering support for our complete industrial infrastructure line from our registered offices and group stock points across major industrial hubs in Gujarat.
           </p>
         </div>
       </section>
 
-      <section className="section">
+      <section className="section" style={{ padding: '4rem 1.5rem' }}>
         <div className="container">
-          <div className="locations-grid">
-            {CITIES.map((city) => (
-              <Link to={`/locations/${city.slug}`} className="location-card" key={city.slug}>
-                <div className="location-card-head">
-                  <h2>{city.name}</h2>
-                  {city.isHeadOffice && <span className="location-hq">Plant</span>}
+          <div className="locations-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem' }}>
+            {GROUP_OFFICES.map((office) => (
+              <div 
+                className="location-card" 
+                key={office.name} 
+                style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: '16px', padding: '2rem', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}
+              >
+                <div className="location-card-head" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
+                  <h2 style={{ fontSize: '1.2rem', fontWeight: 800, margin: 0, color: 'var(--text-main)' }}>{office.name}</h2>
+                  {!office.isSalesOffice && <span className="location-hq" style={{ background: '#f1f5f9', color: '#475569', fontSize: '0.65rem', fontWeight: 800, padding: '3px 8px', borderRadius: '4px' }}>Support</span>}
+                  {office.isSalesOffice && office.name.includes('Head') && <span className="location-hq" style={{ background: 'rgba(225, 89, 11, 0.1)', color: 'var(--accent-orange)', fontSize: '0.65rem', fontWeight: 800, padding: '3px 8px', borderRadius: '4px' }}>Head Office</span>}
                 </div>
-                <span className="location-district">{city.district} district, Gujarat</span>
-                <p>{city.industries[0]}</p>
-                <div className="location-card-foot">
-                  <span>{city.areas.length} zones covered</span>
-                  <span aria-hidden="true">→</span>
-                </div>
-              </Link>
+                <span className="location-district" style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>{office.description}</span>
+                <p style={{ fontSize: '0.86rem', color: 'var(--text-main)', lineHeight: 1.5, margin: '0.5rem 0' }}>{office.address}, Pincode: {office.pincode}</p>
+                
+                {office.phone.length > 0 && (
+                  <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                    <strong>Phone: </strong>{office.phone.join(', ')}
+                  </div>
+                )}
+                
+                {office.email.length > 0 && (
+                  <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                    <strong>Email: </strong>{office.email.join(', ')}
+                  </div>
+                )}
+              </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="section locations-products">
-        <div className="container">
-          <div className="section-header">
-            <h2>Supplied in Every Location</h2>
-            <p>The complete Transpower range is available across all cities listed above.</p>
+      <section className="section locations-products" style={{ background: '#f8fafc', padding: '4rem 1.5rem', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }}>
+        <div className="container" style={{ textAlign: 'center' }}>
+          <div className="section-header" style={{ marginBottom: '2.5rem' }}>
+            <h2 style={{ fontSize: '2rem', fontWeight: 800 }}>Supplied Across Our Network</h2>
+            <p style={{ color: 'var(--text-muted)', marginTop: '0.5rem' }}>Our complete range of industrial composite products and electric drives is distributed through all locations.</p>
           </div>
-          <div className="locations-product-strip">
+          <div className="locations-product-strip" style={{ display: 'flex', flexWrap: 'wrap', gap: '1.5rem', justifyContent: 'center' }}>
             {PRODUCT_CARDS.map((p) => (
-              <Link to={`/product/${p.id}`} className="locations-product-chip" key={p.id}>
-                <img src={p.image} alt={p.title} width="160" height="120" loading="lazy" decoding="async" />
-                <span>{p.title}</span>
+              <Link 
+                to={`/product/${p.id}`} 
+                className="locations-product-chip" 
+                key={p.id}
+                style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: '12px', padding: '1rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.75rem', width: '180px', textDecoration: 'none', color: 'var(--text-main)', transition: 'transform 0.2s' }}
+              >
+                <img src={p.image} alt={p.title} width="140" height="100" loading="lazy" decoding="async" style={{ borderRadius: '6px', objectFit: 'contain' }} />
+                <span style={{ fontSize: '0.85rem', fontWeight: 800 }}>{p.title}</span>
               </Link>
             ))}
           </div>

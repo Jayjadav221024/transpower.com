@@ -1,5 +1,4 @@
-import { useMemo, useState } from 'react';
-import { MESH_PROFILES } from '../../data/products';
+import { useMemo, useState, useEffect } from 'react';
 
 const SURFACE_TYPES = [
   { key: 'meniscus', label: 'Meniscus Top' },
@@ -8,10 +7,26 @@ const SURFACE_TYPES = [
 ];
 
 export default function LoadCalculator() {
+  const [meshProfiles, setMeshProfiles] = useState([
+    { key: '25mm-molded', label: '25 mm Molded FRP Grating (38x38 mesh)', EI: 3.4e9 },
+    { key: '30mm-molded', label: '30 mm Molded FRP Grating (38x38 mesh)', EI: 6.7e9 },
+    { key: '38mm-molded', label: '38 mm Molded FRP Grating (38x38 mesh)', EI: 1.1e10 }
+  ]);
   const [meshKey, setMeshKey]       = useState('38mm-molded');
   const [surfaceKey, setSurfaceKey] = useState('meniscus');
   const [span, setSpan]             = useState('900');
   const [load, setLoad]             = useState('500');
+
+  useEffect(() => {
+    fetch('/config/load_calculator_config.json')
+      .then(res => res.json())
+      .then(config => {
+        if (config && config.MESH_PROFILES) {
+          setMeshProfiles(config.MESH_PROFILES);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   // Max recommended span per grating profile
   const maxSpan = useMemo(() => {
@@ -62,7 +77,7 @@ export default function LoadCalculator() {
   const results = useMemo(() => {
     if (!validation.isValid) return null;
 
-    const profile = MESH_PROFILES.find((m) => m.key === meshKey) ?? MESH_PROFILES[0];
+    const profile = meshProfiles.find((m) => m.key === meshKey) ?? meshProfiles[0];
     const L = validation.spanNum;
     const loadKg = validation.loadNum;
 
@@ -96,11 +111,11 @@ export default function LoadCalculator() {
       badgeText,
       badgeClass,
     };
-  }, [meshKey, validation]);
+  }, [meshKey, validation, meshProfiles]);
 
   // Dispatch current details to RFQ Form
   const handleRequestTable = () => {
-    const profile = MESH_PROFILES.find((m) => m.key === meshKey) ?? MESH_PROFILES[0];
+    const profile = meshProfiles.find((m) => m.key === meshKey) ?? meshProfiles[0];
     const surface = SURFACE_TYPES.find((s) => s.key === surfaceKey) ?? SURFACE_TYPES[0];
 
     let messageText = '';
@@ -140,7 +155,7 @@ export default function LoadCalculator() {
                 disabled={surfaceKey === 'chequered'}
                 onChange={(e) => setMeshKey(e.target.value)}
               >
-                {MESH_PROFILES.map((m) => (
+                {meshProfiles.map((m) => (
                   <option key={m.key} value={m.key}>{m.label}</option>
                 ))}
               </select>

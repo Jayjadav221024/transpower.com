@@ -3,6 +3,7 @@ import { Outlet } from 'react-router-dom';
 import SiteHeader from '../components/site/SiteHeader';
 import SiteFooter from '../components/site/SiteFooter';
 import StickyActions from '../components/common/StickyActions';
+import CookieConsent from '../components/common/CookieConsent';
 
 export default function PublicLayout() {
   return (
@@ -17,6 +18,7 @@ export default function PublicLayout() {
       </main>
       <StickyActions />
       <SiteFooter />
+      <CookieConsent />
     </>
   );
 }

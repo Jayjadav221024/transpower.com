@@ -21,7 +21,7 @@ const DEFAULT_ABOUT = {
   phone: '+91 98255 07517 / 37',
   emails: [
     'baroda@transpower.net.in',
-    'sales@transpower.com',
+    'sales@transpower.net.in',
     'frp@transpower.net.in'
   ],
   address: '346 GIDC, Makarpura, Vadodara - 390010, Gujarat (India)',

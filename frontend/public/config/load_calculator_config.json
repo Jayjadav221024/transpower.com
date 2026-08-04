@@ -1,0 +1,7 @@
+{
+  "MESH_PROFILES": [
+    { "key": "25mm-molded", "label": "25 mm Molded FRP Grating (38x38 mesh)", "EI": 3400000000 },
+    { "key": "30mm-molded", "label": "30 mm Molded FRP Grating (38x38 mesh)", "EI": 6700000000 },
+    { "key": "38mm-molded", "label": "38 mm Molded FRP Grating (38x38 mesh)", "EI": 11000000000 }
+  ]
+}

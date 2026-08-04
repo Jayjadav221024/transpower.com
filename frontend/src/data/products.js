@@ -13,7 +13,7 @@ export const HERO_PRODUCTS = [
     image: '/assets/images/hero_frp_grating.webp',
     imgAlt: 'Transpower FRP Molded Gratings & Cable Trays',
     model: 'Molded 38x38mm Mesh',
-    resin: 'Isophthalic / Vinyl Ester',
+    resin: 'Fiberglass Reinforced Plastic',
   },
   {
     badge: '🔌 Cable Management Systems',
@@ -28,52 +28,37 @@ export const HERO_PRODUCTS = [
     image: '/assets/images/cable_tray_product.webp',
     imgAlt: 'Transpower FRP Ladder Cable Trays',
     model: 'FRP Ladder Tray Series',
-    resin: 'Vinyl Ester Composite',
+    resin: 'Composite Material',
   },
   {
     badge: '⚙️ Power Transmission Solutions',
     accent: 'INDUSTRIAL',
     rest: 'GEAR BOXES',
-    desc: 'High-torque helical, bevel, and planetary gearmotors engineered for continuous heavy-duty drives, conveyors, and agitator systems at >96% efficiency.',
+    desc: 'High-torque helical, bevel, and planetary gearmotors engineered for continuous heavy-duty drives, conveyors, and agitator systems.',
     pills: [
       { icon: '⚙️', text: 'Helical & Bevel-Helical Drives' },
-      { icon: '📊', text: '>96% Power Transfer Efficiency' },
+      { icon: '📊', text: 'Optimised Power Transmission' },
       { icon: '🏭', text: 'Cast Iron / Alloy Housing' },
     ],
     image: '/assets/images/gearboxes_product.webp',
     imgAlt: 'Transpower Industrial Gear Boxes',
     model: 'Helical Gearmotor Series',
-    resin: 'ISO VG 220 Gear Oil',
+    resin: 'Industrial Lubricated',
   },
   {
     badge: '⚡ Power Distribution Systems',
     accent: 'SWITCHGEAR',
     rest: '& MCCs',
-    desc: 'Industrial air circuit breakers, motor control centers, and power distribution panels tested for high short-circuit withstand capacity and plant electrical safety.',
+    desc: 'Industrial air circuit breakers, motor control centers, and power distribution panels engineered for plant electrical safety.',
     pills: [
-      { icon: '🔒', text: 'High Short-Circuit Withstand' },
+      { icon: '🔒', text: 'Reliable Circuit Protection' },
       { icon: '🏭', text: 'Motor Control Centers (MCC)' },
       { icon: '⚡', text: 'ACB & MCCB Full Range' },
     ],
     image: '/assets/images/switchgears_product.webp',
     imgAlt: 'Transpower Power Switchgears',
     model: 'ACB / MCCB Panel Series',
-    resin: 'IEC 62271 Compliant',
-  },
-  {
-    badge: '🏗️ Structural Composite Profiles',
-    accent: 'PULTRUDED',
-    rest: 'FRP PROFILES',
-    desc: 'High-load composite I-beams, box channels, angles, and handrails replacing structural steel — 75% lighter with zero corrosion and zero painting required.',
-    pills: [
-      { icon: '🏋️', text: 'High Strength-to-Weight Ratio' },
-      { icon: '🔧', text: 'Custom Cut to Length On-Site' },
-      { icon: '♻️', text: 'Low Maintenance — No Painting Required' },
-    ],
-    image: '/assets/images/industrial_walkway.webp',
-    imgAlt: 'Transpower Pultruded Structural FRP Profiles',
-    model: 'Pultruded I-Beam / Box Series',
-    resin: 'High-Modulus Glass Fibre',
+    resin: 'IEC Standards Compliant',
   },
 ];
 
@@ -104,7 +89,7 @@ export const PRODUCT_CARDS = [
     desc: 'High-torque helical, bevel, worm, and planetary gearmotors designed for continuous heavy duty industrial drives and conveyors.',
     specs: [
       'Helical & Bevel-Helical Gear Drives',
-      'High efficiency (> 96% output transfer)',
+      'High-performance power transmission',
       'Rugged cast iron / alloy housing options',
     ],
     cta: 'Get Gearbox Catalog',
@@ -120,7 +105,7 @@ export const PRODUCT_CARDS = [
     specs: [
       'Air Circuit Breakers (ACB) & MCCB range',
       'Motor Control & Power Distribution Panels',
-      'Tested for high short-circuit withstand capacity',
+      'Standard industrial safety configurations',
     ],
     cta: 'Get Switchgear Specs',
   },
@@ -133,9 +118,9 @@ export const PRODUCT_CARDS = [
     title: 'Molded FRP Gratings',
     desc: 'Bi-directional strength molded fiberglass mesh panels for chemical plant walkways, trench covers, and platform flooring.',
     specs: [
-      'Standard 38x38mm & 50x50mm mesh',
+      'Standard 38x38mm mesh size',
       'Quartz grit top for permanent anti-slip friction',
-      'Isophthalic & Vinyl Ester resin grades',
+      'Available in 25mm, 30mm, and 38mm heights',
     ],
     cta: 'Get Grating Specs',
   },
@@ -146,28 +131,13 @@ export const PRODUCT_CARDS = [
     image: '/assets/images/gearboxes_product.webp',
     imgAlt: 'Transpower Industrial Electric Motors',
     title: 'Electric Motors',
-    desc: 'Three-phase induction, flameproof and energy-efficient IE2/IE3 motors supplied as an authorised partner for Siemens, Crompton Greaves, Innomotics, Hindustan and Rotomotive.',
+    desc: 'Three-phase induction and energy-efficient motors supplied as an authorised channel partner for Siemens, Crompton Greaves, Innomotics, Hindustan and Rotomotive.',
     specs: [
-      'Squirrel cage & slip ring induction motors',
-      'Flameproof and increased-safety Ex ratings',
-      'IE2 / IE3 premium efficiency frames',
+      'Three-phase induction motors',
+      'Standard enclosure options',
+      'High-performance industrial frames',
     ],
     cta: 'Get Motor Ratings',
-  },
-  {
-    id: 'pultruded-profiles',
-    category: 'frp',
-    badge: 'Heavy Load',
-    image: '/assets/images/industrial_walkway.webp',
-    imgAlt: 'Pultruded FRP Structural Profiles',
-    title: 'Pultruded Structural Profiles',
-    desc: 'Composite I-Beams, Box Channels, Angles, Handrails, and custom structural sections replacing heavy traditional steel.',
-    specs: [
-      '75% lighter than structural steel',
-      'High glass fiber stiffness matrix',
-      'Zero ongoing painting or maintenance needed',
-    ],
-    cta: 'Request Structural Specs',
   },
 ];
 
@@ -196,13 +166,13 @@ export const COMPARISON_ROWS = [
   },
   {
     feature: 'Weight Efficiency',
-    frp:  { text: 'High Strength-to-Weight Ratio – Significantly Lighter than Steel', tone: 'good' },
+    frp:  { text: 'High Strength-to-Weight Ratio – Lighter than Steel', tone: 'good' },
     galv: { text: 'Very Heavy', tone: 'bad' },
     ss:   { text: 'Very Heavy', tone: 'bad' },
   },
   {
     feature: 'Maintenance Requirement',
-    frp:  { text: 'Low Maintenance – No Painting or Galvanizing Required', tone: 'good' },
+    frp:  { text: 'Low Maintenance – No Painting or Coating Required', tone: 'good' },
     galv: { text: 'Regular Painting / Galvanizing', tone: 'bad' },
     ss:   { text: 'Low — no coating required', tone: 'good' },
   },
@@ -268,18 +238,10 @@ export const APPLICATIONS = [
 
 export const CERTIFICATIONS = [];
 
-/* Load calculator profiles — EI in N·mm². */
-export const MESH_PROFILES = [
-  { key: '25mm-molded', label: '25 mm Molded FRP Grating (38x38 mesh)', EI: 3.4e9 },
-  { key: '30mm-molded', label: '30 mm Molded FRP Grating (38x38 mesh)', EI: 6.7e9 },
-  { key: '38mm-molded', label: '38 mm Molded FRP Grating (38x38 mesh)', EI: 1.1e10 },
-];
-
 export const RFQ_PRODUCTS = [
   { value: 'frp-gratings',       label: 'Molded FRP Gratings' },
   { value: 'cable-trays',        label: 'FRP Cable Trays' },
   { value: 'gearboxes',          label: 'Industrial Gear Boxes' },
   { value: 'electric-motors',    label: 'Electric Motors' },
   { value: 'switchgears',        label: 'Power Switchgears' },
-  { value: 'pultruded-profiles', label: 'Pultruded Profiles & Beams' },
 ];

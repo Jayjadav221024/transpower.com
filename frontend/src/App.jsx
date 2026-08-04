@@ -21,6 +21,9 @@ const GalleryPage   = lazy(() => import('./pages/GalleryPage'));
 const LocationsPage = lazy(() => import('./pages/LocationsPage'));
 const CityPage      = lazy(() => import('./pages/CityPage'));
 const NotFoundPage  = lazy(() => import('./pages/NotFoundPage'));
+const ContactPage   = lazy(() => import('./pages/ContactPage'));
+const PrivacyPolicyPage = lazy(() => import('./pages/PrivacyPolicyPage'));
+const TermsPage     = lazy(() => import('./pages/TermsPage'));
 
 /* The admin panel is never touched by public traffic — keep all of it out of
    the visitor's download. */
@@ -180,6 +183,9 @@ export default function App() {
             <Route path="/blog/:slug" element={<PostPage />} />
             <Route path="/locations" element={<LocationsPage />} />
             <Route path="/locations/:citySlug" element={<CityPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+            <Route path="/terms" element={<TermsPage />} />
             <Route path="/feature-demo" element={<FeatureDemoPage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Route>
@@ -194,7 +200,7 @@ export default function App() {
               </RequireAuth>
             }
           >
-            <Route index element={<Navigate to="posts" replace />} />
+            <Route index element={<Navigate to="analytics" replace />} />
             <Route path="posts" element={<PostsPage />} />
             <Route path="posts/new" element={<PostEditorPage />} />
             <Route path="posts/:id" element={<PostEditorPage />} />

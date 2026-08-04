@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { publicApi } from '../../api/client';
-import { CITIES } from '../../data/cities';
 
 const GROUP_COMPANIES = [
   { name: 'Apidel', logo: '/assets/images/logo_apidel.jpg' },
@@ -154,6 +153,11 @@ export default function SiteFooter() {
                 <option value="Power Switchgears">Interested in Switchgears</option>
               </select>
 
+              <label style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', fontSize: '0.74rem', color: '#94a3b8', cursor: 'pointer', marginTop: '0.4rem', userSelect: 'none' }}>
+                <input type="checkbox" required style={{ accentColor: 'var(--accent-orange)' }} />
+                <span>I agree to the <Link to="/privacy-policy" target="_blank" style={{ color: 'var(--accent-orange)', textDecoration: 'underline' }}>Privacy Policy</Link> and data terms.</span>
+              </label>
+
               {error && <div className="quick-feedback error">{error}</div>}
               {success && <div className="quick-feedback success">✓ Inquiry Sent!</div>}
 
@@ -184,11 +188,12 @@ export default function SiteFooter() {
 
         {/* Footer Bottom Rights */}
         <div className="footer-bottom-new">
-          <div>© 2026 Transpower Technologies Pvt. Ltd. All rights reserved.</div>
+          <div>© {new Date().getFullYear()} Transpower Technologies Pvt. Ltd. All Rights Reserved.</div>
           <div className="footer-bottom-links">
             <Link to="/blog">Blog</Link>
             <Link to="/products">Products</Link>
-            <Link to="/admin">Admin Dashboard</Link>
+            <Link to="/privacy-policy">Privacy Policy</Link>
+            <Link to="/terms">Terms of Use</Link>
           </div>
         </div>
       </div>

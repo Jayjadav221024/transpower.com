@@ -1,8 +1,10 @@
 /* Single source of truth for absolute URLs used in canonical tags, Open Graph
    metadata, JSON-LD and the sitemap. Kept here so the domain is changed once. */
-export const SITE_ORIGIN = 'https://www.transpower.in';
+export const SITE_ORIGIN = 'https://www.transpower.net.in';
 
 export const SITE_NAME = 'Transpower Technologies Pvt. Ltd.';
+
+export const COMPANY_EXPERIENCE_YEARS = '60+'; // Flagged for client sign-off (60+ years group history)
 
 /* Head office / manufacturing address — used for LocalBusiness structured data. */
 export const HEAD_OFFICE = {

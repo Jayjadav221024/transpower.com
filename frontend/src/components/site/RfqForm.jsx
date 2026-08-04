@@ -56,9 +56,9 @@ export default function RfqForm() {
       <div className="container rfq-grid-new">
         {/* Left Column: Heading + Direct Contact Details */}
         <div className="rfq-info-col">
-          <div className="badge-tag">Factory Direct Pricing</div>
+          <div className="badge-tag">Factory Pricing &amp; Engineering</div>
           <h2>Request a <span className="text-orange">B2B Quote</span></h2>
-          <p>Get technical consultation, CAD drawings, and factory direct price quotes within 2 hours.</p>
+          <p>Get technical consultation, CAD drawings, and factory direct price quotes tailored to your spec.</p>
           
           <div className="rfq-contact-details">
             <div>
@@ -71,7 +71,7 @@ export default function RfqForm() {
             <div>
               <strong>✉️ Email Address</strong>
               <span style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', fontSize: '0.92rem' }}>
-                <a href="mailto:sales@transpower.com" style={{ minHeight: '44px', display: 'inline-flex', alignItems: 'center', color: 'inherit' }}>sales@transpower.com</a>
+                <a href="mailto:sales@transpower.net.in" style={{ minHeight: '44px', display: 'inline-flex', alignItems: 'center', color: 'inherit' }}>sales@transpower.net.in</a>
                 <a href="mailto:baroda@transpower.net.in" style={{ minHeight: '44px', display: 'inline-flex', alignItems: 'center', color: 'inherit' }}>baroda@transpower.net.in</a>
                 <a href="mailto:frp@transpower.net.in" style={{ minHeight: '44px', display: 'inline-flex', alignItems: 'center', color: 'inherit' }}>frp@transpower.net.in</a>
               </span>
@@ -151,7 +151,7 @@ export default function RfqForm() {
               </div>
             </div>
 
-            <div className="form-group" style={{ marginBottom: '1.5rem' }}>
+            <div className="form-group" style={{ marginBottom: '1rem' }}>
               <label htmlFor="rfq-msg">Project Requirements &amp; Specifications</label>
               <textarea
                 id="rfq-msg" 
@@ -160,8 +160,15 @@ export default function RfqForm() {
                 placeholder="Detail your resin requirements, gear ratio, power rating, or target timeline..."
                 value={values.message} 
                 onChange={update('message')}
-                style={{ minHeight: '120px', resize: 'vertical' }}
+                style={{ minHeight: '100px', resize: 'vertical' }}
               />
+            </div>
+
+            <div className="form-group" style={{ marginBottom: '1.2rem' }}>
+              <label style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', fontSize: '0.78rem', color: 'var(--text-muted)', cursor: 'pointer', userSelect: 'none' }}>
+                <input type="checkbox" required style={{ accentColor: 'var(--accent-orange)' }} />
+                <span>I agree to the <a href="/privacy-policy" target="_blank" style={{ color: 'var(--accent-orange)', textDecoration: 'underline' }}>Privacy Policy</a> and authorize processing of my business contact data for this quote.</span>
+              </label>
             </div>
 
             <button
@@ -170,7 +177,7 @@ export default function RfqForm() {
               style={{ width: '100%', padding: '0.85rem' }}
               disabled={sending}
             >
-              {sending ? 'Processing Inquiry…' : 'Submit Inquiry For Instant Quote'}
+              {sending ? 'Processing Inquiry…' : 'Submit Inquiry For Quote'}
             </button>
 
             <div aria-live="polite" style={{ marginTop: '0.5rem' }}>

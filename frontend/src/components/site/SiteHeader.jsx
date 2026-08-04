@@ -345,9 +345,9 @@ export default function SiteHeader() {
 
         {/* Desktop Right Actions */}
         <div className="header-actions-new desktop-actions">
-          <a href="/#quote" className="nav-link-new" onClick={(e) => goToSection(e, 'quote')}>
+          <Link to="/contact" className="nav-link-new">
             Contact
-          </a>
+          </Link>
           <a href="/#quote" className="btn-pill" onClick={(e) => goToSection(e, 'quote')}>
             Get B2B Quote
           </a>

@@ -54,3 +54,17 @@ export const escapeHtml = (text) =>
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;');
+
+const ENTITIES = {
+  amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: ' ',
+  hellip: '…', mdash: '—', ndash: '–', rsquo: '’', lsquo: '‘',
+  rdquo: '”', ldquo: '“', deg: '°', times: '×', middot: '·',
+};
+
+export function decodeHtmlEntities(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(Number(n)))
+    .replace(/&#x([0-9a-f]+);/gi, (_, n) => String.fromCodePoint(parseInt(n, 16)))
+    .replace(/&([a-z]+);/gi, (m, name) => ENTITIES[name.toLowerCase()] ?? m);
+}

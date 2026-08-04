@@ -5,11 +5,11 @@ import AccessRequestPrompt from '../components/admin/AccessRequestPrompt';
 import '../styles/admin.css';
 
 const NAV = [
+  { to: '/admin/analytics', label: 'Dashboard' },
   { to: '/admin/posts',     label: 'Blog Posts' },
   { to: '/admin/media',     label: 'Image Library' },
   { to: '/admin/inquiries', label: 'RFQ Inquiries' },
   { to: '/admin/pages',     label: 'Page Content Manager' },
-  { to: '/admin/analytics', label: 'Analytics' },
   { to: '/admin/settings',  label: 'Settings' },
 ];
 

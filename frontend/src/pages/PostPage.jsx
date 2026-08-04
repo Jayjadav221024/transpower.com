@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { publicApi, assetUrl } from '../api/client';
 import BlogCard from '../components/blog/BlogCard';
-import { toDisplayHtml } from '../utils/contentHtml';
+import { toDisplayHtml, decodeHtmlEntities } from '../utils/contentHtml';
 import { formatDate, readingTime } from '../utils/format';
 import '../styles/blog.css';
 
@@ -32,8 +32,9 @@ export default function PostPage() {
   useEffect(() => {
     if (state.status !== 'ready') return undefined;
     const previous = document.title;
-    document.title = `${state.post.title} | Transpower Technologies Pvt. Ltd.`;
-    document.querySelector('meta[name="description"]')?.setAttribute('content', state.post.excerpt);
+    const decodedTitle = decodeHtmlEntities(state.post.title);
+    document.title = `${decodedTitle} | Transpower Technologies Pvt. Ltd.`;
+    document.querySelector('meta[name="description"]')?.setAttribute('content', decodeHtmlEntities(state.post.excerpt));
     return () => { document.title = previous; };
   }, [state]);
 
@@ -60,6 +61,8 @@ export default function PostPage() {
   }
 
   const { post, related } = state;
+  const decodedTitle = decodeHtmlEntities(post.title);
+  const authorName = post.authorName || (typeof post.author === 'object' ? post.author?.name : post.author) || 'Kajal Zakhariya';
 
   return (
     <>
@@ -68,31 +71,40 @@ export default function PostPage() {
           <Link className="post-back" to="/blog">← All articles</Link>
 
           <header className="post-header">
-            {post.tags.length > 0 && (
+            {post.tags && post.tags.length > 0 && (
               <div className="blog-card-tags">
                 {post.tags.map((tag) => (
                   <Link className="blog-card-tag" key={tag} to={`/blog?tag=${encodeURIComponent(tag)}`}>
-                    {tag}
+                    {decodeHtmlEntities(tag)}
                   </Link>
                 ))}
               </div>
             )}
 
-            <h1>{post.title}</h1>
+            <h1>{decodedTitle}</h1>
 
             <div className="post-meta">
-              {post.author && <span>By {post.author}</span>}
+              <span>By {authorName}</span>
+              <span className="post-meta-divider">·</span>
               <span>{formatDate(post.publishedAt, { long: true })}</span>
+              <span className="post-meta-divider">·</span>
               <span>{readingTime(post.content)} min read</span>
-              <span>{post.views} views</span>
             </div>
           </header>
 
-          {post.coverImage && (
-            <div className="post-cover">
-              <img src={assetUrl(post.coverImage)} alt={post.coverAlt || post.title} width="800" height="450" decoding="async" />
-            </div>
-          )}
+          <div className="post-cover">
+            <img 
+              src={post.coverImage ? assetUrl(post.coverImage) : '/assets/images/hero_frp_grating.webp'} 
+              alt={post.coverAlt ? decodeHtmlEntities(post.coverAlt) : decodedTitle} 
+              width="800" 
+              height="450" 
+              decoding="async" 
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = '/assets/images/hero_frp_grating.webp';
+              }}
+            />
+          </div>
 
           {/* Content is authored by the site admin in the panel, so its HTML is
               rendered as-is — see the trust note in the README. Only the upload
@@ -102,18 +114,18 @@ export default function PostPage() {
 
           <div className="post-cta">
             <h3>NEED A SPEC FOR YOUR SITE?</h3>
-            <p>Our engineers size FRP gratings, cable trays, gearboxes and switchgear panels to your load and environment.</p>
+            <p>Our group engineers size FRP gratings, cable trays, gearboxes and switchgear panels to your load and environment.</p>
             <a href="/#quote" className="btn btn-primary"><span>Request a B2B Quote</span></a>
           </div>
         </div>
       </article>
 
-      {related.length > 0 && (
+      {related && related.length > 0 && (
         <section className="section">
           <div className="container">
             <h2 className="section-title">More <span className="text-orange">Articles</span></h2>
             <div className="blog-grid">
-              {related.map((r) => <BlogCard key={r.id} post={r} showViews={false} />)}
+              {related.map((r) => <BlogCard key={r.id || r._id} post={r} />)}
             </div>
           </div>
         </section>

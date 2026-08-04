@@ -156,6 +156,7 @@ function termNames(wp) {
         tags:        termNames(wp),
         status:      'published',
         author:      admin._id,
+        authorName:  decodeEntities(wp._embedded?.author?.[0]?.name || 'Kajal Zakhariya'),
         publishedAt: new Date(wp.date_gmt ? `${wp.date_gmt}Z` : wp.date),
       };
 

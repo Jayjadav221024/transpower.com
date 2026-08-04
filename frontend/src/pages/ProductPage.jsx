@@ -26,7 +26,7 @@ const PRODUCT_DEFAULTS = {
     category: 'Power Transmission',
     badge: '⚙️ High-Torque',
     feature1: 'High Torque',
-    feature2: '96% Efficiency',
+    feature2: 'Helical & Bevel',
     feature3: 'Cast Iron Body',
     feature4: 'Low Maintenance',
     benefit1: 'Helical Gears',
@@ -34,7 +34,7 @@ const PRODUCT_DEFAULTS = {
     benefit3: 'Heavy Load',
     benefit4: 'Compact Fit',
     detailsText: 'High-torque helical, bevel, worm, and planetary gearmotors designed for continuous heavy-duty industrial drives and conveyors.',
-    benefitsText: 'Engineered for over 96% power transmission efficiency. Rugged housing options built for harsh manufacturing atmospheres.',
+    benefitsText: 'Engineered for high power transmission efficiency. Rugged housing options built for harsh industrial atmospheres.',
     useText: 'Widely used in mining conveyors, chemical mixers, water treatment drives, and material handling systems.',
     productImage: '/assets/images/gearboxes_product.webp'
   },
@@ -51,8 +51,8 @@ const PRODUCT_DEFAULTS = {
     benefit3: 'Solid Enclosure',
     benefit4: 'Busbar System',
     detailsText: 'Industrial circuit breakers, motor control centers (MCC), contactors, and power distribution switchgears for plant electrical safety.',
-    benefitsText: 'Fully compliant with IEC safety certifications. Tested for high short-circuit withstand capacity to guard critical factory machinery.',
-    useText: 'Installed in main manufacturing substations, plant control rooms, and commercial power supply grids.',
+    benefitsText: 'Fully compliant with IEC safety standards to guard critical factory machinery.',
+    useText: 'Installed in main substations, plant control rooms, and commercial power supply grids.',
     productImage: '/assets/images/switchgears_product.webp'
   },
   'molded-gratings': {
@@ -68,7 +68,7 @@ const PRODUCT_DEFAULTS = {
     benefit3: 'Low Weight',
     benefit4: 'Fire Safe',
     detailsText: 'Bi-directional strength molded fiberglass mesh panels for chemical plant walkways, trench covers, and platform flooring.',
-    benefitsText: 'Features a quartz-grit anti-slip top coat. Lightweight panels cut and install on site with zero hot-work permits required.',
+    benefitsText: 'Features quartz-grit anti-slip top coat. Lightweight panels cut and install on site with zero hot-work permits required.',
     useText: 'Ideal for refinery walkways, drainage trench covers, access stairs, and water treatment decks.',
     productImage: '/assets/images/hero_frp_grating.webp'
   },
@@ -76,35 +76,18 @@ const PRODUCT_DEFAULTS = {
     title: 'Electric Motors',
     category: 'Rotating Equipment',
     badge: '🔄 Authorized Dealer',
-    feature1: 'IE2 / IE3 Rated',
-    feature2: 'Flameproof Ex',
-    feature3: 'Squirrel Cage',
-    feature4: 'Slip Ring',
+    feature1: 'Three-Phase',
+    feature2: 'Standard Frames',
+    feature3: 'Induction Type',
+    feature4: 'Enclosed Frame',
     benefit1: 'Energy Saving',
     benefit2: 'Low Vibration',
     benefit3: 'Long Bearing Life',
     benefit4: 'Wide Frame Range',
-    detailsText: 'Three-phase induction, flameproof and energy-efficient IE2/IE3 motors supplied as an authorised partner for Siemens, Crompton Greaves, Innomotics, Hindustan Electric Motors and Rotomotive.',
-    benefitsText: 'Premium-efficiency frames cut running cost on continuous-duty loads, and flameproof variants are rated for hazardous chemical and petrochemical areas.',
+    detailsText: 'Three-phase induction and energy-efficient motors supplied as an authorised channel partner for Siemens, Crompton Greaves, Innomotics, Hindustan Electric Motors and Rotomotive.',
+    benefitsText: 'Induction motor frames cut running costs on continuous-duty loads, with designs suitable for demanding chemical and engineering applications.',
     useText: 'Driving pumps, compressors, conveyors, agitators, fans and blowers across chemical, textile, water treatment and engineering plants.',
     productImage: '/assets/images/gearboxes_product.webp'
-  },
-  'pultruded-profiles': {
-    title: 'Pultruded Structural Profiles',
-    category: 'FRP Structural',
-    badge: '🏗️ Heavy Load',
-    feature1: 'High Modulus',
-    feature2: '75% Lighter',
-    feature3: 'Zero Paint',
-    feature4: 'Custom Length',
-    benefit1: 'Anti-Corrosion',
-    benefit2: 'Structural I-Beam',
-    benefit3: 'Fast Assembly',
-    benefit4: 'Certified Span',
-    detailsText: 'Composite I-Beams, Box Channels, Angles, Handrails, and custom structural sections replacing heavy traditional steel.',
-    benefitsText: 'Provides incredible tensile strength at one-quarter the weight of steel, eliminating future corrosion and painting costs.',
-    useText: 'Employed in building structural framing, safety handrails, structural stairways, and marine platforms.',
-    productImage: '/assets/images/industrial_walkway.webp'
   }
 };
 
@@ -1505,75 +1488,24 @@ export default function ProductPage() {
             </div>
           </div>
 
-          {/* Package Selectors */}
-          <div style={{ marginTop: '0.5rem' }}>
-            <span style={{ display: 'block', fontSize: '0.78rem', fontWeight: 800, color: 'var(--text-main)', marginBottom: '0.6rem' }}>Select Quantity Options:</span>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.8rem' }}>
-              <div 
-                onClick={() => setActiveQty('1')}
-                style={{ border: activeQty === '1' ? '2px solid var(--accent-orange)' : '1px solid var(--border)', background: activeQty === '1' ? 'rgba(217, 101, 59, 0.03)' : '#fff', padding: '0.8rem', borderRadius: '8px', textAlign: 'center', cursor: 'pointer', transition: 'all 0.15s' }}
-              >
-                <div style={{ fontSize: '1.2rem', marginBottom: '0.2rem' }}>📦</div>
-                <div style={{ fontSize: '0.78rem', fontWeight: 800 }}>Single Unit</div>
-              </div>
-              <div 
-                onClick={() => setActiveQty('2')}
-                style={{ border: activeQty === '2' ? '2px solid var(--accent-orange)' : '1px solid var(--border)', background: activeQty === '2' ? 'rgba(217, 101, 59, 0.03)' : '#fff', padding: '0.8rem', borderRadius: '8px', textAlign: 'center', cursor: 'pointer', transition: 'all 0.15s', position: 'relative' }}
-              >
-                <span style={{ position: 'absolute', top: '-10px', left: '50%', transform: 'translateX(-50%)', background: 'var(--accent-orange)', color: '#fff', fontSize: '0.58rem', fontWeight: 800, padding: '0.1rem 0.4rem', borderRadius: '10px' }}>Best Value</span>
-                <div style={{ fontSize: '1.2rem', marginBottom: '0.2rem' }}>📦📦</div>
-                <div style={{ fontSize: '0.78rem', fontWeight: 800 }}>Double Pack</div>
-              </div>
-              <div 
-                onClick={() => setActiveQty('3')}
-                style={{ border: activeQty === '3' ? '2px solid var(--accent-orange)' : '1px solid var(--border)', background: activeQty === '3' ? 'rgba(217, 101, 59, 0.03)' : '#fff', padding: '0.8rem', borderRadius: '8px', textAlign: 'center', cursor: 'pointer', transition: 'all 0.15s' }}
-              >
-                <div style={{ fontSize: '1.2rem', marginBottom: '0.2rem' }}>🏭</div>
-                <div style={{ fontSize: '0.78rem', fontWeight: 800 }}>Bulk Industrial</div>
-              </div>
-            </div>
-          </div>
-
-          {/* Option Selects */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem', marginTop: '0.5rem' }}>
-            <label 
-              onClick={() => setPurchaseTypeState('once')}
-              style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', border: '1px solid var(--border)', padding: '1rem', borderRadius: '8px', cursor: 'pointer', background: purchaseTypeState === 'once' ? 'rgba(217, 101, 59, 0.02)' : '#fff' }}
+          {/* B2B Quote Action Area */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem' }}>
+            <p style={{ fontSize: '0.86rem', color: 'var(--text-muted)', lineHeight: 1.5 }}>
+              Request a custom quotation tailored to your span, load, and service duty specifications. Our technical sales team will provide a formal commercial proposal.
+            </p>
+            <button 
+              type="button" 
+              onClick={() => {
+                const contactForm = document.getElementById('inquiry-form') || document.getElementById('contact') || document.querySelector('footer');
+                if (contactForm) {
+                  contactForm.scrollIntoView({ behavior: 'smooth' });
+                }
+              }}
+              className="btn btn-primary" 
+              style={{ width: '100%', padding: '1rem', fontSize: '1rem', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
             >
-              <div style={{ display: 'flex', gap: '0.8rem', alignItems: 'center' }}>
-                <input type="radio" checked={purchaseTypeState === 'once'} onChange={() => {}} style={{ accentColor: 'var(--accent-orange)' }} />
-                <div>
-                  <strong style={{ display: 'block', fontSize: '0.85rem' }}>One Time Purchase</strong>
-                  <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Single batch shipment</span>
-                </div>
-              </div>
-            </label>
-
-            <label 
-              onClick={() => setPurchaseTypeState('sub')}
-              style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', border: '1px solid var(--border)', padding: '1rem', borderRadius: '8px', cursor: 'pointer', background: purchaseTypeState === 'sub' ? 'rgba(217, 101, 59, 0.02)' : '#fff' }}
-            >
-              <div style={{ display: 'flex', gap: '0.8rem', alignItems: 'center' }}>
-                <input type="radio" checked={purchaseTypeState === 'sub'} onChange={() => {}} style={{ accentColor: 'var(--accent-orange)' }} />
-                <div>
-                  <strong style={{ display: 'block', fontSize: '0.85rem' }}>Flexible Supply Contract</strong>
-                  <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Recurring monthly batch delivery</span>
-                </div>
-              </div>
-            </label>
-          </div>
-
-          <button 
-            type="button" 
-            className="btn btn-primary" 
-            style={{ width: '100%', padding: '1rem', fontSize: '1rem', fontWeight: 800, marginTop: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
-          >
-            Request B2B Quote
-          </button>
-
-          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', fontSize: '0.78rem', color: 'var(--text-muted)', background: '#f8fafc', padding: '0.6rem 1rem', borderRadius: '6px', border: '1px solid var(--border)' }}>
-            <span>✅</span>
-            <span><strong>30-Day Guarantee:</strong> If the product specifications do not fit your span load requirements, we offer full exchange support.</span>
+              Request a Quotation
+            </button>
           </div>
 
         </div>
