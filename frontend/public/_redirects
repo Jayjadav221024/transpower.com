@@ -1,11 +1,5 @@
-# SPA fallback for static hosts (Render Static Sites, Netlify).
-#
-# Without this, refreshing or deep-linking /about asks the host for a file at
-# that path, which does not exist, and the visitor gets the host's 404 instead
-# of the React router. The 200 keeps the URL intact so the router still sees
-# /about rather than a redirect to /.
-#
-# Vite copies public/ into dist/ verbatim, so this ships with the build.
-# It is ignored when the Express server in backend/ serves the build itself —
-# that path has its own fallback in backend/src/app.js.
+# SPA fallback. Netlify and Cloudflare Pages read this; Render does NOT — its
+# static sites need the equivalent Rewrite rule set in the dashboard instead.
+# Kept for portability, and because it is served as a plain file on Render it is
+# deliberately short.
 /*    /index.html   200
