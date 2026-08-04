@@ -168,23 +168,6 @@ export default function SiteFooter() {
           </div>
         </div>
 
-        {/* Network & Cities Row — home page plus the location pages, where the
-            city cross-links are directly relevant. */}
-        {(pathname === '/' || pathname.startsWith('/locations')) && (
-          <div className="footer-cities-row">
-            <div className="cities-heading">Available Offline &amp; Online in Gujarat</div>
-            <div className="cities-grid">
-              {CITIES.map((city) => (
-                <Link to={`/locations/${city.slug}`} key={city.slug} className="city-link">
-                  {city.name}
-                </Link>
-              ))}
-            </div>
-            <Link to="/locations" className="cities-all-link">
-              View all service locations <span aria-hidden="true">→</span>
-            </Link>
-          </div>
-        )}
 
         {/* Footer Bottom Rights */}
         <div className="footer-bottom-new">
