@@ -90,6 +90,7 @@ admin.use(protect);
 
 admin.post('/posts/upload-xml', xmlUpload.single('file'), posts.uploadXml);
 admin.route('/posts').get(posts.listAll).post(posts.create);
+admin.post('/posts/:id/duplicate', posts.duplicate);
 admin.route('/posts/:id').get(posts.getById).put(posts.update).delete(posts.remove);
 
 admin.route('/media').get(media.listMedia).post(upload.array('images', 10), media.uploadImages);

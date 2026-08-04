@@ -39,6 +39,37 @@ export default function PostsPage() {
     }
   };
 
+  // Tracks the row whose action is in flight, so only that row's buttons lock.
+  const [busyId, setBusyId] = useState(null);
+
+  const handleDuplicate = async (e, post) => {
+    e.stopPropagation();               // the row itself navigates on click
+    setBusyId(post.id);
+    try {
+      const res = await adminApi.duplicatePost(post.id);
+      toast(`Copied “${post.title}” — opening the draft.`, false);
+      navigate(`/admin/posts/${res.post.id}`);
+    } catch (ex) {
+      toast(ex.message, true);
+      setBusyId(null);
+    }
+  };
+
+  const handleDelete = async (e, post) => {
+    e.stopPropagation();
+    if (!window.confirm(`Delete “${post.title}”? This cannot be undone.`)) return;
+    setBusyId(post.id);
+    try {
+      await adminApi.deletePost(post.id);
+      toast('Post deleted.', false);
+      await load();
+    } catch (ex) {
+      toast(ex.message, true);
+    } finally {
+      setBusyId(null);
+    }
+  };
+
   useEffect(() => {
     const id = setTimeout(() => setQuery(search.trim()), 250);
     return () => clearTimeout(id);
@@ -147,6 +178,24 @@ export default function PostsPage() {
                 <span>{post.views} views</span>
                 {post.tags.map((tag) => <span className="pill pill-tag" key={tag}>{tag}</span>)}
               </div>
+            </div>
+
+            <div className="post-actions">
+              <button
+                type="button" className="btn btn-ghost"
+                disabled={busyId === post.id}
+                onClick={(e) => handleDuplicate(e, post)}
+                title="Create an editable draft copy of this post"
+              >
+                {busyId === post.id ? 'Copying…' : 'Duplicate'}
+              </button>
+              <button
+                type="button" className="btn btn-danger"
+                disabled={busyId === post.id}
+                onClick={(e) => handleDelete(e, post)}
+              >
+                Delete
+              </button>
             </div>
           </article>
         ))}

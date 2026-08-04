@@ -228,6 +228,30 @@ const update = asyncHandler(async (req, res) => {
   res.json({ post: shape(post) });
 });
 
+/* POST /api/admin/posts/:id/duplicate */
+const duplicate = asyncHandler(async (req, res) => {
+  const source = await Post.findById(req.params.id);
+  if (!source) return res.status(404).json({ error: 'Post not found' });
+
+  // Always lands as a draft so a half-edited copy can't go live by accident.
+  // The cover points at the same media record — copies share the image rather
+  // than duplicating the file on disk.
+  const copy = await Post.create({
+    title:      `${source.title} (Copy)`.slice(0, 200),
+    slug:       await Post.uniqueSlug(source.slug),
+    content:    source.content,
+    excerpt:    source.excerpt,
+    coverImage: source.coverImage,
+    coverAlt:   source.coverAlt,
+    tags:       [...source.tags],
+    status:     'draft',
+    author:     req.user._id,
+  });
+
+  await copy.populate('author', 'name');
+  res.status(201).json({ post: shape(copy) });
+});
+
 /* DELETE /api/admin/posts/:id */
 const remove = asyncHandler(async (req, res) => {
   const deleted = await Post.findByIdAndDelete(req.params.id);
@@ -355,4 +379,4 @@ const uploadXml = asyncHandler(async (req, res) => {
   });
 });
 
-module.exports = { listPublished, listTags, getBySlug, listAll, getById, create, update, remove, uploadXml };
+module.exports = { listPublished, listTags, getBySlug, listAll, getById, create, update, duplicate, remove, uploadXml };

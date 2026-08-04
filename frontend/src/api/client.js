@@ -171,6 +171,7 @@ export const adminApi = {
   getPost:    (id)          => api.get(`/api/admin/posts/${id}`),
   createPost: (payload)     => api.post('/api/admin/posts', payload),
   updatePost: (id, payload) => api.put(`/api/admin/posts/${id}`, payload),
+  duplicatePost: (id)       => api.post(`/api/admin/posts/${id}/duplicate`),
   deletePost: (id)          => api.del(`/api/admin/posts/${id}`),
   uploadXml: (file) => {
     const form = new FormData();

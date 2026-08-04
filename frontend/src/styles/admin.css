@@ -203,6 +203,11 @@ code { background: #eef2f7; padding: 1px 5px; border-radius: 4px; font-size: .82
 .post-info h2 { font-size: 1rem; margin-bottom: .18rem; }
 .post-info p { font-size: .8rem; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .post-meta { display: flex; gap: .6rem; align-items: center; font-size: .72rem; color: var(--faint); margin-top: .3rem; flex-wrap: wrap; }
+/* Row actions stay quiet until the row is hovered, so the list reads as titles first. */
+.post-actions { display: flex; gap: .4rem; flex: none; opacity: 0; transition: opacity .18s ease; }
+.post-actions .btn { padding: .35rem .6rem; font-size: .75rem; }
+.post-row:hover .post-actions,
+.post-row:focus-within .post-actions { opacity: 1; }
 .pill {
   font-size: .66rem; font-weight: 800; text-transform: uppercase; letter-spacing: .07em;
   padding: .2rem .5rem; border-radius: 999px;
@@ -293,6 +298,10 @@ code { background: #eef2f7; padding: 1px 5px; border-radius: 4px; font-size: .82
   .sidebar-foot .who { display: none; }
   .content { padding: 1.35rem 1.15rem 3rem; }
   .post-thumb { display: none; }
+}
+/* Without hover there is nothing to reveal the actions, so pin them visible. */
+@media (hover: none) {
+  .post-actions { opacity: 1; }
 }
 
 /* ==========================================================================
