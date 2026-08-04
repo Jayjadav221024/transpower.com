@@ -53,7 +53,6 @@ const CATEGORIES = [
 /* Products now has its own route, so it is a NavLink rather than a hash jump
    that only worked on the home page. */
 const SECTIONS = [
-  { hash: 'calculator',   label: 'Load Specs' },
   { hash: 'comparison',   label: 'Why FRP' },
 ];
 
