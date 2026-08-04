@@ -7,6 +7,9 @@ dist/
 transpower.txt
 google-credentials.json
 backend/google-credentials.json
+# Google service account keys keep their generated name — match the whole family
+transpower-analytics-*.json
+*-service-account.json
 
 # Uploaded content — back this up, don't commit it
 backend/uploads/*

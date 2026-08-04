@@ -14,25 +14,64 @@ const CACHE_REALTIME_MS = 5 * 1000;
 
 const fs = require('node:fs');
 
-// Initialize GA4 client if credentials are set up and exist on disk
+/**
+ * Read the service account key from GOOGLE_CREDENTIALS_JSON (raw JSON or base64).
+ * Hosts like Render have no persistent disk for a key file, so the inline env var
+ * is the primary path; GOOGLE_APPLICATION_CREDENTIALS is the local-dev fallback.
+ */
+function loadInlineCredentials() {
+  const raw = process.env.GOOGLE_CREDENTIALS_JSON;
+  if (!raw || !raw.trim()) return null;
+
+  const text = raw.trim().startsWith('{')
+    ? raw
+    : Buffer.from(raw, 'base64').toString('utf8');
+
+  const parsed = JSON.parse(text);
+  if (!parsed.client_email || !parsed.private_key) {
+    throw new Error('missing client_email or private_key');
+  }
+  // Env vars typically carry the key with literal \n escapes rather than real newlines
+  parsed.private_key = parsed.private_key.replace(/\\n/g, '\n');
+  return parsed;
+}
+
+// Initialize GA4 client from inline credentials, or a key file on disk
 let gaClient = null;
 const propertyId = process.env.GA_PROPERTY_ID;
 const credentialsPath = process.env.GOOGLE_APPLICATION_CREDENTIALS;
-const hasCredentialsFile = credentialsPath && fs.existsSync(credentialsPath);
 
-if (hasCredentialsFile && propertyId) {
+let inlineCredentials = null;
+try {
+  inlineCredentials = loadInlineCredentials();
+} catch (err) {
+  console.error(`  Analytics Warning: GOOGLE_CREDENTIALS_JSON could not be parsed (${err.message}).`);
+}
+
+const hasCredentialsFile = Boolean(credentialsPath) && fs.existsSync(credentialsPath);
+
+if (propertyId && (inlineCredentials || hasCredentialsFile)) {
   try {
-    gaClient = new BetaAnalyticsDataClient();
-    console.log('  Google Analytics 4 Data API client initialized.');
+    gaClient = inlineCredentials
+      ? new BetaAnalyticsDataClient({
+          credentials: {
+            client_email: inlineCredentials.client_email,
+            private_key: inlineCredentials.private_key,
+          },
+          projectId: inlineCredentials.project_id,
+        })
+      : new BetaAnalyticsDataClient();
+    console.log(`  Google Analytics 4 Data API client initialized (${inlineCredentials ? 'inline credentials' : 'key file'}).`);
   } catch (err) {
+    gaClient = null;
     console.error('  Error initializing GA4 client:', err.message);
   }
+} else if (propertyId) {
+  console.warn(
+    `  Analytics Warning: no GA4 credentials found. Set GOOGLE_CREDENTIALS_JSON, or point GOOGLE_APPLICATION_CREDENTIALS at a readable key file${credentialsPath ? ` (currently: ${credentialsPath})` : ''}. Running in simulation mode.`
+  );
 } else {
-  if (propertyId && !hasCredentialsFile) {
-    console.warn(`  Analytics Warning: Credentials file not found at: ${credentialsPath}. Running in simulation mode.`);
-  } else {
-    console.log('  GA4 credentials not set. Running Analytics in simulation mode.');
-  }
+  console.log('  GA_PROPERTY_ID not set. Running Analytics in simulation mode.');
 }
 
 /**
