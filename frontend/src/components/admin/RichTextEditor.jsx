@@ -9,17 +9,19 @@ import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useSta
  * `value` (an HTML string) and `onChange`.
  */
 
-/* Commands that toggle on and off, so the button can show a pressed state. */
+/* Commands that toggle on and off, so the button can show a pressed state.
+   Each carries a name next to its mark — you can tell what a button does
+   without hovering and waiting for a tooltip. */
 const INLINE = [
-  { cmd: 'bold',          label: 'B', title: 'Bold (Ctrl+B)',      style: { fontWeight: 700 } },
-  { cmd: 'italic',        label: 'I', title: 'Italic (Ctrl+I)',    style: { fontStyle: 'italic' } },
-  { cmd: 'underline',     label: 'U', title: 'Underline (Ctrl+U)', style: { textDecoration: 'underline' } },
-  { cmd: 'strikeThrough', label: 'S', title: 'Strikethrough',      style: { textDecoration: 'line-through' } },
+  { cmd: 'bold',          mark: 'B', label: 'Bold',      title: 'Bold (Ctrl+B)',      style: { fontWeight: 700 } },
+  { cmd: 'italic',        mark: 'I', label: 'Italic',    title: 'Italic (Ctrl+I)',    style: { fontStyle: 'italic' } },
+  { cmd: 'underline',     mark: 'U', label: 'Underline', title: 'Underline (Ctrl+U)', style: { textDecoration: 'underline' } },
+  { cmd: 'strikeThrough', mark: 'S', label: 'Strike',    title: 'Strikethrough',      style: { textDecoration: 'line-through' } },
 ];
 
 const LISTS = [
-  { cmd: 'insertUnorderedList', label: '• List', title: 'Bulleted list' },
-  { cmd: 'insertOrderedList',   label: '1. List', title: 'Numbered list' },
+  { cmd: 'insertUnorderedList', mark: '•',  label: 'Bullet List', title: 'Bulleted list' },
+  { cmd: 'insertOrderedList',   mark: '1.', label: 'Number List', title: 'Numbered list' },
 ];
 
 const BLOCKS = [
@@ -142,15 +144,16 @@ const RichTextEditor = forwardRef(function RichTextEditor(
     emit();
   }
 
-  const btn = (key, label, title, onClick, isActive, style) => (
+  /* `isActive` is undefined for one-shot buttons (link, image, clear) — those
+     have no on/off state, so they get no aria-pressed at all. */
+  const btn = (key, label, title, onClick, isActive) => (
     <button
       key={key} type="button" title={title}
-      aria-pressed={isActive ? 'true' : 'false'}
+      aria-pressed={isActive === undefined ? undefined : String(Boolean(isActive))}
       className={`rte-btn${isActive ? ' active' : ''}`}
       // Keep focus (and the selection) in the editable box when clicking.
       onMouseDown={(e) => e.preventDefault()}
       onClick={onClick}
-      style={style}
     >
       {label}
     </button>
@@ -161,8 +164,12 @@ const RichTextEditor = forwardRef(function RichTextEditor(
       <div className="rte-bar">
         {mode === 'visual' && (
           <>
-            {INLINE.map(({ cmd, label, title, style }) =>
-              btn(cmd, label, title, () => run(cmd), active[cmd], style))}
+            {INLINE.map(({ cmd, mark, label, title, style }) =>
+              btn(
+                cmd,
+                <><span className="rte-mark" style={style}>{mark}</span>{label}</>,
+                title, () => run(cmd), active[cmd]
+              ))}
 
             <span className="rte-sep" />
 
@@ -178,15 +185,19 @@ const RichTextEditor = forwardRef(function RichTextEditor(
 
             <span className="rte-sep" />
 
-            {LISTS.map(({ cmd, label, title }) =>
-              btn(cmd, label, title, () => run(cmd), active[cmd]))}
+            {LISTS.map(({ cmd, mark, label, title }) =>
+              btn(
+                cmd,
+                <><span className="rte-mark">{mark}</span>{label}</>,
+                title, () => run(cmd), active[cmd]
+              ))}
 
             <span className="rte-sep" />
 
-            {btn('link',   '🔗',  'Insert link',        addLink)}
-            {btn('unlink', '🔗̸', 'Remove link',        () => run('unlink'))}
-            {btn('image',  '🖼',  'Insert image',       () => onRequestImage?.())}
-            {btn('clear',  '⌫',  'Clear formatting',   () => run('removeFormat'))}
+            {btn('link',   <><span className="rte-mark">🔗</span>Link</>,   'Turn the selected text into a link', addLink)}
+            {btn('unlink', <><span className="rte-mark">⛓</span>Unlink</>,  'Remove the link',                    () => run('unlink'))}
+            {btn('image',  <><span className="rte-mark">🖼</span>Image</>,  'Insert an image from the library',   () => onRequestImage?.())}
+            {btn('clear',  <><span className="rte-mark">⌫</span>Clear</>,  'Strip formatting from the selection', () => run('removeFormat'))}
           </>
         )}
 

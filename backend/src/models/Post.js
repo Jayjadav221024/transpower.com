@@ -13,6 +13,9 @@ const postSchema = new mongoose.Schema(
     status:     { type: String, enum: ['draft', 'published'], default: 'draft', index: true },
     views:      { type: Number, default: 0 },
     author:     { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    // Byline shown on the site. Overrides the account name when set, so a post
+    // can be credited to someone who has no admin login.
+    authorName: { type: String, default: '', trim: true, maxlength: 120 },
     publishedAt:{ type: Date, default: null },
   },
   { timestamps: true }

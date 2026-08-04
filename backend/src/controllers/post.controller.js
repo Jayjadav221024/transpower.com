@@ -24,7 +24,10 @@ function shape(doc, { withContent = true } = {}) {
     status:      p.status,
     views:       p.views,
     readTime:    readingTime(p.content),
-    author:      p.author?.name || '',
+    author:      p.authorName || p.author?.name || '',
+    // The raw override, so the editor can tell "no byline set" (falls back to
+    // the account name) apart from one typed to match it.
+    authorName:  p.authorName || '',
     createdAt:   p.createdAt,
     updatedAt:   p.updatedAt,
     publishedAt: p.publishedAt,
@@ -190,6 +193,7 @@ const create = asyncHandler(async (req, res) => {
     tags:       normaliseTags(b.tags),
     status:     b.status === 'published' ? 'published' : 'draft',
     author:     req.user._id,
+    authorName: String(b.authorName ?? '').trim().slice(0, 120),
   });
 
   await post.populate('author', 'name');
@@ -213,6 +217,7 @@ const update = asyncHandler(async (req, res) => {
   if (has('content'))    post.content    = String(b.content);
   if (has('coverImage')) post.coverImage = String(b.coverImage).trim();
   if (has('coverAlt'))   post.coverAlt   = String(b.coverAlt).trim().slice(0, 200);
+  if (has('authorName')) post.authorName = String(b.authorName).trim().slice(0, 120);
   if (has('tags'))       post.tags       = normaliseTags(b.tags);
   if (has('status') && ['draft', 'published'].includes(b.status)) post.status = b.status;
 
@@ -246,6 +251,7 @@ const duplicate = asyncHandler(async (req, res) => {
     tags:       [...source.tags],
     status:     'draft',
     author:     req.user._id,
+    authorName: source.authorName,
   });
 
   await copy.populate('author', 'name');

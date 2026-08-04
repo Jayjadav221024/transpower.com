@@ -8,7 +8,8 @@ import { formatDate } from '../../utils/format';
 import { slugify } from '../../utils/slugify';
 
 const BLANK = {
-  title: '', excerpt: '', content: '', tags: '', slug: '', coverImage: '', coverAlt: '', status: 'draft',
+  title: '', excerpt: '', content: '', tags: '', slug: '', coverImage: '', coverAlt: '',
+  authorName: '', status: 'draft',
 };
 
 export default function PostEditorPage() {
@@ -42,7 +43,8 @@ export default function PostEditorPage() {
         setForm({
           title: post.title, excerpt: post.excerpt, content: post.content,
           tags: post.tags.join(', '), slug: post.slug,
-          coverImage: post.coverImage, coverAlt: post.coverAlt || '', status: post.status,
+          coverImage: post.coverImage, coverAlt: post.coverAlt || '',
+          authorName: post.authorName || '', status: post.status,
         });
         setMeta(post);
       })
@@ -217,6 +219,19 @@ export default function PostEditorPage() {
             <p className="muted small">
               Describes the image for screen readers and search engines. Skip phrases like
               “image of” — just say what is shown.
+            </p>
+          </div>
+
+          <div className="panel">
+            <h3>Author</h3>
+            <input
+              type="text" className="input" maxLength={120}
+              placeholder={meta?.author || 'Your account name'}
+              value={form.authorName} onChange={update('authorName')}
+            />
+            <p className="muted small">
+              Byline shown on the blog. Leave blank to credit the logged-in account
+              {meta?.author ? <> — currently <strong>{meta.author}</strong></> : null}.
             </p>
           </div>
 
