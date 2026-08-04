@@ -435,6 +435,10 @@
   transform-style: preserve-3d;
 }
 
+.table-card {
+  margin-bottom: 1.5rem;
+}
+
 .chart-card:hover, .table-card:hover {
   border-color: var(--analytics-primary);
   transform: perspective(1000px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateZ(8px);
