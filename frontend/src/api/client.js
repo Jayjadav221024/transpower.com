@@ -16,6 +16,10 @@ const getApiBase = () => {
 
 const BASE = getApiBase();
 
+/* Empty when the API answers on this same origin. Exported so post markup can
+   have its "/uploads/…" paths pointed at the API host — see utils/contentHtml. */
+export const API_BASE = BASE;
+
 /* Uploaded media is served by the API host, so a bare "/uploads/x.png" would
    resolve against the front end's own origin when the two are deployed apart.
    Bundled files under /assets are part of this build and must stay untouched. */

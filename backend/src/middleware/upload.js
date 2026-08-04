@@ -21,17 +21,41 @@ const ALLOWED = {
   '.svg':  'image/svg+xml',
 };
 
+/* The reverse map, for files that arrive without a usable extension — a WebP
+   dragged straight out of another browser tab, or one saved as "download".
+   The MIME only ever picks between entries of ALLOWED above, so it decides
+   nothing that was not already permitted. */
+const EXT_FOR_MIME = {
+  'image/jpeg':    '.jpg',
+  'image/jpg':     '.jpg',
+  'image/png':     '.png',
+  'image/webp':    '.webp',
+  'image/gif':     '.gif',
+  'image/avif':    '.avif',
+  'image/svg+xml': '.svg',
+};
+
 const MAX_BYTES = 8 * 1024 * 1024;   // 8 MB per image
 const MAX_FILES = 10;
 
 const extOf = (name) => path.extname(String(name)).toLowerCase();
+
+/** The extension the file will be stored under, or '' when it is not an image
+ *  type we accept. */
+function resolveExt(file) {
+  const ext = extOf(file.originalname);
+  if (ext === '.jpeg') return '.jpg';
+  if (ALLOWED[ext]) return ext;
+  const mime = String(file.mimetype || '').split(';')[0].trim().toLowerCase();
+  return EXT_FOR_MIME[mime] || '';
+}
 
 /* Filenames are generated, never taken from the client — no path traversal,
    no overwriting, no executable extensions. */
 const storage = multer.diskStorage({
   destination: (_req, _file, cb) => cb(null, UPLOAD_DIR),
   filename: (_req, file, cb) => {
-    const ext  = extOf(file.originalname) === '.jpeg' ? '.jpg' : extOf(file.originalname);
+    const ext  = resolveExt(file);
     const stem =
       path.basename(file.originalname, path.extname(file.originalname))
         .toLowerCase()
@@ -46,11 +70,11 @@ const upload = multer({
   storage,
   limits: { fileSize: MAX_BYTES, files: MAX_FILES },
   fileFilter: (_req, file, cb) => {
-    if (!ALLOWED[extOf(file.originalname)]) {
+    if (!resolveExt(file)) {
       return cb(
         Object.assign(
           new Error(
-            `Unsupported file type "${extOf(file.originalname) || file.originalname}". Use JPG, PNG, WebP, GIF, AVIF or SVG.`
+            `Unsupported file type "${extOf(file.originalname) || file.mimetype || file.originalname}". Use JPG, PNG, WebP, GIF, AVIF or SVG.`
           ),
           { status: 400 }
         )
@@ -60,4 +84,4 @@ const upload = multer({
   },
 });
 
-module.exports = { upload, UPLOAD_DIR, ALLOWED, MAX_FILES, extOf };
+module.exports = { upload, UPLOAD_DIR, ALLOWED, MAX_FILES, extOf, resolveExt };

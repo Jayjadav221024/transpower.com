@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { adminApi, publicApi } from '../../api/client';
+import { IMAGE_ACCEPT, isImageFile } from '../../utils/media';
 
 // Generate a deterministic and clean tag-based unique selector path
 function getUniqueSelector(el) {
@@ -267,7 +268,7 @@ export default function PagesPage() {
   }
 
   const handleImageUpload = async (e) => {
-    const files = [...(e.target.files || [])].filter((f) => f.type.startsWith('image/'));
+    const files = [...(e.target.files || [])].filter(isImageFile);
     if (!files.length) return;
     setUploadingImage(true);
     try {
@@ -630,7 +631,7 @@ export default function PagesPage() {
                           {/* Upload */}
                           <label className="btn btn-outline btn-sm" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', cursor: 'pointer', textAlign: 'center' }}>
                             {uploadingImage ? 'Uploading...' : '📤 Upload Replace Image'}
-                            <input type="file" accept="image/*" onChange={handleImageUpload} style={{ display: 'none' }} disabled={uploadingImage} />
+                            <input type="file" accept={IMAGE_ACCEPT} onChange={handleImageUpload} style={{ display: 'none' }} disabled={uploadingImage} />
                           </label>
 
                           {/* Image path URL input */}

@@ -274,8 +274,15 @@ code { background: #eef2f7; padding: 1px 5px; border-radius: 4px; font-size: .82
 .rte-box:empty::before { content: 'Write the article here…'; color: var(--faint); }
 /* The editing surface previews the article, so mirror the public blog's rhythm. */
 .rte-box > * + * { margin-top: .85rem; }
-.rte-box h2 { font-size: 1.3rem; line-height: 1.3; }
-.rte-box h3 { font-size: 1.1rem; line-height: 1.35; }
+.rte-box h1, .rte-box h2, .rte-box h3,
+.rte-box h4, .rte-box h5, .rte-box h6 { line-height: 1.3; font-weight: 800; }
+.rte-box h1 { font-size: 1.55rem; }
+.rte-box h2 { font-size: 1.3rem; }
+.rte-box h3 { font-size: 1.1rem; }
+.rte-box h4 { font-size: 1rem; }
+.rte-box h5 { font-size: .92rem; }
+/* Smallest heading would otherwise be indistinguishable from body copy. */
+.rte-box h6 { font-size: .86rem; text-transform: uppercase; letter-spacing: .04em; }
 .rte-box ul, .rte-box ol { padding-left: 1.5rem; }
 .rte-box li + li { margin-top: .3rem; }
 .rte-box blockquote {

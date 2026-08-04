@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { adminApi, assetUrl } from '../../api/client';
+import { IMAGE_ACCEPT } from '../../utils/media';
 import { useToast } from './Toast';
 
 /**
@@ -60,7 +61,7 @@ export default function MediaPicker({ mode = 'cover', onSelect, onClose }) {
             {uploading ? 'Uploading…' : '+ Upload new'}
           </button>
           <input
-            ref={fileInput} type="file" accept="image/*" multiple hidden
+            ref={fileInput} type="file" accept={IMAGE_ACCEPT} multiple hidden
             onChange={(e) => { handleUpload(e.target.files); e.target.value = ''; }}
           />
 

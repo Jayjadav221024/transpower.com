@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { adminApi, assetUrl } from '../../api/client';
 import { useToast } from '../../components/admin/Toast';
 import { formatDate, formatFileSize } from '../../utils/format';
+import { IMAGE_ACCEPT, isImageFile } from '../../utils/media';
 
 export default function MediaPage() {
   const toast = useToast();
@@ -23,7 +24,7 @@ export default function MediaPage() {
   }, [toast]);
 
   async function upload(fileList) {
-    const files = [...(fileList || [])].filter((f) => f.type.startsWith('image/'));
+    const files = [...(fileList || [])].filter(isImageFile);
     if (!files.length) {
       toast('Only image files can be uploaded', true);
       return;
@@ -95,7 +96,7 @@ export default function MediaPage() {
       </div>
 
       <input
-        ref={fileInput} type="file" accept="image/*" multiple hidden
+        ref={fileInput} type="file" accept={IMAGE_ACCEPT} multiple hidden
         onChange={(e) => { upload(e.target.files); e.target.value = ''; }}
       />
 

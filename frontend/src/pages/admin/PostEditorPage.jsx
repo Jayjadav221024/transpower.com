@@ -4,6 +4,7 @@ import { adminApi, assetUrl } from '../../api/client';
 import { useToast } from '../../components/admin/Toast';
 import MediaPicker from '../../components/admin/MediaPicker';
 import RichTextEditor from '../../components/admin/RichTextEditor';
+import { escapeAttr } from '../../utils/contentHtml';
 import { formatDate } from '../../utils/format';
 import { slugify } from '../../utils/slugify';
 
@@ -118,9 +119,12 @@ export default function PostEditorPage() {
     }
   }
 
-  /* Insert an <img> tag at the caret, not blindly at the end. */
+  /* Insert an <img> tag at the caret, not blindly at the end. The path stays
+     root-relative — the editor makes it absolute for display and the public
+     page does the same when rendering, so the saved markup never hard-codes
+     whichever host is currently serving the uploads. */
   function insertIntoContent(image) {
-    const tag = `<img src="${image.url}" alt="${image.alt}" loading="lazy">`;
+    const tag = `<img src="${escapeAttr(image.url)}" alt="${escapeAttr(image.alt)}" loading="lazy">`;
     editorRef.current?.insertHtml(tag);
   }
 

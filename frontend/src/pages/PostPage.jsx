@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { publicApi, assetUrl } from '../api/client';
 import BlogCard from '../components/blog/BlogCard';
+import { toDisplayHtml } from '../utils/contentHtml';
 import { formatDate, readingTime } from '../utils/format';
 import '../styles/blog.css';
 
@@ -94,8 +95,10 @@ export default function PostPage() {
           )}
 
           {/* Content is authored by the site admin in the panel, so its HTML is
-              rendered as-is — see the trust note in the README. */}
-          <div className="post-body" dangerouslySetInnerHTML={{ __html: post.content }} />
+              rendered as-is — see the trust note in the README. Only the upload
+              paths are touched, so inline images resolve against the API host
+              rather than this one. */}
+          <div className="post-body" dangerouslySetInnerHTML={{ __html: toDisplayHtml(post.content) }} />
 
           <div className="post-cta">
             <h3>NEED A SPEC FOR YOUR SITE?</h3>

@@ -9,6 +9,7 @@ const fs           = require('node:fs');
 const path         = require('node:path');
 
 const { loadUser } = require('./middleware/auth');
+const { ALLOWED, extOf } = require('./middleware/upload');
 const { notFound, errorHandler } = require('./middleware/error');
 const routes = require('./routes');
 
@@ -64,7 +65,15 @@ app.use(
   '/uploads',
   express.static(UPLOAD_DIR, {
     maxAge: '30d',
-    setHeaders: (res) => {
+    setHeaders: (res, filePath) => {
+      /* Declare the type from our own table rather than leaving it to the mime
+         db bundled with `send`, which is old enough to miss AVIF and would
+         serve it as application/octet-stream — a download prompt instead of an
+         image. Set here because `send` only falls back to its own lookup when
+         Content-Type is still unset. */
+      const type = ALLOWED[extOf(filePath)];
+      if (type) res.setHeader('Content-Type', type);
+
       // Uploads are never interpreted as script: nosniff pins the declared type,
       // and the CSP neutralises <script> embedded in an SVG opened directly.
       res.setHeader('X-Content-Type-Options', 'nosniff');

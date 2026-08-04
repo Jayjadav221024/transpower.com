@@ -1,4 +1,5 @@
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import { escapeHtml, toDisplayHtml, toStoredHtml } from '../../utils/contentHtml';
 
 /* A small visual editor over contentEditable, with a raw-HTML tab alongside.
  *
@@ -7,6 +8,10 @@ import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useSta
  * editing without pulling in a framework such as TipTap or Quill. Swapping the
  * internals later only touches this file — the outside contract is just
  * `value` (an HTML string) and `onChange`.
+ *
+ * `value` is the *stored* markup, with upload paths left root-relative. The
+ * editable box needs them absolute to actually load the images, so everything
+ * crossing the boundary goes through toDisplayHtml / toStoredHtml.
  */
 
 /* Commands that toggle on and off, so the button can show a pressed state.
@@ -24,10 +29,17 @@ const LISTS = [
   { cmd: 'insertOrderedList',   mark: '1.', label: 'Number List', title: 'Numbered list' },
 ];
 
+/* The full heading range. H1 is offered even though the article title already
+   renders as the page's h1 — imported posts use it inside the body and editing
+   one should not silently rewrite the tag. */
 const BLOCKS = [
   { tag: 'p',          label: 'Paragraph' },
+  { tag: 'h1',         label: 'Heading 1' },
   { tag: 'h2',         label: 'Heading 2' },
   { tag: 'h3',         label: 'Heading 3' },
+  { tag: 'h4',         label: 'Heading 4' },
+  { tag: 'h5',         label: 'Heading 5' },
+  { tag: 'h6',         label: 'Heading 6' },
   { tag: 'blockquote', label: 'Quote' },
 ];
 
@@ -48,8 +60,9 @@ const RichTextEditor = forwardRef(function RichTextEditor(
   useEffect(() => {
     const box = boxRef.current;
     if (mode !== 'visual' || !box) return;
-    if (value !== emitted.current || value !== box.innerHTML) {
-      if (value !== box.innerHTML) box.innerHTML = value || '';
+    const display = toDisplayHtml(value);
+    if (value !== emitted.current || display !== box.innerHTML) {
+      if (display !== box.innerHTML) box.innerHTML = display;
       emitted.current = value;
     }
   }, [value, mode]);
@@ -63,8 +76,9 @@ const RichTextEditor = forwardRef(function RichTextEditor(
   const emit = useCallback(() => {
     const box = boxRef.current;
     if (!box) return;
-    emitted.current = box.innerHTML;
-    onChange(box.innerHTML);
+    const stored = toStoredHtml(box.innerHTML);
+    emitted.current = stored;
+    onChange(stored);
   }, [onChange]);
 
   const refreshActive = useCallback(() => {
@@ -82,25 +96,32 @@ const RichTextEditor = forwardRef(function RichTextEditor(
     return () => document.removeEventListener('selectionchange', refreshActive);
   }, [refreshActive]);
 
+  /* Puts the caret in the box, at the end when it has never been there — with
+     no selection inside it every execCommand below would silently no-op. */
+  const focusBox = useCallback(() => {
+    const box = boxRef.current;
+    if (!box) return null;
+    box.focus();
+    const sel = window.getSelection();
+    if (!sel || !box.contains(sel.anchorNode)) {
+      const range = document.createRange();
+      range.selectNodeContents(box);
+      range.collapse(false);
+      sel?.removeAllRanges();
+      sel?.addRange(range);
+    }
+    return box;
+  }, []);
+
   /* Lets the page drop markup (an <img> from the media library) at the caret
      without reaching into this component's DOM itself. */
   useImperativeHandle(ref, () => ({
     insertHtml(html) {
       if (mode === 'visual') {
-        const box = boxRef.current;
-        if (!box) return;
-        box.focus();
-        // With no prior caret in the box, execCommand would no-op — put the
-        // caret at the end first so the image still lands somewhere sensible.
-        const sel = window.getSelection();
-        if (!sel || !box.contains(sel.anchorNode)) {
-          const range = document.createRange();
-          range.selectNodeContents(box);
-          range.collapse(false);
-          sel?.removeAllRanges();
-          sel?.addRange(range);
-        }
-        document.execCommand('insertHTML', false, html);
+        if (!focusBox()) return;
+        // Display form, or the freshly inserted image shows as a broken icon
+        // until the post is reloaded. emit() converts it back for saving.
+        document.execCommand('insertHTML', false, toDisplayHtml(html));
         emit();
       } else {
         const box = htmlRef.current;
@@ -110,10 +131,10 @@ const RichTextEditor = forwardRef(function RichTextEditor(
         onChange(next);
       }
     },
-  }), [mode, value, onChange, emit]);
+  }), [mode, value, onChange, emit, focusBox]);
 
   function run(cmd, arg = null) {
-    boxRef.current?.focus();
+    focusBox();
     document.execCommand(cmd, false, arg);
     emit();
     refreshActive();
@@ -122,6 +143,37 @@ const RichTextEditor = forwardRef(function RichTextEditor(
   function applyBlock(tag) {
     // formatBlock wants <tag> in older engines and tolerates it everywhere.
     run('formatBlock', `<${tag}>`);
+  }
+
+  /* A line break inside a paragraph, as opposed to Enter's new paragraph.
+     execCommand('insertLineBreak') is the good path — Chrome keeps the trailing
+     placeholder <br> that holds the new line open, and it lands on the undo
+     stack. Firefox has no such command, so fall back to placing the <br> by
+     hand, adding the placeholder ourselves when the break ends its block (a
+     lone trailing <br> renders as nothing, which is exactly the "br does not
+     work" symptom). */
+  function lineBreak() {
+    if (!focusBox()) return;
+
+    let handled = false;
+    try { handled = document.execCommand('insertLineBreak'); } catch { handled = false; }
+
+    if (!handled) {
+      const sel = window.getSelection();
+      if (sel?.rangeCount) {
+        const range = sel.getRangeAt(0);
+        range.deleteContents();
+        const br = document.createElement('br');
+        range.insertNode(br);
+        if (!br.nextSibling) br.parentNode?.appendChild(document.createElement('br'));
+        const after = document.createRange();
+        after.setStartAfter(br);
+        after.collapse(true);
+        sel.removeAllRanges();
+        sel.addRange(after);
+      }
+    }
+    emit();
   }
 
   function addLink() {
@@ -135,12 +187,36 @@ const RichTextEditor = forwardRef(function RichTextEditor(
     run('createLink', url);
   }
 
+  function handleKeyDown(e) {
+    if (e.key === 'Enter' && e.shiftKey) {
+      e.preventDefault();
+      lineBreak();
+    }
+  }
+
   /* Paste as plain text — otherwise Word and Google Docs bring a wall of
-     inline styles and <span> soup into the saved markup. */
+     inline styles and <span> soup into the saved markup. Newlines have to be
+     turned into real markup on the way in: insertText keeps them as literal
+     characters, which HTML collapses to spaces, so a multi-line paste used to
+     land as one run-on line. Blank-line gaps become paragraphs, single
+     newlines become <br>. */
   function handlePaste(e) {
     e.preventDefault();
     const text = e.clipboardData.getData('text/plain');
-    document.execCommand('insertText', false, text);
+    if (!text) return;
+
+    if (!/[\r\n]/.test(text)) {
+      // Single line — insertText so pasting mid-sentence stays in that sentence.
+      document.execCommand('insertText', false, text);
+    } else {
+      const html = text
+        .replace(/\r\n?/g, '\n')
+        .split(/\n{2,}/)
+        .filter((block) => block.trim())
+        .map((block) => `<p>${block.split('\n').map(escapeHtml).join('<br>')}</p>`)
+        .join('');
+      document.execCommand('insertHTML', false, html);
+    }
     emit();
   }
 
@@ -196,6 +272,7 @@ const RichTextEditor = forwardRef(function RichTextEditor(
 
             {btn('link',   <><span className="rte-mark">🔗</span>Link</>,   'Turn the selected text into a link', addLink)}
             {btn('unlink', <><span className="rte-mark">⛓</span>Unlink</>,  'Remove the link',                    () => run('unlink'))}
+            {btn('break',  <><span className="rte-mark">↵</span>Break</>,   'Insert a line break (Shift+Enter)',  lineBreak)}
             {btn('image',  <><span className="rte-mark">🖼</span>Image</>,  'Insert an image from the library',   () => onRequestImage?.())}
             {btn('clear',  <><span className="rte-mark">⌫</span>Clear</>,  'Strip formatting from the selection', () => run('removeFormat'))}
           </>
@@ -229,6 +306,7 @@ const RichTextEditor = forwardRef(function RichTextEditor(
           onInput={emit}
           onBlur={emit}
           onPaste={handlePaste}
+          onKeyDown={handleKeyDown}
           onKeyUp={refreshActive}
           onMouseUp={refreshActive}
         />
