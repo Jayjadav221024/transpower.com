@@ -60,7 +60,7 @@ export default function LocationsPage() {
 
       <section className="section" style={{ padding: '4rem 1.5rem' }}>
         <div className="container">
-          <div className="locations-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem' }}>
+          <div className="locations-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(280px, 100%), 1fr))', gap: '2rem' }}>
             {GROUP_OFFICES.map((office) => (
               <div 
                 className="location-card" 

@@ -193,7 +193,7 @@ export default function AboutPage() {
             <h2 className="section-title">Authorized Brands</h2>
           </div>
 
-          <div className="brands-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem', alignItems: 'center' }}>
+          <div className="brands-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(200px, 100%), 1fr))', gap: '1.5rem', alignItems: 'center' }}>
             {BRANDS.map((brand) => (
               <div className="brand-card" key={brand.name} style={{ background: '#fff', padding: '1.25rem', borderRadius: '12px', border: '1px solid #e2e8f0', height: '110px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 10px rgba(0,0,0,0.01)' }}>
                 <img src={brand.logo} alt={brand.name} style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }} width="150" height="80" loading="lazy" decoding="async" />

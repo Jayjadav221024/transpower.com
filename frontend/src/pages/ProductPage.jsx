@@ -631,10 +631,7 @@ export default function ProductPage() {
         {selectedProduct && (
           <div style={{
             position: 'fixed',
-            top: 0,
-            left: 0,
-            width: '100vw',
-            height: '100vh',
+            inset: 0,
             background: 'rgba(0, 0, 0, 0.55)',
             backdropFilter: 'blur(4px)',
             display: 'flex',
@@ -652,7 +649,7 @@ export default function ProductPage() {
               overflow: 'hidden',
               display: 'flex',
               flexDirection: 'column',
-              maxHeight: '90vh'
+              maxHeight: '90dvh'
             }}>
               {/* Modal Header */}
               <div style={{
@@ -857,10 +854,7 @@ export default function ProductPage() {
         {selectedProduct && (
           <div style={{
             position: 'fixed',
-            top: 0,
-            left: 0,
-            width: '100vw',
-            height: '100vh',
+            inset: 0,
             background: 'rgba(0, 0, 0, 0.55)',
             backdropFilter: 'blur(4px)',
             display: 'flex',
@@ -878,7 +872,7 @@ export default function ProductPage() {
               overflow: 'hidden',
               display: 'flex',
               flexDirection: 'column',
-              maxHeight: '90vh'
+              maxHeight: '90dvh'
             }}>
               {/* Modal Header */}
               <div style={{
@@ -1096,10 +1090,7 @@ export default function ProductPage() {
         {selectedProduct && (
           <div style={{
             position: 'fixed',
-            top: 0,
-            left: 0,
-            width: '100vw',
-            height: '100vh',
+            inset: 0,
             background: 'rgba(0, 0, 0, 0.55)',
             backdropFilter: 'blur(4px)',
             display: 'flex',
@@ -1117,7 +1108,7 @@ export default function ProductPage() {
               overflow: 'hidden',
               display: 'flex',
               flexDirection: 'column',
-              maxHeight: '90vh'
+              maxHeight: '90dvh'
             }}>
               {/* Modal Header */}
               <div style={{
@@ -1319,10 +1310,7 @@ export default function ProductPage() {
         {selectedProduct && (
           <div style={{
             position: 'fixed',
-            top: 0,
-            left: 0,
-            width: '100vw',
-            height: '100vh',
+            inset: 0,
             background: 'rgba(0, 0, 0, 0.55)',
             backdropFilter: 'blur(4px)',
             display: 'flex',
@@ -1340,7 +1328,7 @@ export default function ProductPage() {
               overflow: 'hidden',
               display: 'flex',
               flexDirection: 'column',
-              maxHeight: '90vh'
+              maxHeight: '90dvh'
             }}>
               {/* Modal Header */}
               <div style={{
@@ -1515,10 +1503,7 @@ export default function ProductPage() {
         {selectedProduct && (
           <div style={{
             position: 'fixed',
-            top: 0,
-            left: 0,
-            width: '100vw',
-            height: '100vh',
+            inset: 0,
             background: 'rgba(0, 0, 0, 0.55)',
             backdropFilter: 'blur(4px)',
             display: 'flex',
@@ -1536,7 +1521,7 @@ export default function ProductPage() {
               overflow: 'hidden',
               display: 'flex',
               flexDirection: 'column',
-              maxHeight: '90vh'
+              maxHeight: '90dvh'
             }}>
               {/* Modal Header */}
               <div style={{

@@ -28,7 +28,7 @@ export default function OurTeamsPage() {
       />
 
       {/* Hero Header */}
-      <section className="locations-hero" style={{ padding: '8rem 1.5rem 4rem', textAlign: 'center', background: '#090e18', color: '#fff' }}>
+      <section className="locations-hero" style={{ padding: 'clamp(5.5rem, 13vw, 8rem) 0 clamp(2.5rem, 6vw, 4rem)', textAlign: 'center', background: '#090e18', color: '#fff' }}>
         <div className="container">
           <nav className="city-breadcrumb" aria-label="Breadcrumb" style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center', marginBottom: '1.5rem', fontSize: '0.85rem' }}>
             <Link to="/" style={{ color: '#94a3b8', textDecoration: 'none' }}>Home</Link>
@@ -36,7 +36,7 @@ export default function OurTeamsPage() {
             <span style={{ color: '#f8fafc' }}>Our Teams</span>
           </nav>
           <span className="badge-tag" style={{ display: 'inline-block', background: 'rgba(225, 89, 11, 0.15)', color: '#ff7a29', padding: '4px 12px', borderRadius: '99px', fontSize: '0.78rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', margin: '0 auto' }}>Corporate Structure</span>
-          <h1 style={{ fontSize: '2.5rem', fontWeight: 900, marginTop: '1rem', letterSpacing: '-0.02em', color: '#fff', textAlign: 'center', marginLeft: 'auto', marginRight: 'auto' }}>Our Teams & Leadership</h1>
+          <h1 style={{ fontSize: 'clamp(1.75rem, 6vw, 2.5rem)', fontWeight: 900, marginTop: '1rem', letterSpacing: '-0.02em', color: '#fff', textAlign: 'center', marginLeft: 'auto', marginRight: 'auto' }}>Our Teams & Leadership</h1>
           <p className="locations-hero-lead" style={{ maxWidth: '680px', margin: '1rem auto 0', color: '#94a3b8', fontSize: '1rem', lineHeight: 1.6, textAlign: 'center' }}>
             Meet the professional Board of Management directing divisions across electrical systems, motors, and composite materials.
           </p>
@@ -44,16 +44,16 @@ export default function OurTeamsPage() {
       </section>
 
       {/* Leadership Messages */}
-      <section style={{ padding: '5rem 1.5rem', background: '#f8fafc' }}>
+      <section style={{ padding: 'clamp(2.5rem, 7vw, 5rem) 0', background: '#f8fafc' }}>
         <div className="container" style={{ maxWidth: '1100px', margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
+          <div style={{ textAlign: 'center', marginBottom: 'clamp(2rem, 6vw, 4rem)' }}>
             <span className="badge-tag" style={{ color: 'var(--accent-orange)' }}>Management Messages</span>
-            <h2 style={{ fontSize: '2rem', fontWeight: '800', margin: '0.5rem 0' }}>Messages from Our Leaders</h2>
+            <h2 style={{ fontSize: 'clamp(1.5rem, 5vw, 2rem)', fontWeight: '800', margin: '0.5rem 0' }}>Messages from Our Leaders</h2>
           </div>
 
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '3rem' }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'clamp(1.25rem, 4vw, 3rem)' }}>
             {/* Mr. Hemant Patel */}
-            <div style={{ flex: '1 1 450px', background: '#fff', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '2.5rem', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
+            <div style={{ flex: '1 1 450px', background: '#fff', border: '1px solid #e2e8f0', borderRadius: '16px', padding: 'clamp(1.25rem, 5vw, 2.5rem)', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', marginBottom: '1.5rem' }}>
                 <img 
                   src="/assets/images/hemant_patel.png" 
@@ -71,7 +71,7 @@ export default function OurTeamsPage() {
             </div>
 
             {/* Mr. Kiran Parekh */}
-            <div style={{ flex: '1 1 450px', background: '#fff', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '2.5rem', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
+            <div style={{ flex: '1 1 450px', background: '#fff', border: '1px solid #e2e8f0', borderRadius: '16px', padding: 'clamp(1.25rem, 5vw, 2.5rem)', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', marginBottom: '1.5rem' }}>
                 <img 
                   src="/assets/images/kiran_parekh.png" 
@@ -92,15 +92,15 @@ export default function OurTeamsPage() {
       </section>
 
       {/* Board of Management List */}
-      <section style={{ padding: '5rem 1.5rem', background: '#ffffff' }}>
+      <section style={{ padding: 'clamp(2.5rem, 7vw, 5rem) 0', background: '#ffffff' }}>
         <div className="container" style={{ maxWidth: '1100px', margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
+          <div style={{ textAlign: 'center', marginBottom: 'clamp(2rem, 6vw, 4rem)' }}>
             <span className="badge-tag" style={{ color: 'var(--accent-orange)' }}>Board Structure</span>
-            <h2 style={{ fontSize: '2rem', fontWeight: '800', margin: '0.5rem 0' }}>Board of Management</h2>
+            <h2 style={{ fontSize: 'clamp(1.5rem, 5vw, 2rem)', fontWeight: '800', margin: '0.5rem 0' }}>Board of Management</h2>
             <p style={{ color: '#64748b', fontSize: '0.96rem' }}>Divisional management directing standard operations.</p>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.5rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(280px, 100%), 1fr))', gap: '1.5rem' }}>
             {BOARD_MEMBERS.map((member) => (
               <div 
                 key={member.name} 
@@ -137,18 +137,18 @@ export default function OurTeamsPage() {
       </section>
 
       {/* Careers Section */}
-      <section style={{ padding: '5rem 1.5rem', background: '#f8fafc', borderTop: '1px solid #e2e8f0' }}>
+      <section style={{ padding: 'clamp(2.5rem, 7vw, 5rem) 0', background: '#f8fafc', borderTop: '1px solid #e2e8f0' }}>
         <div className="container" style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
           <span className="badge-tag" style={{ color: 'var(--accent-orange)' }}>Join Us</span>
-          <h2 style={{ fontSize: '2rem', fontWeight: '800', margin: '0.5rem 0' }}>Start Your Journey With Us</h2>
+          <h2 style={{ fontSize: 'clamp(1.5rem, 5vw, 2rem)', fontWeight: '800', margin: '0.5rem 0' }}>Start Your Journey With Us</h2>
           <p style={{ color: '#475569', lineHeight: '1.7', marginBottom: '2rem' }}>
             We are always looking for passionate people to join our technical operations, sales teams, and corporate divisions. Sent your resume to our human resources team.
           </p>
-          <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '2rem', display: 'inline-block', boxShadow: '0 4px 6px rgba(0,0,0,0.02)' }}>
+          <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '16px', padding: 'clamp(1.25rem, 5vw, 2rem)', maxWidth: '100%', display: 'inline-block', boxShadow: '0 4px 6px rgba(0,0,0,0.02)' }}>
             <div style={{ fontSize: '0.88rem', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: '700', marginBottom: '0.5rem' }}>Send CV/Resume to</div>
             <a 
               href="mailto:hr@transpower.com" 
-              style={{ fontSize: '1.5rem', fontWeight: '900', color: 'var(--accent-orange)', textDecoration: 'none' }}
+              style={{ fontSize: 'clamp(1.05rem, 4.5vw, 1.5rem)', fontWeight: '900', color: 'var(--accent-orange)', textDecoration: 'none', overflowWrap: 'break-word' }}
             >
               hr@transpower.com
             </a>

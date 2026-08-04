@@ -115,6 +115,11 @@ const STYLE = `
   gap: 50px;
   align-items: center;
 }
+/* A grid item's automatic minimum is its min-content width, so a long
+   unbroken heading could hold the column open wider than the card. */
+.f108-content-grid > * {
+  min-width: 0;
+}
 @media (max-width: 868px) {
   .f108-content-grid {
     grid-template-columns: 1fr;
@@ -131,33 +136,51 @@ const STYLE = `
     align-self: center;
   }
 }
-@media (max-width: 600px) {
+@media (max-width: 767px) {
   .f108-section {
     padding: 40px 0;
+  }
+  .f108-grid {
+    padding: 0 var(--gutter);
+  }
+  .f108-header {
+    margin-bottom: 24px;
   }
   .f108-tabs-list {
     flex-wrap: nowrap;
     justify-content: flex-start;
     overflow-x: auto;
+    overscroll-behavior-x: contain;
     padding-bottom: 12px;
     margin-bottom: 20px;
     scrollbar-width: none;
     -ms-overflow-style: none;
-    width: 100vw;
-    padding-left: 20px;
-    padding-right: 20px;
+    /* Bleeds to the screen edges by cancelling the grid's own padding. This was
+       width:100vw, which is measured including the scrollbar and so left the
+       strip overhanging its container to the right by that width. */
+    width: auto;
+    margin-inline: calc(var(--gutter) * -1);
+    padding-left: var(--gutter);
+    padding-right: var(--gutter);
   }
   .f108-tabs-list::-webkit-scrollbar {
     display: none;
   }
   .f108-tab-trigger {
     flex-shrink: 0;
+    min-height: 48px;
     padding: 8px 16px;
     font-size: 0.76rem;
   }
   .f108-content-card {
     padding: 20px 15px;
     border-radius: var(--radius-md);
+  }
+}
+@media (max-width: 479px) {
+  .f108-btn {
+    width: 100%;
+    white-space: normal;
   }
 }
 .f108-text-col {

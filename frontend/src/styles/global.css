@@ -60,6 +60,20 @@
 
   --transition-fast: 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   --transition-normal: 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* One value drives the page gutter *and* every full-bleed strip that has to
+     cancel it (hero chip row, product tabs). Those strips used to hard-code
+     1.5rem, so they only lined up at one breakpoint. 16px on phones, and the
+     24px desktop has always had from 768 up. */
+  --gutter: 1rem;
+
+  /* Vertical clearance the floating brochure/WhatsApp stack needs at the foot
+     of the page so it never lands on top of a card or a link. */
+  --floating-actions-clearance: 0rem;
+}
+
+@media (min-width: 768px) {
+  :root { --gutter: 1.5rem; }
 }
 
 /* Reset & Base */
@@ -98,7 +112,7 @@ img { max-width: 100%; height: auto; }
 }
 
 /* Utility Classes */
-.container { width: 100%; max-width: 1280px; margin: 0 auto; padding: 0 1.5rem; }
+.container { width: 100%; max-width: 1280px; margin: 0 auto; padding: 0 var(--gutter); }
 
 .text-orange { color: var(--accent-orange); }
 .text-cyan { color: var(--accent-cyan); }
@@ -665,8 +679,11 @@ img { max-width: 100%; height: auto; }
 .menu-toggle-btn {
   display: flex !important;
 }
+/* Tracks the page gutter, so the logo lines up with the copy underneath it at
+   every width. It was a flat 1rem, which left the header 8px inside the
+   content edge for the whole 768–1023px band. */
 .header-container-new {
-  padding: 0 1rem;
+  padding: 0 var(--gutter);
 }
 
 @media (min-width: 1024px) {
@@ -717,10 +734,10 @@ img { max-width: 100%; height: auto; }
 /* Mobile Nav Drawer & Backdrop */
 .mobile-nav-backdrop {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
+  /* `inset` rather than 100vw/100vh: the viewport units include the scrollbar
+     and ignore the collapsing mobile browser chrome, so the backdrop used to
+     overhang on one edge and fall short on the other. */
+  inset: 0;
   background: rgba(15, 23, 42, 0.4);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
@@ -1163,8 +1180,20 @@ img { max-width: 100%; height: auto; }
   box-shadow: var(--shadow-glow);
 }
 
-/* PRODUCTS GRID */
-.products-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.8rem; }
+/* PRODUCTS GRID
+   One column on phones, two from 600px, and auto-fit from 1024px up — which is
+   the same 3-across the desktop has always rendered at 1280.
+   `minmax(320px, …)` on its own is a hard 320px floor: below a ~368px viewport
+   the track was wider than the container and pushed the page sideways. */
+.products-grid { display: grid; grid-template-columns: 1fr; gap: 1.25rem; }
+
+@media (min-width: 600px) {
+  .products-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem; }
+}
+
+@media (min-width: 1024px) {
+  .products-grid { grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr)); gap: 1.8rem; }
+}
 
 .product-card {
   position: relative;
@@ -1332,7 +1361,7 @@ img { max-width: 100%; height: auto; }
 .cross-red { color: #c0342b; font-weight: 800; }
 
 /* APPLICATIONS */
-.applications-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.2rem; }
+.applications-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr)); gap: 1.2rem; }
 
 .app-card {
   position: relative;
@@ -1729,7 +1758,7 @@ img { max-width: 100%; height: auto; }
 
 .cities-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(130px, 100%), 1fr));
   gap: 0.8rem;
 }
 
@@ -1970,6 +1999,10 @@ img { max-width: 100%; height: auto; }
   writing-mode: vertical-rl;
   text-orientation: mixed;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.vertical-brochure-tab .brochure-tab-icon {
+  margin-bottom: 8px;
 }
 
 .vertical-brochure-tab:hover {
@@ -2560,37 +2593,40 @@ p {
 
 @media (max-width: 767px) {
   .carousel-dots {
-    /* Fills the hero column and scrolls inside it.
-       This was width:100vw with margin-left:-1.5rem, to bleed the strip out to
-       the screen edges. On mobile the parent switches to align-items:center, so
-       a 100vw child was centred *and then* pulled left — it ended up hanging
-       about 2.25rem off one side and 0.75rem off the other. .hero-section clips
-       its overflow, so the chips in that margin were cut off with no way to
-       scroll them into view. align-self:stretch opts this one item out of the
-       parent's centring. */
+    /* Bleeds to both screen edges and scrolls inside itself.
+       This was width:100vw with margin-left:-1.5rem. On mobile the parent
+       switches to align-items:center, so a 100vw child was centred *and then*
+       pulled left — it ended up hanging about 2.25rem off one side and 0.75rem
+       off the other. .hero-section clips its overflow, so the chips in that
+       margin were cut off with no way to scroll them into view.
+
+       align-self:stretch opts this one item out of the parent's centring, and
+       the gutter is cancelled with a symmetric negative margin rather than a
+       viewport unit, so it lands flush at every width. */
     align-self: stretch;
     width: auto;
-    max-width: 100%;
-    margin-left: 0;
-    margin-right: 0;
+    max-width: none;
+    margin-inline: calc(var(--gutter) * -1);
+    padding-inline: var(--gutter);
     overflow-x: auto;
+    overscroll-behavior-x: contain;
     /* proximity, not mandatory: the component scrolls the active chip to the
        centre itself, and mandatory snapping fought that programmatic scroll,
        leaving chips parked half-clipped. */
     scroll-snap-type: x proximity;
-    scroll-padding-inline: 0.25rem;
+    scroll-padding-inline: var(--gutter);
     -webkit-overflow-scrolling: touch;
-    padding: 0 0 4px;
+    padding-block: 0 4px;
     scrollbar-width: none;
   }
-  
+
   .carousel-dots::-webkit-scrollbar {
     display: none;
   }
-  
+
   .dot {
     width: auto;
-    height: 44px;
+    height: 48px;
     border-radius: var(--radius-pill);
     background: var(--bg-secondary);
     border: 1px solid var(--border-color);
@@ -2617,30 +2653,45 @@ p {
   }
 }
 
-/* Mobile Product Catalog Filter Tab styling */
+/* Mobile Product Catalog Filter Tab styling.
+   Scroll rather than wrap: six filters wrapped to three stacked rows and pushed
+   the first product card most of a screen further down.
+
+   The strip bleeds to both screen edges so a clipped tab reads as "there is
+   more this way" instead of a broken layout. It does that by cancelling the
+   container gutter with a negative margin — NOT with `width: 100vw`, which is
+   measured including the scrollbar and so overhung the page by the scrollbar
+   width on every device that has one. */
 @media (max-width: 767px) {
   .product-tabs {
     display: flex;
     flex-wrap: nowrap !important;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
+    justify-content: flex-start;
+    gap: 0.6rem;
+    width: auto;
+    max-width: none;
+    margin-inline: calc(var(--gutter) * -1);
+    padding-inline: var(--gutter);
     padding-bottom: 4px;
-    width: 100vw;
-    margin-left: -1.5rem;
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
+    margin-bottom: 1.75rem;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    /* proximity, not mandatory — mandatory snapping fights a flick that lands
+       between two tabs and jerks the strip back. */
+    scroll-snap-type: x proximity;
+    scroll-padding-inline: var(--gutter);
+    -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
   }
-  
+
   .product-tabs::-webkit-scrollbar {
     display: none;
   }
-  
+
   .tab-btn {
     scroll-snap-align: start;
     flex-shrink: 0;
-    min-height: 44px;
+    min-height: 48px;
   }
 }
 
@@ -2725,4 +2776,372 @@ main > section:not([id]):not(:first-of-type) {
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
+}
+
+/* ==========================================================================
+   MOBILE LAYOUT PASS  (≤767px phone, 768–1023px tablet)
+   Nothing in here fires at 1024px and up, so the desktop composition is
+   untouched. Everything above this point is shared or desktop-owned.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Overflow containment
+   Grid and flex items default to an automatic minimum of their *min-content*
+   width, which is how a long product title or a wide image holds a column open
+   past the edge of the screen. Opting the page's structural grids out of that
+   is what actually stops the sideways drift; `overflow-x: hidden` on <body>
+   only hides the symptom (and hides it by clipping content, which is what made
+   the hero copy look chopped off rather than wrapped).
+   -------------------------------------------------------------------------- */
+.hero-grid > *,
+.rfq-grid-new > *,
+.brochure-grid > *,
+.calc-box > *,
+.products-grid > *,
+.applications-grid > *,
+.testimonials-grid > *,
+.footer-top-grid > * {
+  min-width: 0;
+}
+
+/* Long unbroken strings — part numbers, emails, URLs — are the other way a
+   fixed-width box appears out of nowhere. */
+.hero-left-content h1,
+.section-header h2,
+.product-body h3,
+.product-body p,
+.bar-spec-value,
+.footer-contact-details-list span,
+.rfq-contact-details span {
+  overflow-wrap: break-word;
+}
+
+/* --------------------------------------------------------------------------
+   2. Section rhythm
+   4.5rem top *and* bottom on every section is ~144px of dead space between
+   each pair on a 640px-tall phone screen. Scaled down for phones, part-way for
+   tablets, and left exactly as-is from 1024px.
+   -------------------------------------------------------------------------- */
+/* `.brochure-section` and the testimonial card live in home-sections.css, which
+   is imported by a route chunk and therefore lands *after* this file — their
+   mobile padding is set over there so it is not lost to source order. */
+@media (max-width: 1023px) {
+  .section { padding: 3.25rem 0; }
+  .section-header { margin-bottom: 2rem; }
+  .rfq-section-new { padding: 3.25rem 0; }
+}
+
+@media (max-width: 767px) {
+  .section { padding: 2.5rem 0; }
+  .section-header { margin-bottom: 1.75rem; }
+  .section-header p { font-size: 1rem; }
+  .rfq-section-new { padding: 2.5rem 0; }
+  .rfq-grid-new { gap: 2rem; }
+  .rfq-contact-details { margin-top: 1rem; padding-top: 1.25rem; }
+  .cert-bar { margin-top: 1.5rem; padding: 1.25rem; gap: 1rem; }
+
+  /* The sticky header is 56px here, not the 72px the desktop offset assumes. */
+  html { scroll-padding-top: 72px; }
+  section[id], div[id], article[id], h2[id], h3[id] { scroll-margin-top: 72px; }
+}
+
+/* --------------------------------------------------------------------------
+   3. Hero
+   -------------------------------------------------------------------------- */
+@media (max-width: 1023px) {
+  .hero-grid { gap: 2rem; }
+}
+
+@media (max-width: 767px) {
+  .hero-section {
+    /* 92vh forced a screenful of empty space under a stacked hero that only
+       needed about two thirds of one. */
+    min-height: auto;
+    padding-top: 4.5rem;
+    padding-bottom: 0;
+  }
+
+  .hero-grid {
+    gap: 1.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .hero-left-content { gap: 1rem; }
+  .hero-copy { gap: 0.85rem; }
+
+  /* 0.98rem is under the 16px iOS reading floor once it is centred and
+     hyphenated; body copy holds at 16px on every phone. */
+  .hero-left-content p {
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  .badge-tag {
+    font-size: 0.72rem;
+    padding: 0.35rem 0.75rem;
+    max-width: 100%;
+  }
+
+  /* Pills wrap as a centred row. Each one keeps its icon and label on the same
+     line, and the label wraps inside the pill rather than widening it. */
+  .hero-feature-pills {
+    gap: 0.5rem 1rem;
+    width: 100%;
+  }
+
+  .spec-pill {
+    gap: 0.6rem;
+    max-width: 100%;
+    font-size: 0.9rem;
+    text-align: left;
+  }
+
+  .spec-pill > div { min-width: 0; }
+
+  .spec-pill-icon {
+    width: 28px;
+    height: 28px;
+    font-size: 0.85rem;
+  }
+
+  .hero-image-stage {
+    /* 580px is wider than any phone; the plinth was being cropped by the
+       section's overflow clip rather than scaled to fit. */
+    max-width: min(420px, 100%);
+    margin-inline: auto;
+  }
+
+  .hero-bottom-bar {
+    flex-wrap: wrap;
+    margin-top: 1.5rem;
+    margin-bottom: 1.25rem;
+    padding: 1.1rem 1rem;
+    gap: 0.9rem;
+  }
+
+  .bar-spec-item {
+    align-items: center;
+    min-width: 0;
+    width: 100%;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   4. Statistics row
+   Two columns on phones, 2×2 on tablets, four across from 1024px.
+   The counters read as ragged because each cell was left-aligned inside a
+   centre-aligned column — the numbers never lined up with their own labels.
+   -------------------------------------------------------------------------- */
+@media (max-width: 1023px) {
+  .hero-inline-stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem 1rem;
+    align-self: stretch;
+    width: 100%;
+    margin-top: 1.5rem;
+    padding-top: 1.25rem;
+    text-align: center;
+  }
+
+  .hero-inline-stats div {
+    align-items: center;
+    min-width: 0;
+  }
+
+  .hero-inline-stats strong {
+    font-size: clamp(1.5rem, 7vw, 2rem);
+  }
+
+  .hero-inline-stats span {
+    font-size: 0.7rem;
+    line-height: 1.3;
+    letter-spacing: 0.04em;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   5. Cards and images
+   Hard-coded box heights crop the artwork at narrow widths; an aspect ratio
+   scales with the column instead. Desktop keeps its fixed heights.
+   -------------------------------------------------------------------------- */
+@media (max-width: 767px) {
+  .product-card { border-radius: var(--radius-md); }
+
+  .product-image-wrap {
+    height: auto;
+    aspect-ratio: 16 / 10;
+  }
+
+  .product-body { padding: 1.1rem; }
+  .product-body p { font-size: 0.9rem; margin-bottom: 1rem; }
+  .product-specs-list { margin-bottom: 1rem; }
+
+  .app-card {
+    height: auto;
+    aspect-ratio: 4 / 3;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   6. Buttons and touch targets
+   48px minimum height, 44px minimum hit area, and the primary CTA in each
+   stacked block goes full width once there is no room to sit it beside
+   anything else.
+   -------------------------------------------------------------------------- */
+@media (max-width: 767px) {
+  .btn,
+  .btn-primary,
+  .btn-secondary,
+  .btn-pill,
+  .tab-btn,
+  .mobile-btn,
+  .btn-quick-submit,
+  .submit-btn {
+    min-height: 48px;
+  }
+
+  .social-icon {
+    width: 44px;
+    height: 44px;
+    font-size: 0.9rem;
+  }
+
+  .drawer-close-btn { width: 48px; height: 48px; }
+
+  /* Footer city links are a dense list of plain anchors — give each one a real
+     row to hit instead of a 14px-tall line of text. */
+  .city-link {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+  }
+}
+
+@media (max-width: 479px) {
+  .hero-bottom-bar .btn,
+  .product-card .btn,
+  .modal-submit-btn,
+  .brochure-form-card .submit-btn,
+  .rfq-form-col .btn {
+    width: 100%;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   7. Navigation drawer
+   Full width on phones so the panel is not a narrow strip with the page
+   showing through beside it. Background scroll is already locked in
+   SiteHeader, and every link closes the drawer on click.
+   -------------------------------------------------------------------------- */
+.mobile-nav-drawer {
+  /* 100vh is the *expanded* viewport on mobile, so the last link sat under the
+     browser's collapsing toolbar. dvh tracks the real height. */
+  height: 100dvh;
+  padding-bottom: calc(3rem + env(safe-area-inset-bottom));
+}
+
+@media (max-width: 480px) {
+  .mobile-nav-drawer {
+    width: 100%;
+    max-width: none;
+    border-left: none;
+    padding-inline: var(--gutter);
+    padding-top: 1rem;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   8. Floating actions
+   Desktop keeps the vertical tab pinned mid-height on the right edge. On
+   phones it becomes a rounded pill in the bottom-right corner and the
+   WhatsApp/scroll-top column moves above it, so neither one sits on top of a
+   product card any more.
+   -------------------------------------------------------------------------- */
+@media (max-width: 767px) {
+  :root {
+    /* pill (48) + gap (12) + WhatsApp (48) + bottom offset (16) */
+    --floating-actions-clearance: 7.75rem;
+  }
+
+  .vertical-brochure-tab {
+    top: auto;
+    bottom: calc(1rem + env(safe-area-inset-bottom));
+    right: 1rem;
+    transform: none;
+    z-index: 1000;
+
+    writing-mode: horizontal-tb;
+    text-orientation: mixed;
+    flex-direction: row;
+    gap: 0.5rem;
+
+    height: 48px;
+    width: auto;
+    /* % on a fixed element resolves against the initial containing block, which
+       — unlike 100vw — excludes the scrollbar. */
+    max-width: calc(100% - 2rem);
+    padding: 0 1.1rem;
+    border-radius: var(--radius-pill);
+    white-space: nowrap;
+    box-shadow: 0 8px 22px rgba(14, 26, 43, 0.24);
+  }
+
+  .vertical-brochure-tab .brochure-tab-icon {
+    margin-bottom: 0;
+  }
+
+  /* The desktop hover nudges the tab out of the right edge by 4px. As a
+     free-standing pill there is no edge to emerge from, so it stays put. */
+  .vertical-brochure-tab:hover { padding-right: 1.1rem; }
+
+  .sticky-actions-container {
+    right: 1rem;
+    bottom: calc(80px + env(safe-area-inset-bottom));
+    gap: 0.75rem;
+    z-index: 1000;
+  }
+
+  /* Reserve the corner so the last thing on the page is still reachable
+     underneath the floating stack. */
+  .site-footer-new {
+    padding-bottom: calc(30px + var(--floating-actions-clearance));
+  }
+}
+
+/* --------------------------------------------------------------------------
+   9. Modal
+   -------------------------------------------------------------------------- */
+@media (max-width: 767px) {
+  .brochure-modal-overlay { padding: 1rem; align-items: flex-end; }
+
+  .brochure-modal-card {
+    max-width: 100%;
+    max-height: calc(100dvh - 2rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 1.75rem 1.25rem;
+  }
+
+  .modal-header p { margin-bottom: 1.25rem; }
+  .modal-form { gap: 0.9rem; }
+  .modal-close-btn {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    top: 0.5rem;
+    right: 0.5rem;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   10. Footer
+   -------------------------------------------------------------------------- */
+@media (max-width: 767px) {
+  .site-footer-new { padding-top: 2.5rem; }
+  .footer-top-grid { gap: 1.75rem; margin-bottom: 2rem; }
+  .footer-cities-row { padding: 1.75rem 0; margin-bottom: 1.5rem; }
+  .cities-heading { margin-bottom: 1rem; }
+  .footer-group-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }

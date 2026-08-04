@@ -29,7 +29,7 @@
 @media (min-width: 768px) {
   .brands-strip,
   .clients-grid {
-    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(170px, 100%), 1fr));
     gap: 1.2rem;
   }
   .brand-chip,
@@ -58,7 +58,7 @@
 /* ── Testimonials ───────────────────────────────────────────────────────── */
 .testimonials-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
   gap: 1.5rem;
 }
 
@@ -394,4 +394,37 @@
   .brochure-form-card {
     padding: 2.5rem;
   }
+}
+
+/* ── Mobile pass ──────────────────────────────────────────────────────────
+   These belong here rather than in global.css: this file is pulled in by a
+   route chunk, so it is injected after global.css and would win the source
+   order tie on any selector the two share. */
+@media (max-width: 1023px) {
+  .brochure-section { padding: 3.25rem 0; }
+}
+
+@media (max-width: 767px) {
+  .brochure-section { padding: 2.5rem 0; }
+  .brochure-section .subtitle { font-size: 1rem; margin-bottom: 1.5rem; }
+  .brochure-grid { gap: 2rem; }
+
+  .brochure-preview-box {
+    margin-top: 1.25rem;
+    padding: 1.5rem 1.1rem;
+    align-items: center;
+  }
+
+  .brochure-mockup-book { margin-inline: auto; }
+
+  .brochure-form-card { padding: 1.25rem; }
+  .brochure-form-card .form-group { margin-bottom: 1rem; }
+
+  .testimonials-grid { gap: 1.1rem; }
+  .testimonial-card { padding: 1.5rem 1.25rem 1.25rem; }
+  .testimonial-card blockquote { font-size: 0.92rem; line-height: 1.65; }
+  .testimonial-mark { font-size: 2.8rem; left: 1rem; }
+
+  .brands-strip,
+  .clients-grid { gap: 0.6rem; }
 }
