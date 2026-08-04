@@ -42,6 +42,220 @@ const Sparkline = ({ stroke, data = [10, 15, 8, 12, 18, 14, 20] }) => {
   );
 };
 
+// Geometry helpers for SVG Donut chart segments
+const polarToCartesian = (centerX, centerY, radius, angleInDegrees) => {
+  const angleInRadians = (angleInDegrees - 90) * Math.PI / 180.0;
+  return {
+    x: centerX + (radius * Math.cos(angleInRadians)),
+    y: centerY + (radius * Math.sin(angleInRadians))
+  };
+};
+
+const getArcPath = (cx, cy, r_out, r_in, startAngle, endAngle) => {
+  if (endAngle - startAngle >= 360) {
+    endAngle = startAngle + 359.99;
+  }
+  const radStart = (startAngle - 90) * Math.PI / 180;
+  const radEnd = (endAngle - 90) * Math.PI / 180;
+
+  const x1_out = cx + r_out * Math.cos(radStart);
+  const y1_out = cy + r_out * Math.sin(radStart);
+  const x2_out = cx + r_out * Math.cos(radEnd);
+  const y2_out = cy + r_out * Math.sin(radEnd);
+
+  const x1_in = cx + r_in * Math.cos(radStart);
+  const y1_in = cy + r_in * Math.sin(radStart);
+  const x2_in = cx + r_in * Math.cos(radEnd);
+  const y2_in = cy + r_in * Math.sin(radEnd);
+
+  const largeArc = (endAngle - startAngle) > 180 ? 1 : 0;
+
+  return `
+    M ${x1_out} ${y1_out}
+    A ${r_out} ${r_out} 0 ${largeArc} 1 ${x2_out} ${y2_out}
+    L ${x2_in} ${y2_in}
+    A ${r_in} ${r_in} 0 ${largeArc} 0 ${x1_in} ${y1_in}
+    Z
+  `.trim();
+};
+
+const TokenomicsChart = ({ sourceData }) => {
+  const defaultData = [
+    { source: 'Organic Search', percentage: 40, value: 2400 },
+    { source: 'Direct', percentage: 25, value: 1500 },
+    { source: 'Referral', percentage: 18, value: 1080 },
+    { source: 'Email', percentage: 12, value: 720 },
+    { source: 'Social', percentage: 5, value: 300 }
+  ];
+
+  const displayData = sourceData && sourceData.length > 0 ? sourceData : defaultData;
+  const totalSessions = displayData.reduce((acc, curr) => acc + (curr.value || curr.visitors || curr.sessions || 0), 0);
+
+  let currentAngle = 0;
+  const slices = displayData.map((s, index) => {
+    const percent = s.percentage || 0;
+    const startAngle = currentAngle;
+    const endAngle = currentAngle + (percent / 100) * 360;
+    currentAngle = endAngle;
+
+    const midAngle = startAngle + (endAngle - startAngle) / 2;
+    return {
+      ...s,
+      startAngle,
+      endAngle,
+      midAngle,
+      index
+    };
+  });
+
+  const leftSlices = slices.filter(s => s.midAngle >= 180 && s.midAngle < 360);
+  const rightSlices = slices.filter(s => s.midAngle < 180 || s.midAngle >= 360);
+
+  const gradients = [
+    { id: 'grad-0', start: '#ff7a29', end: '#ffb300' },
+    { id: 'grad-1', start: '#ec4899', end: '#ff7a29' },
+    { id: 'grad-2', start: '#8b5cf6', end: '#ec4899' },
+    { id: 'grad-3', start: '#06b6d4', end: '#3b82f6' },
+    { id: 'grad-4', start: '#10b981', end: '#84cc16' }
+  ];
+
+  const colors = [
+    '#ff9f43',
+    '#ff4d88',
+    '#c56cf0',
+    '#1dd1a1',
+    '#00d2d3'
+  ];
+
+  return (
+    <div className="tokenomics-container" style={{
+      background: 'linear-gradient(135deg, #180933 0%, #060913 100%)',
+      borderRadius: '16px',
+      padding: '2rem 2.5rem',
+      position: 'relative',
+      overflow: 'hidden',
+      color: '#fff',
+      border: '1px solid rgba(255, 255, 255, 0.08)',
+      boxShadow: '0 20px 40px rgba(0, 0, 0, 0.4)',
+      width: '100%'
+    }}>
+      <div style={{
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: '400px',
+        height: '400px',
+        background: 'radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, rgba(0, 0, 0, 0) 70%)',
+        pointerEvents: 'none',
+        zIndex: 0
+      }} />
+
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', zIndex: 1, position: 'relative' }}>
+        <h3 style={{ fontSize: '1.1rem', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '0.6rem', color: '#ff7a29', margin: 0, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+          <Globe size={18} /> Acquisition Channels Distribution
+        </h3>
+        <span style={{ fontSize: '0.74rem', color: '#8892b0', background: 'rgba(255,255,255,0.05)', padding: '4px 12px', borderRadius: '20px' }}>GA4 Traffic Analytics</span>
+      </div>
+
+      <div className="tokenomics-layout" style={{
+        display: 'grid',
+        gridTemplateColumns: '1fr 1.6fr 1fr',
+        alignItems: 'center',
+        gap: '2rem',
+        minHeight: '340px',
+        zIndex: 1,
+        position: 'relative'
+      }}>
+        
+        {/* Left Column Labels */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', textAlign: 'right' }}>
+          {leftSlices.map((s) => {
+            const color = colors[s.index % colors.length];
+            return (
+              <div key={s.source} style={{ transition: 'all 0.2s' }}>
+                <div style={{ fontSize: '0.8rem', color: '#a0aec0', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{s.source}</div>
+                <div style={{ fontSize: '1.7rem', fontWeight: '900', color: color, lineHeight: '1.1', margin: '0.1rem 0' }}>
+                  {s.percentage.toFixed(1)}%
+                </div>
+                <div style={{ fontSize: '0.74rem', color: '#718096' }}>{(s.value || s.visitors || s.sessions || 0).toLocaleString()} sessions</div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Center SVG Chart */}
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'relative' }}>
+          <svg width="300" height="300" viewBox="0 0 300 300" style={{ overflow: 'visible' }}>
+            <defs>
+              {gradients.map(g => (
+                <linearGradient id={g.id} key={g.id} x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor={g.start} />
+                  <stop offset="100%" stopColor={g.end} />
+                </linearGradient>
+              ))}
+            </defs>
+
+            <g transform="translate(150, 150)">
+              {/* Outer Glow Ring */}
+              <circle cx="0" cy="0" r="105" fill="none" stroke="rgba(255, 255, 255, 0.02)" strokeWidth="6" />
+
+              {/* Slices */}
+              {slices.map(s => {
+                const percent = s.percentage || 0;
+                if (percent === 0) return null;
+                const path = getArcPath(0, 0, 100, 72, s.startAngle, s.endAngle);
+                const glassPath = getArcPath(0, 0, 104, 68, s.startAngle + 1.2, s.endAngle - 1.2);
+                
+                return (
+                  <g key={s.source} style={{ transition: 'transform 0.3s ease', cursor: 'pointer' }}>
+                    <path 
+                      d={path} 
+                      fill={`url(#grad-${s.index % 5})`}
+                      style={{ filter: 'drop-shadow(0px 6px 12px rgba(0,0,0,0.35))' }}
+                    />
+                    <path 
+                      d={glassPath} 
+                      fill="rgba(255, 255, 255, 0.04)" 
+                      stroke="rgba(255, 255, 255, 0.12)"
+                      strokeWidth="1.2"
+                      style={{ mixBlendMode: 'overlay' }}
+                    />
+                  </g>
+                );
+              })}
+
+              {/* Center Hole Details */}
+              <circle cx="0" cy="0" r="66" fill="#060913" stroke="rgba(255, 255, 255, 0.06)" strokeWidth="1" />
+              
+              <text x="0" y="-10" textAnchor="middle" fill="#8892b0" fontSize="9" fontWeight="800" letterSpacing="0.1em">TOTAL TRAFFIC</text>
+              <text x="0" y="14" textAnchor="middle" fill="#fff" fontSize="22" fontWeight="900" letterSpacing="-0.02em">{totalSessions.toLocaleString()}</text>
+              <text x="0" y="28" textAnchor="middle" fill="#ff7a29" fontSize="8" fontWeight="800" letterSpacing="0.05em">SESSIONS</text>
+            </g>
+          </svg>
+        </div>
+
+        {/* Right Column Labels */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', textAlign: 'left' }}>
+          {rightSlices.map((s) => {
+            const color = colors[s.index % colors.length];
+            return (
+              <div key={s.source} style={{ transition: 'all 0.2s' }}>
+                <div style={{ fontSize: '0.8rem', color: '#a0aec0', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{s.source}</div>
+                <div style={{ fontSize: '1.7rem', fontWeight: '900', color: color, lineHeight: '1.1', margin: '0.1rem 0' }}>
+                  {s.percentage.toFixed(1)}%
+                </div>
+                <div style={{ fontSize: '0.74rem', color: '#718096' }}>{(s.value || s.visitors || s.sessions || 0).toLocaleString()} sessions</div>
+              </div>
+            );
+          })}
+        </div>
+
+      </div>
+    </div>
+  );
+};
+
 export default function AnalyticsPage() {
   const [range, setRange] = useState('30days');
   const [customDates, setCustomDates] = useState({ start: '', end: '' });
@@ -888,13 +1102,8 @@ export default function AnalyticsPage() {
           </div>
         </div>
 
-        <div className="chart-card" style={{ gridColumn: 'span 4' }}>
-          <div className="chart-card-header">
-            <h3><Globe size={16} /> Traffic sources share</h3>
-          </div>
-          <div className="chart-container-new">
-            <canvas ref={chartRefs.sources}></canvas>
-          </div>
+        <div style={{ gridColumn: 'span 12' }}>
+          <TokenomicsChart sourceData={data?.charts?.trafficSources} />
         </div>
 
         <div className="chart-card" style={{ gridColumn: 'span 4' }}>
