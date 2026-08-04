@@ -13,9 +13,12 @@ export default function AnalyticsPage() {
   const [customDates, setCustomDates] = useState({ start: '', end: '' });
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState(null);
+  const [error, setError] = useState(null);              // { error, detail, code }
   const [realtimeData, setRealtimeData] = useState(null);
-  const [realtimeHistory, setRealtimeHistory] = useState([12, 19, 15, 23, 21, 28, 30, 25, 28, 32]);
-  const [realtimeLabels, setRealtimeLabels] = useState(Array.from({ length: 10 }, (_, i) => `${i * 5}s ago`).reverse());
+  const [realtimeError, setRealtimeError] = useState(null);
+  /* Starts empty and fills one sample per poll. Seeding it with numbers would
+     draw a trend line for traffic that was never measured. */
+  const [realtimeHistory, setRealtimeHistory] = useState([]);
   const [darkMode, setDarkMode] = useState(false);
 
   // References for all 11 Chart instances
@@ -42,16 +45,19 @@ export default function AnalyticsPage() {
     async function fetchRealtime() {
       try {
         const res = await adminApi.getAnalyticsRealtime();
-        if (res) {
-          setRealtimeData(res);
-          // Add to rolling history
-          setRealtimeHistory(prev => {
-            const next = [...prev.slice(1), res.activeUsers];
-            return next;
-          });
-        }
+        if (!res) return;
+        setRealtimeData(res);
+        setRealtimeError(null);
+        // Rolling window of the last 20 samples, timestamped as they arrive.
+        setRealtimeHistory(prev => [
+          ...prev.slice(-19),
+          { at: new Date(res.lastUpdated || Date.now()), users: res.activeUsers },
+        ]);
       } catch (err) {
-        console.error('Failed to load real-time analytics:', err);
+        /* Polling continues: the panel recovers on its own once GA4 starts
+           answering, without the admin having to reload. */
+        setRealtimeData(null);
+        setRealtimeError({ error: err.message, detail: err.data?.detail, code: err.code });
       }
     }
 
@@ -72,11 +78,12 @@ export default function AnalyticsPage() {
           params.endDate = customDates.end;
         }
         const res = await adminApi.getAnalyticsHistorical(params);
-        if (res) {
-          setData(res);
-        }
+        setData(res || null);
+        setError(null);
       } catch (err) {
-        console.error('Failed to load historical analytics:', err);
+        // No numbers to show, so show none — and say why.
+        setData(null);
+        setError({ error: err.message, detail: err.data?.detail, code: err.code });
       } finally {
         setLoading(false);
       }
@@ -133,12 +140,12 @@ export default function AnalyticsPage() {
       });
     };
 
-    // 1. Real-time Chart
+    // 1. Real-time Chart — one point per poll that actually returned
     createChart('realtime', 'line', {
-      labels: realtimeLabels,
+      labels: realtimeHistory.map(s => s.at.toLocaleTimeString([], { minute: '2-digit', second: '2-digit' })),
       datasets: [{
         label: 'Active Users (Live)',
-        data: realtimeHistory,
+        data: realtimeHistory.map(s => s.users),
         borderColor: '#0f9d68', // Green line for live users
         backgroundColor: 'rgba(15, 157, 104, 0.15)',
         tension: 0.4,
@@ -171,15 +178,13 @@ export default function AnalyticsPage() {
       plugins: { legend: { display: false } }
     });
 
-    // 3. Weekly Visitors
-    // Group daily data into week slots for weekly chart (or use simulated)
-    const weeklyLabels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-    const weeklyValues = [340, 480, 520, 450, 610, 240, 190]; // Defaults
+    // 3. Visitors by day of week, over the selected range
+    const weekdayData = data.charts.weekdayVisitors || [];
     createChart('weekly', 'bar', {
-      labels: weeklyLabels,
+      labels: weekdayData.map(d => d.day),
       datasets: [{
         label: 'Visitors',
-        data: weeklyValues,
+        data: weekdayData.map(d => d.visitors),
         backgroundColor: themeColors.palette[1],
         borderRadius: 4
       }]
@@ -187,14 +192,13 @@ export default function AnalyticsPage() {
       plugins: { legend: { display: false } }
     });
 
-    // 4. Monthly Visitors
-    const monthlyLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    const monthlyValues = [2400, 3100, 4500, 4200, 5800, 6200, 7100, 6800, 7400, 8100, 9200, 10500];
+    // 4. Monthly Visitors — trailing 12 months from GA4
+    const monthlyData = data.charts.monthlyVisitors || [];
     createChart('monthly', 'bar', {
-      labels: monthlyLabels,
+      labels: monthlyData.map(m => m.month),
       datasets: [{
         label: 'Visitors',
-        data: monthlyValues,
+        data: monthlyData.map(m => m.visitors),
         backgroundColor: themeColors.palette[0],
         borderRadius: 4
       }]
@@ -296,6 +300,10 @@ export default function AnalyticsPage() {
     });
 
   }, [loading, data, darkMode, realtimeHistory]);
+
+  /* An em dash, not a zero — "0 visitors" and "we have no data" are different
+     statements, and only one of them is true when GA4 is unreachable. */
+  const cardValue = (value) => (value === undefined || value === null ? '—' : value);
 
   // Export functions
   const exportToCSV = () => {
@@ -639,6 +647,38 @@ export default function AnalyticsPage() {
           .header-actions-new, .sidebar { display: none !important; }
         }
 
+        /* Shown when GA4 cannot be reached — in place of numbers, never over them. */
+        .analytics-notice {
+          background: var(--analytics-card-bg);
+          border: 1.5px solid var(--analytics-border);
+          border-left: 4px solid #d0342c;
+          border-radius: 12px;
+          padding: 1.5rem;
+          margin-bottom: 2rem;
+        }
+
+        .analytics-notice h3 {
+          margin: 0 0 0.5rem;
+          font-size: 1rem;
+          font-weight: 800;
+          color: var(--analytics-text);
+        }
+
+        .analytics-notice p {
+          margin: 0 0 0.5rem;
+          font-size: 0.88rem;
+          color: var(--analytics-text-muted);
+          line-height: 1.6;
+        }
+
+        .analytics-notice code {
+          font-size: 0.78rem;
+          word-break: break-word;
+          background: rgba(208, 52, 44, 0.08);
+          padding: 2px 6px;
+          border-radius: 4px;
+        }
+
         /* Skeleton Loaders */
         .skeleton {
           background: linear-gradient(90deg, var(--analytics-border) 25%, var(--analytics-card-bg) 50%, var(--analytics-border) 75%);
@@ -723,6 +763,21 @@ export default function AnalyticsPage() {
         </div>
       </div>
 
+      {(error || realtimeError) && (
+        <div className="analytics-notice">
+          <h3>No analytics data to show</h3>
+          <p>{(error || realtimeError).error}</p>
+          {(error || realtimeError).detail && (
+            <p><code>{(error || realtimeError).detail}</code></p>
+          )}
+          <p>
+            {(error || realtimeError).code === 'ANALYTICS_NOT_CONFIGURED'
+              ? 'Set GA_PROPERTY_ID and the service-account credentials in backend/.env, then restart the API.'
+              : 'Nothing is shown in place of the missing figures — the cards and charts below stay empty until Google Analytics answers.'}
+          </p>
+        </div>
+      )}
+
       {/* Real-time Online Counter */}
       <div className="card-stats-grid">
         <div className="stat-card-new live-card">
@@ -731,7 +786,7 @@ export default function AnalyticsPage() {
             <span className="live-pulse"></span>
           </div>
           <div className="stat-card-body">
-            <h2>{realtimeData ? realtimeData.activeUsers : '--'}</h2>
+            <h2>{realtimeData ? realtimeData.activeUsers : '—'}</h2>
           </div>
           <div className="stat-card-footer">
             <Users size={12} /> Currently online on your website
@@ -744,7 +799,7 @@ export default function AnalyticsPage() {
             <Eye size={14} />
           </div>
           <div className="stat-card-body">
-            {loading ? <div className="skeleton" style={{ height: '30px', width: '80px' }}></div> : <h2>{data?.cards.totalVisitors}</h2>}
+            {loading ? <div className="skeleton" style={{ height: '30px', width: '80px' }}></div> : <h2>{cardValue(data?.cards.totalVisitors)}</h2>}
           </div>
           <div className="stat-card-footer">
             <TrendingUp size={12} color="#0f9d68" /> Total visits across selected range
@@ -757,7 +812,7 @@ export default function AnalyticsPage() {
             <Users size={14} />
           </div>
           <div className="stat-card-body">
-            {loading ? <div className="skeleton" style={{ height: '30px', width: '80px' }}></div> : <h2>{data?.cards.todayVisitors}</h2>}
+            {loading ? <div className="skeleton" style={{ height: '30px', width: '80px' }}></div> : <h2>{cardValue(data?.cards.todayVisitors)}</h2>}
           </div>
           <div className="stat-card-footer">
             Tracked since midnight today
@@ -770,7 +825,7 @@ export default function AnalyticsPage() {
             <Users size={14} />
           </div>
           <div className="stat-card-body">
-            {loading ? <div className="skeleton" style={{ height: '30px', width: '80px' }}></div> : <h2>{data?.cards.yesterdayVisitors}</h2>}
+            {loading ? <div className="skeleton" style={{ height: '30px', width: '80px' }}></div> : <h2>{cardValue(data?.cards.yesterdayVisitors)}</h2>}
           </div>
           <div className="stat-card-footer">
             Full tracked day yesterday
@@ -783,7 +838,7 @@ export default function AnalyticsPage() {
             <Calendar size={14} />
           </div>
           <div className="stat-card-body">
-            {loading ? <div className="skeleton" style={{ height: '30px', width: '80px' }}></div> : <h2>{data?.cards.weekVisitors}</h2>}
+            {loading ? <div className="skeleton" style={{ height: '30px', width: '80px' }}></div> : <h2>{cardValue(data?.cards.weekVisitors)}</h2>}
           </div>
           <div className="stat-card-footer">
             Trailing 7-day visitor counts
@@ -796,7 +851,7 @@ export default function AnalyticsPage() {
             <Calendar size={14} />
           </div>
           <div className="stat-card-body">
-            {loading ? <div className="skeleton" style={{ height: '30px', width: '80px' }}></div> : <h2>{data?.cards.monthVisitors}</h2>}
+            {loading ? <div className="skeleton" style={{ height: '30px', width: '80px' }}></div> : <h2>{cardValue(data?.cards.monthVisitors)}</h2>}
           </div>
           <div className="stat-card-footer">
             Trailing 30-day visitor counts
@@ -809,7 +864,7 @@ export default function AnalyticsPage() {
             <Eye size={14} />
           </div>
           <div className="stat-card-body">
-            {loading ? <div className="skeleton" style={{ height: '30px', width: '80px' }}></div> : <h2>{data?.cards.totalPageViews}</h2>}
+            {loading ? <div className="skeleton" style={{ height: '30px', width: '80px' }}></div> : <h2>{cardValue(data?.cards.totalPageViews)}</h2>}
           </div>
           <div className="stat-card-footer">
             Total screens/pages loaded
@@ -822,7 +877,7 @@ export default function AnalyticsPage() {
             <Clock size={14} />
           </div>
           <div className="stat-card-body">
-            {loading ? <div className="skeleton" style={{ height: '30px', width: '80px' }}></div> : <h2>{data?.cards.avgSessionDuration}</h2>}
+            {loading ? <div className="skeleton" style={{ height: '30px', width: '80px' }}></div> : <h2>{cardValue(data?.cards.avgSessionDuration)}</h2>}
           </div>
           <div className="stat-card-footer">
             Average minutes spent per visit
@@ -835,7 +890,7 @@ export default function AnalyticsPage() {
             <ArrowDownRight size={14} color="#d0342c" />
           </div>
           <div className="stat-card-body">
-            {loading ? <div className="skeleton" style={{ height: '30px', width: '80px' }}></div> : <h2>{data?.cards.bounceRate}</h2>}
+            {loading ? <div className="skeleton" style={{ height: '30px', width: '80px' }}></div> : <h2>{cardValue(data?.cards.bounceRate)}</h2>}
           </div>
           <div className="stat-card-footer">
             Single-page sessions ratio
@@ -848,7 +903,9 @@ export default function AnalyticsPage() {
             <Users size={14} />
           </div>
           <div className="stat-card-body">
-            {loading ? <div className="skeleton" style={{ height: '30px', width: '80px' }}></div> : <h2>{data?.cards.newVsReturning.new}% / {data?.cards.newVsReturning.returning}%</h2>}
+            {loading
+              ? <div className="skeleton" style={{ height: '30px', width: '80px' }}></div>
+              : <h2>{data ? `${data.cards.newVsReturning.new}% / ${data.cards.newVsReturning.returning}%` : '—'}</h2>}
           </div>
           <div className="stat-card-footer">
             Ratio of fresh vs repeat visitors
@@ -856,37 +913,37 @@ export default function AnalyticsPage() {
         </div>
       </div>
 
-      {/* Real-time Visitor Stream */}
+      {/* Live activity. GA4's realtime report is aggregated by page and place —
+          it never identifies individual visitors, so this table shows what the
+          API actually returns rather than invented per-visitor rows. */}
       <div className="table-card">
-        <h3><Compass size={16} color="#0f9d68" style={{ marginRight: '0.25rem', verticalAlign: 'text-bottom' }} /> Live Activity Stream (Auto-refreshes every 5s)</h3>
+        <h3><Compass size={16} color="#0f9d68" style={{ marginRight: '0.25rem', verticalAlign: 'text-bottom' }} /> Live Activity (Auto-refreshes every 5s)</h3>
         <div className="table-responsive-new">
           <table className="analytics-table">
             <thead>
               <tr>
-                <th>Visitor ID</th>
-                <th>Page Path</th>
+                <th>Page</th>
                 <th>Location</th>
-                <th>Traffic Source</th>
-                <th>Active Duration</th>
+                <th>Active Users</th>
                 <th>Status</th>
               </tr>
             </thead>
             <tbody>
-              {realtimeData?.activeVisitors && realtimeData.activeVisitors.length > 0 ? (
-                realtimeData.activeVisitors.map(v => (
-                  <tr key={v.id}>
-                    <td><code>{v.id}</code></td>
-                    <td>{v.page}</td>
-                    <td><MapPin size={12} style={{ marginRight: '4px', verticalAlign: 'middle' }} /> {v.city}, {v.country}</td>
-                    <td>{v.source}</td>
-                    <td>{v.duration}</td>
+              {realtimeData?.activePages?.length > 0 ? (
+                realtimeData.activePages.map((row, i) => (
+                  <tr key={`${row.page}-${row.city}-${row.country}-${i}`}>
+                    <td>{row.page}</td>
+                    <td><MapPin size={12} style={{ marginRight: '4px', verticalAlign: 'middle' }} /> {row.city}, {row.country}</td>
+                    <td>{row.activeUsers}</td>
                     <td><span className="status-badge">Active Now</span></td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan={6} style={{ textAlign: 'center', padding: '2rem', color: 'var(--analytics-text-muted)' }}>
-                    No active visitors tracked in the last 5 seconds.
+                  <td colSpan={4} style={{ textAlign: 'center', padding: '2rem', color: 'var(--analytics-text-muted)' }}>
+                    {realtimeError
+                      ? 'Live data unavailable — see the notice above.'
+                      : 'Nobody is on the site right now.'}
                   </td>
                 </tr>
               )}
@@ -908,7 +965,7 @@ export default function AnalyticsPage() {
 
         <div className="chart-card" style={{ gridColumn: 'span 6' }}>
           <div className="chart-card-header">
-            <h3><TrendingUp size={16} color="#e1590b" /> Daily visitors (Last 30 Days)</h3>
+            <h3><TrendingUp size={16} color="#e1590b" /> Daily visitors (selected range)</h3>
           </div>
           <div className="chart-container-new">
             <canvas ref={chartRefs.daily}></canvas>
@@ -917,7 +974,7 @@ export default function AnalyticsPage() {
 
         <div className="chart-card" style={{ gridColumn: 'span 4' }}>
           <div className="chart-card-header">
-            <h3><Calendar size={16} /> Weekly visitor trends</h3>
+            <h3><Calendar size={16} /> Visitors by day of week</h3>
           </div>
           <div className="chart-container-new">
             <canvas ref={chartRefs.weekly}></canvas>
@@ -926,7 +983,7 @@ export default function AnalyticsPage() {
 
         <div className="chart-card" style={{ gridColumn: 'span 4' }}>
           <div className="chart-card-header">
-            <h3><Calendar size={16} /> Monthly visitor counts</h3>
+            <h3><Calendar size={16} /> Monthly visitors (last 12 months)</h3>
           </div>
           <div className="chart-container-new">
             <canvas ref={chartRefs.monthly}></canvas>

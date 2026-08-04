@@ -1,18 +1,38 @@
+/* ==========================================================================
+   Google Analytics 4 reporting.
+
+   Every number this file serves comes from the GA4 Data API. There is no
+   simulated dataset and no placeholder constants: when GA4 is not configured,
+   or the API refuses the call, the endpoint answers 503 with the reason and the
+   dashboard shows that instead of numbers.
+
+   That is deliberate. Plausible-looking fake traffic cannot be told apart from
+   real traffic once it is on screen — it silently becomes the thing decisions
+   get made on. An empty panel that explains itself is worth more.
+   ========================================================================== */
 const { BetaAnalyticsDataClient } = require('@google-analytics/data');
-
-// In-memory cache for historical and real-time reports to prevent GA API rate limiting
-const cache = {
-  historical: null,
-  historicalExpiry: 0,
-  realtime: null,
-  realtimeExpiry: 0,
-};
-
-// Caching thresholds (Historical: 5 mins, Real-time: 5 seconds)
-const CACHE_HISTORICAL_MS = 5 * 60 * 1000;
-const CACHE_REALTIME_MS = 5 * 1000;
-
 const fs = require('node:fs');
+
+/* Caching keeps the GA4 request quota out of trouble: the live panel polls
+   every 5s and the historical view refetches on every range change. Each key
+   carries its own expiry — a shared one meant a freshly cached range could be
+   discarded because an older key had aged out. */
+const CACHE_HISTORICAL_MS = 5 * 60 * 1000;
+const CACHE_REALTIME_MS   = 5 * 1000;
+
+const cache = new Map();   // key -> { data, expiry }
+
+function cacheGet(key) {
+  const hit = cache.get(key);
+  if (!hit) return null;
+  if (Date.now() >= hit.expiry) { cache.delete(key); return null; }
+  return hit.data;
+}
+
+function cacheSet(key, data, ttlMs) {
+  cache.set(key, { data, expiry: Date.now() + ttlMs });
+  return data;
+}
 
 /**
  * Read the service account key from GOOGLE_CREDENTIALS_JSON (raw JSON or base64).
@@ -66,6 +86,21 @@ try {
 
 const hasCredentialsFile = Boolean(credentialsPath) && fs.existsSync(credentialsPath);
 
+/* What is missing, in words the admin can act on. Kept as a function so the
+   message reflects the environment rather than being written twice. */
+function missingConfig() {
+  const gaps = [];
+  if (!propertyId) gaps.push('GA_PROPERTY_ID is not set');
+  if (!inlineCredentials && !hasCredentialsFile) {
+    gaps.push(
+      credentialsPath
+        ? `no readable service-account key (GOOGLE_APPLICATION_CREDENTIALS points at "${credentialsPath}")`
+        : 'no service-account credentials (set GOOGLE_CREDENTIALS_JSON or GOOGLE_APPLICATION_CREDENTIALS)'
+    );
+  }
+  return gaps;
+}
+
 if (propertyId && (inlineCredentials || hasCredentialsFile)) {
   try {
     gaClient = inlineCredentials
@@ -82,407 +117,355 @@ if (propertyId && (inlineCredentials || hasCredentialsFile)) {
     gaClient = null;
     console.error('  Error initializing GA4 client:', err.message);
   }
-} else if (propertyId) {
-  console.warn(
-    `  Analytics Warning: no GA4 credentials found. Set GOOGLE_CREDENTIALS_JSON, or point GOOGLE_APPLICATION_CREDENTIALS at a readable key file${credentialsPath ? ` (currently: ${credentialsPath})` : ''}. Running in simulation mode.`
-  );
 } else {
-  console.log('  GA_PROPERTY_ID not set. Running Analytics in simulation mode.');
+  console.warn(`  Analytics: reporting disabled — ${missingConfig().join('; ')}. The dashboard will say so.`);
 }
 
-/**
- * Helper to generate realistic simulated visitor patterns using a random walk
- */
-function getSimulatedRealtime() {
-  const pages = ['/', '/about', '/products', '/product/cable-trays', '/product/molded-gratings', '/product/gear-boxes', '/product/switchgears', '/blog', '/locations'];
-  const locations = [
-    { country: 'India', city: 'Baroda' },
-    { country: 'India', city: 'Mumbai' },
-    { country: 'India', city: 'New Delhi' },
-    { country: 'India', city: 'Bangalore' },
-    { country: 'United States', city: 'Houston' },
-    { country: 'United States', city: 'Chicago' },
-    { country: 'Germany', city: 'Frankfurt' },
-    { country: 'United Arab Emirates', city: 'Dubai' }
-  ];
-  const referrers = ['Google Organic', 'Direct', 'LinkedIn', 'IndiaMART', 'Siemens Partner Portal', 'Email Newsletter'];
+/* ─── Response helpers ───────────────────────────────────────────────────── */
 
-  // Base active users fluctuates between 18 and 42
-  const activeCount = Math.floor(25 + Math.sin(Date.now() / 100000) * 10 + (Math.random() - 0.5) * 5);
+/** The only response shape when live figures cannot be produced. Carries no numbers. */
+function unavailable(res, { code, error, detail }) {
+  return res.status(503).json({
+    code,
+    error,
+    detail: detail || undefined,
+    configured: Boolean(gaClient),
+    propertyId: propertyId || null,
+  });
+}
 
-  const activeVisitors = Array.from({ length: activeCount }, (_, idx) => {
-    const loc = locations[idx % locations.length];
-    return {
-      id: `v-${idx + 1}-${Math.floor(Math.random() * 10000)}`,
-      page: pages[Math.floor(Math.random() * pages.length)],
-      country: loc.country,
-      city: loc.city,
-      source: referrers[Math.floor(Math.random() * referrers.length)],
-      duration: `${Math.floor(1 + Math.random() * 8)}m`
-    };
+const notConfigured = (res) =>
+  unavailable(res, {
+    code: 'ANALYTICS_NOT_CONFIGURED',
+    error: 'Google Analytics is not connected, so there are no figures to show.',
+    detail: missingConfig().join('; '),
   });
 
-  return {
-    activeUsers: activeCount,
-    activeVisitors,
-    onlineStatus: 'healthy',
-    lastUpdated: new Date().toISOString()
-  };
-}
-
-function getSimulatedHistorical(range = '30days') {
-  let days = 30;
-  if (range === 'today') days = 1;
-  else if (range === 'yesterday') days = 1;
-  else if (range === '7days') days = 7;
-  else if (range === '90days') days = 90;
-
-  // Aggregate numbers
-  const totalVisitors = days * 350 + Math.floor(Math.random() * 1000);
-  const totalPageViews = Math.floor(totalVisitors * 2.4);
-  const avgDuration = '2m 45s';
-  const bounceRate = '42.5%';
-
-  // Daily visitors (last 30/7/90 days)
-  const dailyVisitors = Array.from({ length: days }, (_, i) => {
-    const dateObj = new Date();
-    dateObj.setDate(dateObj.getDate() - (days - 1 - i));
-    const dayName = dateObj.toLocaleDateString('en-US', { day: '2-digit', month: 'short' });
-    const isWeekend = dateObj.getDay() === 0 || dateObj.getDay() === 6;
-    // Lower traffic on weekends
-    const base = isWeekend ? 150 : 380;
-    const value = Math.floor(base + Math.sin(i) * 50 + Math.random() * 60);
-    return { date: dayName, visitors: value };
+const apiFailed = (res, err, what) => {
+  console.error(`GA4 ${what} request failed:`, err.message);
+  return unavailable(res, {
+    code: 'ANALYTICS_API_ERROR',
+    error: `Google Analytics refused the ${what} request.`,
+    detail: err.message,
   });
+};
 
-  // Country Breakdown
-  const countries = [
-    { name: 'India', visitors: Math.floor(totalVisitors * 0.70) },
-    { name: 'United States', visitors: Math.floor(totalVisitors * 0.12) },
-    { name: 'United Arab Emirates', visitors: Math.floor(totalVisitors * 0.06) },
-    { name: 'Germany', visitors: Math.floor(totalVisitors * 0.05) },
-    { name: 'United Kingdom', visitors: Math.floor(totalVisitors * 0.04) },
-    { name: 'Others', visitors: Math.floor(totalVisitors * 0.03) }
-  ];
+/* ─── Parsing helpers ────────────────────────────────────────────────────── */
 
-  // Device Breakdown
-  const devices = [
-    { type: 'Desktop', percentage: 65 },
-    { type: 'Mobile', percentage: 32 },
-    { type: 'Tablet', percentage: 3 }
-  ];
+const num = (value) => {
+  const n = Number(value);
+  return Number.isFinite(n) ? n : 0;
+};
 
-  // System Stats
-  const browsers = [
-    { name: 'Chrome', percentage: 72 },
-    { name: 'Safari', percentage: 14 },
-    { name: 'Firefox', percentage: 7 },
-    { name: 'Edge', percentage: 5 },
-    { name: 'Opera', percentage: 2 }
-  ];
+const rowsOf = (report) => (report && report.rows) || [];
 
-  const operatingSystems = [
-    { name: 'Windows', percentage: 58 },
-    { name: 'Android', percentage: 22 },
-    { name: 'macOS', percentage: 12 },
-    { name: 'iOS', percentage: 6 },
-    { name: 'Linux', percentage: 2 }
-  ];
-
-  // Top Pages
-  const topPages = [
-    { path: '/', views: Math.floor(totalPageViews * 0.40) },
-    { path: '/products', views: Math.floor(totalPageViews * 0.22) },
-    { path: '/product/cable-trays', views: Math.floor(totalPageViews * 0.12) },
-    { path: '/product/molded-gratings', views: Math.floor(totalPageViews * 0.10) },
-    { path: '/about', views: Math.floor(totalPageViews * 0.08) },
-    { path: '/blog', views: Math.floor(totalPageViews * 0.05) },
-    { path: '/locations', views: Math.floor(totalPageViews * 0.03) }
-  ];
-
-  const topLandingPages = [
-    { path: '/', sessions: Math.floor(totalVisitors * 0.50) },
-    { path: '/product/cable-trays', sessions: Math.floor(totalVisitors * 0.20) },
-    { path: '/product/molded-gratings', sessions: Math.floor(totalVisitors * 0.15) },
-    { path: '/about', sessions: Math.floor(totalVisitors * 0.08) },
-    { path: '/blog', sessions: Math.floor(totalVisitors * 0.07) }
-  ];
-
-  const trafficSources = [
-    { source: 'Google Organic', percentage: 52 },
-    { source: 'Direct', percentage: 28 },
-    { source: 'IndiaMART', percentage: 12 },
-    { source: 'Referrals', percentage: 5 },
-    { source: 'Social', percentage: 3 }
-  ];
-
-  return {
-    cards: {
-      totalVisitors,
-      todayVisitors: Math.floor(340 + Math.random() * 50),
-      yesterdayVisitors: Math.floor(360 + Math.random() * 40),
-      weekVisitors: Math.floor(totalVisitors * 0.28),
-      monthVisitors: totalVisitors,
-      totalPageViews,
-      avgSessionDuration: avgDuration,
-      bounceRate,
-      newVsReturning: { new: 68, returning: 32 }
-    },
-    charts: {
-      dailyVisitors,
-      countries,
-      devices,
-      browsers,
-      operatingSystems,
-      topPages,
-      topLandingPages,
-      trafficSources
-    }
-  };
+/** dimension value + metric value, as a share of the report's own total. */
+function shares(report, labelKey, countKey) {
+  const items = rowsOf(report).map((row) => ({
+    label: row.dimensionValues[0].value || '(not set)',
+    count: num(row.metricValues[0].value),
+  }));
+  const total = items.reduce((sum, i) => sum + i.count, 0);
+  return items.map((i) => ({
+    [labelKey]: i.label,
+    [countKey]: i.count,
+    /* A real share of the total, not a raw count wearing the name
+       "percentage" — the doughnut legends read these as percentages. */
+    percentage: total ? Number(((i.count * 100) / total).toFixed(1)) : 0,
+  }));
 }
+
+/** "20260804" → "04 Aug" */
+function shortDate(yyyymmdd) {
+  const raw = String(yyyymmdd || '');
+  if (raw.length !== 8) return raw;
+  const date = new Date(`${raw.slice(0, 4)}-${raw.slice(4, 6)}-${raw.slice(6, 8)}T00:00:00Z`);
+  if (Number.isNaN(date.getTime())) return raw;
+  return `${raw.slice(6, 8)} ${date.toLocaleDateString('en-US', { month: 'short', timeZone: 'UTC' })}`;
+}
+
+/** "202608" → "Aug 26" */
+function shortMonth(yyyymm) {
+  const raw = String(yyyymm || '');
+  if (raw.length !== 6) return raw;
+  const date = new Date(`${raw.slice(0, 4)}-${raw.slice(4, 6)}-01T00:00:00Z`);
+  if (Number.isNaN(date.getTime())) return raw;
+  return `${date.toLocaleDateString('en-US', { month: 'short', timeZone: 'UTC' })} ${raw.slice(2, 4)}`;
+}
+
+const WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+/** Seconds → "2m 45s", the shape the cards display. */
+function duration(seconds) {
+  const total = Math.max(0, Math.round(num(seconds)));
+  return `${Math.floor(total / 60)}m ${total % 60}s`;
+}
+
+/** Named date ranges arrive as an extra "dateRange" dimension on each row. */
+function byDateRange(report) {
+  const headers = (report && report.dimensionHeaders) || [];
+  const at = headers.findIndex((h) => h.name === 'dateRange');
+  const out = {};
+  for (const row of rowsOf(report)) {
+    const key = at >= 0 ? row.dimensionValues[at].value : 'total';
+    out[key] = num(row.metricValues[0].value);
+  }
+  return out;
+}
+
+/* ─── Date ranges ────────────────────────────────────────────────────────── */
+
+const RANGE_PRESETS = {
+  today:     { startDate: 'today',     endDate: 'today' },
+  yesterday: { startDate: 'yesterday', endDate: 'yesterday' },
+  '7days':   { startDate: '7daysAgo',  endDate: 'today' },
+  '30days':  { startDate: '30daysAgo', endDate: 'today' },
+  '90days':  { startDate: '90daysAgo', endDate: 'today' },
+};
+
+const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
+
+/** Resolves the query into a GA4 date range, or null when it is unusable. */
+function resolveRange(range, startDate, endDate) {
+  if (range === 'custom' || (startDate && endDate)) {
+    if (!ISO_DATE.test(String(startDate)) || !ISO_DATE.test(String(endDate))) return null;
+    if (startDate > endDate) return null;
+    return { startDate, endDate };
+  }
+  return RANGE_PRESETS[range] || null;
+}
+
+/* ==========================================================================
+   Controllers
+   ========================================================================== */
 
 /**
- * Controller: Get Real-Time Analytics
+ * GET /api/admin/analytics/realtime
+ *
+ * GA4's realtime report is aggregated — a row is "this many people are on this
+ * page from this city", not one identified visitor. So this returns exactly
+ * that. The old per-visitor IDs and durations had no source in the API and were
+ * invented locally.
  */
-exports.getRealTimeStats = async (req, res) => {
-  const now = Date.now();
+exports.getRealTimeStats = async (_req, res) => {
+  const cached = cacheGet('realtime');
+  if (cached) return res.json(cached);
 
-  // Check cache first
-  if (cache.realtime && now < cache.realtimeExpiry) {
-    return res.json(cache.realtime);
-  }
-
-  // If no live GA4 client, return simulated data
-  if (!gaClient) {
-    const data = getSimulatedRealtime();
-    cache.realtime = data;
-    cache.realtimeExpiry = now + CACHE_REALTIME_MS;
-    return res.json(data);
-  }
+  if (!gaClient) return notConfigured(res);
 
   try {
-    // Run GA4 Real-time Report
-    const [response] = await gaClient.runRealtimeReport({
+    const [report] = await gaClient.runRealtimeReport({
       property: `properties/${propertyId}`,
       dimensions: [
-        { name: 'unifiedPageScreen' },
+        { name: 'unifiedScreenName' },
         { name: 'country' },
         { name: 'city' },
-        { name: 'source' }
       ],
-      metrics: [
-        { name: 'activeUsers' }
-      ],
+      metrics: [{ name: 'activeUsers' }],
+      orderBys: [{ metric: { metricName: 'activeUsers' }, desc: true }],
+      limit: 50,
     });
 
-    const activeUsers = response.rows ? response.rows.reduce((sum, row) => sum + parseInt(row.metricValues[0].value || 0, 10), 0) : 0;
-    
-    const activeVisitors = (response.rows || []).map((row, idx) => ({
-      id: `ga-v-${idx + 1}`,
-      page: row.dimensionValues[0].value,
-      country: row.dimensionValues[1].value,
-      city: row.dimensionValues[2].value,
-      source: row.dimensionValues[3].value,
-      duration: 'active'
+    const activePages = rowsOf(report).map((row) => ({
+      page:        row.dimensionValues[0].value || '(not set)',
+      country:     row.dimensionValues[1].value || '(unknown)',
+      city:        row.dimensionValues[2].value || '(unknown)',
+      activeUsers: num(row.metricValues[0].value),
     }));
 
+    /* Summed from the per-page rows rather than requested separately: one call
+       instead of two, and the total always agrees with the table beneath it. */
     const result = {
-      activeUsers,
-      activeVisitors,
-      onlineStatus: 'healthy',
-      lastUpdated: new Date().toISOString()
+      activeUsers: activePages.reduce((sum, p) => sum + p.activeUsers, 0),
+      activePages,
+      lastUpdated: new Date().toISOString(),
     };
 
-    cache.realtime = result;
-    cache.realtimeExpiry = now + CACHE_REALTIME_MS;
-    return res.json(result);
+    return res.json(cacheSet('realtime', result, CACHE_REALTIME_MS));
   } catch (err) {
-    console.error('GA4 Real-time API error, falling back to simulation:', err.message);
-    const data = getSimulatedRealtime();
-    return res.json({ ...data, onlineStatus: 'degraded', apiError: err.message });
+    return apiFailed(res, err, 'live');
   }
 };
 
 /**
- * Controller: Get Historical Reports (with date filtering)
+ * GET /api/admin/analytics/historical?range=&startDate=&endDate=
+ *
+ * Every card and chart below maps to a GA4 dimension. Nothing is estimated from
+ * another figure, which the previous version did in several places — today's
+ * visitors as 5% of the range total, operating systems and traffic sources as
+ * fixed percentages, landing pages as 85% of page views.
  */
 exports.getHistoricalStats = async (req, res) => {
   const { range = '30days', startDate, endDate } = req.query;
-  const now = Date.now();
 
-  // Cache key includes range parameters
-  const cacheKey = `historical_${range}_${startDate || ''}_${endDate || ''}`;
-
-  if (cache[cacheKey] && now < cache.historicalExpiry) {
-    return res.json(cache[cacheKey]);
+  const dateRange = resolveRange(range, startDate, endDate);
+  if (!dateRange) {
+    return res.status(400).json({
+      code: 'ANALYTICS_BAD_RANGE',
+      error: 'Pick one of today, yesterday, 7days, 30days, 90days, or supply startDate and endDate as YYYY-MM-DD.',
+    });
   }
 
-  // Fallback to simulation if no client
-  if (!gaClient) {
-    const data = getSimulatedHistorical(range);
-    cache[cacheKey] = data;
-    cache.historicalExpiry = now + CACHE_HISTORICAL_MS;
-    return res.json(data);
-  }
+  const cacheKey = `historical:${dateRange.startDate}:${dateRange.endDate}`;
+  const cached = cacheGet(cacheKey);
+  if (cached) return res.json(cached);
+
+  if (!gaClient) return notConfigured(res);
+
+  const property = `properties/${propertyId}`;
+  const dateRanges = [dateRange];
+
+  /* One report per breakdown, all in flight together — GA4 bills a token per
+     request either way, and serially they would take ten round trips. */
+  const breakdown = (dimension, metric, limit) =>
+    gaClient.runReport({
+      property,
+      dateRanges,
+      dimensions: [{ name: dimension }],
+      metrics: [{ name: metric }],
+      orderBys: [{ metric: { metricName: metric }, desc: true }],
+      limit,
+    });
 
   try {
-    // Map preset range to GA date range
-    let gaStartDate = '30daysAgo';
-    let gaEndDate = 'today';
+    const [
+      [totals],
+      [dailyReport],
+      [cardCounts],
+      [deviceReport],
+      [browserReport],
+      [osReport],
+      [countryReport],
+      [pagesReport],
+      [landingReport],
+      [sourceReport],
+      [visitorTypeReport],
+      [weekdayReport],
+      [monthlyReport],
+    ] = await Promise.all([
+      /* Range totals with no dimension. Bounce rate and session duration have
+         to come from here: averaging the per-day values, as this used to, is
+         not the same number as the range's own rate. */
+      gaClient.runReport({
+        property,
+        dateRanges,
+        metrics: [
+          { name: 'activeUsers' },
+          { name: 'screenPageViews' },
+          { name: 'sessions' },
+          { name: 'bounceRate' },
+          { name: 'averageSessionDuration' },
+        ],
+      }),
+      gaClient.runReport({
+        property,
+        dateRanges,
+        dimensions: [{ name: 'date' }],
+        metrics: [{ name: 'activeUsers' }],
+        orderBys: [{ dimension: { dimensionName: 'date' } }],
+        limit: 400,
+      }),
+      /* The four fixed-window cards, as named ranges in a single request. */
+      gaClient.runReport({
+        property,
+        dateRanges: [
+          { startDate: 'today',      endDate: 'today',     name: 'today' },
+          { startDate: 'yesterday',  endDate: 'yesterday', name: 'yesterday' },
+          { startDate: '6daysAgo',   endDate: 'today',     name: 'week' },
+          { startDate: '29daysAgo',  endDate: 'today',     name: 'month' },
+        ],
+        metrics: [{ name: 'activeUsers' }],
+      }),
+      breakdown('deviceCategory', 'activeUsers', 10),
+      breakdown('browser', 'activeUsers', 5),
+      breakdown('operatingSystem', 'activeUsers', 5),
+      breakdown('country', 'activeUsers', 6),
+      breakdown('pagePath', 'screenPageViews', 8),
+      breakdown('landingPagePlusQueryString', 'sessions', 5),
+      breakdown('sessionDefaultChannelGroup', 'sessions', 6),
+      breakdown('newVsReturning', 'activeUsers', 5),
+      gaClient.runReport({
+        property,
+        dateRanges,
+        dimensions: [{ name: 'dayOfWeek' }],
+        metrics: [{ name: 'activeUsers' }],
+        orderBys: [{ dimension: { dimensionName: 'dayOfWeek' } }],
+      }),
+      gaClient.runReport({
+        property,
+        dateRanges: [{ startDate: '365daysAgo', endDate: 'today' }],
+        dimensions: [{ name: 'yearMonth' }],
+        metrics: [{ name: 'activeUsers' }],
+        orderBys: [{ dimension: { dimensionName: 'yearMonth' } }],
+        limit: 13,
+      }),
+    ]);
 
-    if (range === 'today') {
-      gaStartDate = 'today';
-      gaEndDate = 'today';
-    } else if (range === 'yesterday') {
-      gaStartDate = 'yesterday';
-      gaEndDate = 'yesterday';
-    } else if (range === '7days') {
-      gaStartDate = '7daysAgo';
-      gaEndDate = 'today';
-    } else if (range === '90days') {
-      gaStartDate = '90daysAgo';
-      gaEndDate = 'today';
-    } else if (startDate && endDate) {
-      gaStartDate = startDate;
-      gaEndDate = endDate;
+    const totalRow = rowsOf(totals)[0];
+    const metric = (idx) => (totalRow ? num(totalRow.metricValues[idx].value) : 0);
+
+    const counts = byDateRange(cardCounts);
+
+    /* GA4 reports dayOfWeek as "0" for Sunday; the chart runs Mon–Sun. */
+    const weekdayTotals = new Array(7).fill(0);
+    for (const row of rowsOf(weekdayReport)) {
+      const ga = num(row.dimensionValues[0].value);          // 0 = Sunday
+      weekdayTotals[(ga + 6) % 7] += num(row.metricValues[0].value);
     }
 
-    // Query daily visitors, browser details, devices, etc. in parallel
-    const [visitorsReport] = await gaClient.runReport({
-      property: `properties/${propertyId}`,
-      dateRanges: [{ startDate: gaStartDate, endDate: gaEndDate }],
-      dimensions: [{ name: 'date' }],
-      metrics: [
-        { name: 'activeUsers' },
-        { name: 'screenPageViews' },
-        { name: 'sessions' },
-        { name: 'bounceRate' },
-        { name: 'averageSessionDuration' }
-      ]
-    });
-
-    const [deviceReport] = await gaClient.runReport({
-      property: `properties/${propertyId}`,
-      dateRanges: [{ startDate: gaStartDate, endDate: gaEndDate }],
-      dimensions: [{ name: 'deviceCategory' }],
-      metrics: [{ name: 'activeUsers' }]
-    });
-
-    const [browserReport] = await gaClient.runReport({
-      property: `properties/${propertyId}`,
-      dateRanges: [{ startDate: gaStartDate, endDate: gaEndDate }],
-      dimensions: [{ name: 'browser' }],
-      metrics: [{ name: 'activeUsers' }]
-    });
-
-    const [countryReport] = await gaClient.runReport({
-      property: `properties/${propertyId}`,
-      dateRanges: [{ startDate: gaStartDate, endDate: gaEndDate }],
-      dimensions: [{ name: 'country' }],
-      metrics: [{ name: 'activeUsers' }]
-    });
-
-    const [pagesReport] = await gaClient.runReport({
-      property: `properties/${propertyId}`,
-      dateRanges: [{ startDate: gaStartDate, endDate: gaEndDate }],
-      dimensions: [{ name: 'pagePath' }],
-      metrics: [{ name: 'screenPageViews' }]
-    });
-
-    // Parse and aggregate daily visitors
-    let totalVisitors = 0;
-    let totalPageViews = 0;
-    let avgDurationSecSum = 0;
-    let bounceRatePercentSum = 0;
-    let rowsCount = 0;
-
-    const dailyVisitors = (visitorsReport.rows || []).map(row => {
-      const activeVal = parseInt(row.metricValues[0].value || 0, 10);
-      const pvVal = parseInt(row.metricValues[1].value || 0, 10);
-      totalVisitors += activeVal;
-      totalPageViews += pvVal;
-      bounceRatePercentSum += parseFloat(row.metricValues[3].value || 0);
-      avgDurationSecSum += parseFloat(row.metricValues[4].value || 0);
-      rowsCount++;
-
-      // Convert "YYYYMMDD" to "DD MMM"
-      const rawDate = row.dimensionValues[0].value;
-      const formattedDate = `${rawDate.substring(6, 8)} ${new Date(`${rawDate.substring(0, 4)}-${rawDate.substring(4, 6)}-${rawDate.substring(6, 8)}`).toLocaleDateString('en-US', { month: 'short' })}`;
-
-      return { date: formattedDate, visitors: activeVal };
-    });
-
-    const avgBounceRate = rowsCount > 0 ? `${(bounceRatePercentSum / rowsCount).toFixed(1)}%` : '0%';
-    const totalSecs = rowsCount > 0 ? avgDurationSecSum / rowsCount : 0;
-    const minutes = Math.floor(totalSecs / 60);
-    const seconds = Math.floor(totalSecs % 60);
-    const avgDurationFormatted = `${minutes}m ${seconds}s`;
-
-    // Parse Devices
-    const devices = (deviceReport.rows || []).map(row => {
-      const name = row.dimensionValues[0].value;
-      const count = parseInt(row.metricValues[0].value || 0, 10);
-      return { type: name.charAt(0).toUpperCase() + name.slice(1), percentage: count };
-    });
-
-    // Parse Browsers
-    const browsers = (browserReport.rows || []).map(row => ({
-      name: row.dimensionValues[0].value,
-      percentage: parseInt(row.metricValues[0].value || 0, 10)
-    }));
-
-    // Parse Countries
-    const countries = (countryReport.rows || []).map(row => ({
-      name: row.dimensionValues[0].value,
-      visitors: parseInt(row.metricValues[0].value || 0, 10)
-    }));
-
-    // Parse Pages
-    const topPages = (pagesReport.rows || []).slice(0, 8).map(row => ({
-      path: row.dimensionValues[0].value,
-      views: parseInt(row.metricValues[0].value || 0, 10)
-    }));
+    const visitorTypes = shares(visitorTypeReport, 'type', 'visitors');
+    const findType = (name) =>
+      visitorTypes.find((t) => t.type.toLowerCase() === name)?.percentage ?? 0;
 
     const result = {
+      range,
+      dateRange,
       cards: {
-        totalVisitors,
-        todayVisitors: Math.floor(totalVisitors * 0.05), // Estimated
-        yesterdayVisitors: Math.floor(totalVisitors * 0.06), // Estimated
-        weekVisitors: Math.floor(totalVisitors * 0.28),
-        monthVisitors: totalVisitors,
-        totalPageViews,
-        avgSessionDuration: avgDurationFormatted,
-        bounceRate: avgBounceRate,
-        newVsReturning: { new: 70, returning: 30 } // Proxy ratios from standard analytics
+        totalVisitors:      metric(0),
+        todayVisitors:      counts.today     || 0,
+        yesterdayVisitors:  counts.yesterday || 0,
+        weekVisitors:       counts.week      || 0,
+        monthVisitors:      counts.month     || 0,
+        totalPageViews:     metric(1),
+        sessions:           metric(2),
+        avgSessionDuration: duration(metric(4)),
+        /* GA4 returns bounceRate as a ratio (0.4251), not a percentage. */
+        bounceRate:         `${(metric(3) * 100).toFixed(1)}%`,
+        newVsReturning:     { new: findType('new'), returning: findType('returning') },
       },
       charts: {
-        dailyVisitors,
-        countries: countries.slice(0, 6),
-        devices,
-        browsers: browsers.slice(0, 5),
-        operatingSystems: [
-          { name: 'Windows', percentage: 60 },
-          { name: 'Android', percentage: 25 },
-          { name: 'macOS', percentage: 10 },
-          { name: 'iOS', percentage: 5 }
-        ],
-        topPages,
-        topLandingPages: topPages.slice(0, 5).map(p => ({ path: p.path, sessions: Math.floor(p.views * 0.85) })),
-        trafficSources: [
-          { source: 'Google Organic', percentage: 50 },
-          { source: 'Direct', percentage: 30 },
-          { source: 'IndiaMART', percentage: 15 },
-          { source: 'Referrals', percentage: 5 }
-        ]
-      }
+        dailyVisitors: rowsOf(dailyReport).map((row) => ({
+          date:     shortDate(row.dimensionValues[0].value),
+          visitors: num(row.metricValues[0].value),
+        })),
+        weekdayVisitors: WEEKDAYS.map((day, i) => ({ day, visitors: weekdayTotals[i] })),
+        monthlyVisitors: rowsOf(monthlyReport).map((row) => ({
+          month:    shortMonth(row.dimensionValues[0].value),
+          visitors: num(row.metricValues[0].value),
+        })),
+        countries: rowsOf(countryReport).map((row) => ({
+          name:     row.dimensionValues[0].value || '(unknown)',
+          visitors: num(row.metricValues[0].value),
+        })),
+        devices:          shares(deviceReport, 'type', 'visitors'),
+        browsers:         shares(browserReport, 'name', 'visitors'),
+        operatingSystems: shares(osReport, 'name', 'visitors'),
+        trafficSources:   shares(sourceReport, 'source', 'sessions'),
+        visitorTypes,
+        topPages: rowsOf(pagesReport).map((row) => ({
+          path:  row.dimensionValues[0].value,
+          views: num(row.metricValues[0].value),
+        })),
+        topLandingPages: rowsOf(landingReport).map((row) => ({
+          path:     row.dimensionValues[0].value,
+          sessions: num(row.metricValues[0].value),
+        })),
+      },
+      lastUpdated: new Date().toISOString(),
     };
 
-    cache[cacheKey] = result;
-    cache.historicalExpiry = now + CACHE_HISTORICAL_MS;
-    return res.json(result);
+    return res.json(cacheSet(cacheKey, result, CACHE_HISTORICAL_MS));
   } catch (err) {
-    console.error('GA4 Historical API error, falling back to simulation:', err.message);
-    const data = getSimulatedHistorical(range);
-    return res.json({ ...data, apiError: err.message });
+    return apiFailed(res, err, 'reporting');
   }
 };
