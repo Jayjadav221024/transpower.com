@@ -570,3 +570,14 @@
 .sparkline {
   filter: drop-shadow(0 2px 4px var(--glow-color, rgba(255,255,255,0.1)));
 }
+
+/* Control spacing gaps */
+.header-actions-new {
+  gap: 1rem !important;
+}
+
+.export-btn-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
