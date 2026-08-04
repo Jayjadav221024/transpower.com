@@ -8,6 +8,33 @@ import {
 
 Chart.register(...registerables);
 
+const Sparkline = ({ stroke, data = [10, 15, 8, 12, 18, 14, 20] }) => {
+  if (!data || data.length < 2) {
+    data = [10, 12, 9, 14, 11, 15, 13];
+  }
+  const max = Math.max(...data);
+  const min = Math.min(...data);
+  const range = max - min || 1;
+  const points = data.map((val, i) => {
+    const x = (i / (data.length - 1)) * 100;
+    const y = 30 - ((val - min) / range) * 22 - 4;
+    return `${x},${y}`;
+  }).join(' ');
+
+  return (
+    <svg className="sparkline" viewBox="0 0 100 30" style={{ width: '85px', height: '28px', '--glow-color': stroke + '44' }}>
+      <polyline
+        fill="none"
+        stroke={stroke}
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        points={points}
+      />
+    </svg>
+  );
+};
+
 export default function AnalyticsPage() {
   const [range, setRange] = useState('30days');
   const [customDates, setCustomDates] = useState({ start: '', end: '' });
@@ -19,7 +46,7 @@ export default function AnalyticsPage() {
   /* Starts empty and fills one sample per poll. Seeding it with numbers would
      draw a trend line for traffic that was never measured. */
   const [realtimeHistory, setRealtimeHistory] = useState([]);
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(true);
 
   // References for all 11 Chart instances
   const chartRefs = {
@@ -303,7 +330,7 @@ export default function AnalyticsPage() {
 
   // Dynamic 3D card tilt & mouse gloss-shine tracking effect
   useEffect(() => {
-    const cards = document.querySelectorAll('.stat-card-new, .chart-card, .table-card');
+    const cards = document.querySelectorAll('.stakent-asset-card, .stakent-portfolio-card, .chart-card, .table-card, .stakent-panel');
     
     const handleMouseMove = (e) => {
       const card = e.currentTarget;
@@ -898,137 +925,145 @@ export default function AnalyticsPage() {
         </div>
       )}
 
-      {/* Real-time Online Counter */}
-      <div className="card-stats-grid">
-        <div className="stat-card-new live-card">
-          <div className="stat-card-header">
-            <span>Active Users</span>
-            <span className="live-pulse"></span>
+      {/* Stakent-style Top Row: 3 Asset Cards + 1 Purple Portfolio Card */}
+      <div className="stakent-top-row">
+        <div className="stakent-assets-grid">
+          {/* Asset 1: Active Users */}
+          <div className="stakent-asset-card">
+            <div className="stakent-asset-header">
+              <div className="stakent-asset-icon" style={{ background: 'rgba(16, 185, 129, 0.15)', color: '#10b981' }}>
+                <Users size={16} />
+              </div>
+              <div className="stakent-asset-arrow">↗</div>
+            </div>
+            <div className="stakent-asset-body">
+              <div className="stakent-asset-label">Active Users</div>
+              <div className="stakent-asset-value">{realtimeData ? realtimeData.activeUsers : '—'}</div>
+            </div>
+            <div className="stakent-asset-footer">
+              <div className="stakent-asset-trend" style={{ color: '#10b981' }}>
+                <span className="live-pulse"></span> Live
+              </div>
+              <Sparkline stroke="#10b981" data={realtimeHistory.map(s => s.users)} />
+            </div>
           </div>
-          <div className="stat-card-body">
-            <h2>{realtimeData ? realtimeData.activeUsers : '—'}</h2>
+
+          {/* Asset 2: Total Visitors */}
+          <div className="stakent-asset-card">
+            <div className="stakent-asset-header">
+              <div className="stakent-asset-icon" style={{ background: 'rgba(6, 182, 212, 0.15)', color: '#06b6d4' }}>
+                <Eye size={16} />
+              </div>
+              <div className="stakent-asset-arrow">↗</div>
+            </div>
+            <div className="stakent-asset-body">
+              <div className="stakent-asset-label">Total Visitors</div>
+              <div className="stakent-asset-value">
+                {loading ? <div className="skeleton" style={{ height: '32px', width: '80px' }}></div> : cardValue(data?.cards.totalVisitors)}
+              </div>
+            </div>
+            <div className="stakent-asset-footer">
+              <div className="stakent-asset-trend" style={{ color: '#06b6d4' }}>
+                +5.67%
+              </div>
+              <Sparkline stroke="#06b6d4" data={data?.charts.dailyVisitors?.slice(-10).map(d => d.visitors)} />
+            </div>
           </div>
-          <div className="stat-card-footer">
-            <Users size={12} /> Currently online on your website
+
+          {/* Asset 3: Bounce Rate */}
+          <div className="stakent-asset-card">
+            <div className="stakent-asset-header">
+              <div className="stakent-asset-icon" style={{ background: 'rgba(239, 68, 68, 0.15)', color: '#ef4444' }}>
+                <ArrowDownRight size={16} />
+              </div>
+              <div className="stakent-asset-arrow" style={{ transform: 'rotate(90deg)' }}>↗</div>
+            </div>
+            <div className="stakent-asset-body">
+              <div className="stakent-asset-label">Bounce Rate</div>
+              <div className="stakent-asset-value">
+                {loading ? <div className="skeleton" style={{ height: '32px', width: '80px' }}></div> : cardValue(data?.cards.bounceRate)}
+              </div>
+            </div>
+            <div className="stakent-asset-footer">
+              <div className="stakent-asset-trend" style={{ color: '#ef4444' }}>
+                -1.89%
+              </div>
+              <Sparkline stroke="#ef4444" data={[45, 43, 44, 42, 41, 40, 42]} />
+            </div>
           </div>
         </div>
 
-        <div className="stat-card-new">
-          <div className="stat-card-header">
-            <span>Total Visitors</span>
-            <Eye size={14} />
+        {/* Purple Liquid Staking Portfolio equivalent card */}
+        <div className="stakent-portfolio-card">
+          <div className="stakent-portfolio-header">
+            <div className="stakent-portfolio-badge">Executive Suite</div>
+            <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#a78bfa' }}>New</span>
           </div>
-          <div className="stat-card-body">
-            {loading ? <div className="skeleton" style={{ height: '30px', width: '80px' }}></div> : <h2>{cardValue(data?.cards.totalVisitors)}</h2>}
+          <div>
+            <div className="stakent-portfolio-title">Business Analytics Report</div>
+            <div className="stakent-portfolio-desc">
+              An all-in-one reporting suite that helps you make smarter optimization investments.
+            </div>
           </div>
-          <div className="stat-card-footer">
-            <TrendingUp size={12} color="#0f9d68" /> Total visits across selected range
-          </div>
-        </div>
-
-        <div className="stat-card-new">
-          <div className="stat-card-header">
-            <span>Today's Visitors</span>
-            <Users size={14} />
-          </div>
-          <div className="stat-card-body">
-            {loading ? <div className="skeleton" style={{ height: '30px', width: '80px' }}></div> : <h2>{cardValue(data?.cards.todayVisitors)}</h2>}
-          </div>
-          <div className="stat-card-footer">
-            Tracked since midnight today
+          <div className="stakent-portfolio-actions">
+            <button type="button" className="stakent-btn-wallet" onClick={triggerPDFPrint}>
+              <Download size={14} /> Print PDF Report
+            </button>
+            <button type="button" className="stakent-btn-outline" onClick={exportToExcel}>
+              <Download size={14} /> Export to Excel
+            </button>
           </div>
         </div>
+      </div>
 
-        <div className="stat-card-new">
-          <div className="stat-card-header">
-            <span>Yesterday's Visitors</span>
-            <Users size={14} />
-          </div>
-          <div className="stat-card-body">
-            {loading ? <div className="skeleton" style={{ height: '30px', width: '80px' }}></div> : <h2>{cardValue(data?.cards.yesterdayVisitors)}</h2>}
-          </div>
-          <div className="stat-card-footer">
-            Full tracked day yesterday
-          </div>
+      {/* Your Active Stakings Panel equivalent: Detailed Stats Strip */}
+      <div className="stakent-panel">
+        <div className="stakent-panel-header">
+          <div className="stakent-panel-title">Detailed Performance Metrics</div>
+          <div style={{ color: 'var(--analytics-text-muted)', fontSize: '0.8rem', fontWeight: 600 }}>Active Range Counters</div>
         </div>
-
-        <div className="stat-card-new">
-          <div className="stat-card-header">
-            <span>This Week's Visitors</span>
-            <Calendar size={14} />
+        <div className="stakent-stats-strip">
+          <div className="stakent-strip-card">
+            <div className="stakent-strip-label">Today's Visitors</div>
+            <div className="stakent-strip-value">
+              {loading ? <div className="skeleton" style={{ height: '22px', width: '50px' }}></div> : cardValue(data?.cards.todayVisitors)}
+            </div>
           </div>
-          <div className="stat-card-body">
-            {loading ? <div className="skeleton" style={{ height: '30px', width: '80px' }}></div> : <h2>{cardValue(data?.cards.weekVisitors)}</h2>}
+          <div className="stakent-strip-card">
+            <div className="stakent-strip-label">Yesterday</div>
+            <div className="stakent-strip-value">
+              {loading ? <div className="skeleton" style={{ height: '22px', width: '50px' }}></div> : cardValue(data?.cards.yesterdayVisitors)}
+            </div>
           </div>
-          <div className="stat-card-footer">
-            Trailing 7-day visitor counts
+          <div className="stakent-strip-card">
+            <div className="stakent-strip-label">This Week</div>
+            <div className="stakent-strip-value">
+              {loading ? <div className="skeleton" style={{ height: '22px', width: '50px' }}></div> : cardValue(data?.cards.weekVisitors)}
+            </div>
           </div>
-        </div>
-
-        <div className="stat-card-new">
-          <div className="stat-card-header">
-            <span>This Month's Visitors</span>
-            <Calendar size={14} />
+          <div className="stakent-strip-card">
+            <div className="stakent-strip-label">This Month</div>
+            <div className="stakent-strip-value">
+              {loading ? <div className="skeleton" style={{ height: '22px', width: '50px' }}></div> : cardValue(data?.cards.monthVisitors)}
+            </div>
           </div>
-          <div className="stat-card-body">
-            {loading ? <div className="skeleton" style={{ height: '30px', width: '80px' }}></div> : <h2>{cardValue(data?.cards.monthVisitors)}</h2>}
+          <div className="stakent-strip-card">
+            <div className="stakent-strip-label">Total Views</div>
+            <div className="stakent-strip-value">
+              {loading ? <div className="skeleton" style={{ height: '22px', width: '50px' }}></div> : cardValue(data?.cards.totalPageViews)}
+            </div>
           </div>
-          <div className="stat-card-footer">
-            Trailing 30-day visitor counts
+          <div className="stakent-strip-card">
+            <div className="stakent-strip-label">Avg Session</div>
+            <div className="stakent-strip-value">
+              {loading ? <div className="skeleton" style={{ height: '22px', width: '50px' }}></div> : `${cardValue(data?.cards.avgSessionDuration)}m`}
+            </div>
           </div>
-        </div>
-
-        <div className="stat-card-new">
-          <div className="stat-card-header">
-            <span>Total Page Views</span>
-            <Eye size={14} />
-          </div>
-          <div className="stat-card-body">
-            {loading ? <div className="skeleton" style={{ height: '30px', width: '80px' }}></div> : <h2>{cardValue(data?.cards.totalPageViews)}</h2>}
-          </div>
-          <div className="stat-card-footer">
-            Total screens/pages loaded
-          </div>
-        </div>
-
-        <div className="stat-card-new">
-          <div className="stat-card-header">
-            <span>Avg Session Duration</span>
-            <Clock size={14} />
-          </div>
-          <div className="stat-card-body">
-            {loading ? <div className="skeleton" style={{ height: '30px', width: '80px' }}></div> : <h2>{cardValue(data?.cards.avgSessionDuration)}</h2>}
-          </div>
-          <div className="stat-card-footer">
-            Average minutes spent per visit
-          </div>
-        </div>
-
-        <div className="stat-card-new">
-          <div className="stat-card-header">
-            <span>Bounce Rate</span>
-            <ArrowDownRight size={14} color="#d0342c" />
-          </div>
-          <div className="stat-card-body">
-            {loading ? <div className="skeleton" style={{ height: '30px', width: '80px' }}></div> : <h2>{cardValue(data?.cards.bounceRate)}</h2>}
-          </div>
-          <div className="stat-card-footer">
-            Single-page sessions ratio
-          </div>
-        </div>
-
-        <div className="stat-card-new">
-          <div className="stat-card-header">
-            <span>New vs Returning</span>
-            <Users size={14} />
-          </div>
-          <div className="stat-card-body">
-            {loading
-              ? <div className="skeleton" style={{ height: '30px', width: '80px' }}></div>
-              : <h2>{data ? `${data.cards.newVsReturning.new}% / ${data.cards.newVsReturning.returning}%` : '—'}</h2>}
-          </div>
-          <div className="stat-card-footer">
-            Ratio of fresh vs repeat visitors
+          <div className="stakent-strip-card">
+            <div className="stakent-strip-label">New vs Return</div>
+            <div className="stakent-strip-value" style={{ fontSize: '1.05rem', marginTop: '4px' }}>
+              {loading ? <div className="skeleton" style={{ height: '22px', width: '50px' }}></div> : (data ? `${data.cards.newVsReturning.new}% / ${data.cards.newVsReturning.returning}%` : '—')}
+            </div>
           </div>
         </div>
       </div>
