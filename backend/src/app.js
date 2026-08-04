@@ -189,24 +189,23 @@ if (fs.existsSync(CLIENT_INDEX)) {
     res.sendFile(CLIENT_INDEX);
   });
 } else {
-  /* Reaching here means the API is up but the React build is not on disk — the
-     usual cause is a host whose build step never ran `npm run build` from the
-     repository root, or whose root directory is set to backend/.
-
-     Without this branch the symptom is a bare 404 on every deep link with
-     nothing in the logs, which reads as a missing SPA fallback rather than a
-     missing build. Say so once at boot, and again in the response. */
+  /* No React build on disk. Either this is an API-only deployment — the front
+     end is a separate static site, which is how Render is set up — or a build
+     step did not run. Both look identical from here, so say what is true and
+     leave the diagnosis to whoever reads it. */
   console.warn(
     `\n  No React build at ${CLIENT_DIST} — serving the API only.\n` +
-    '  Deep links such as /about will 404 until the front end is built:\n' +
-    '    npm run build   (from the repository root)\n'
+    '  Expected when the front end is deployed separately. If this server is\n' +
+    '  meant to serve the site too, build it first:  npm run build  (repo root)\n'
   );
 
+  /* 404, not 503: for an API-only deployment this state is correct, and a 5xx
+     on / would fail an uptime or platform health check against the root path. */
   app.get('*', (req, res, next) => {
     if (req.path.startsWith('/api/') || req.path.startsWith('/uploads/')) return next();
-    res.status(503).type('text/plain').send(
-      'The front-end build is missing on the server, so this page cannot be served.\n' +
-      'The API itself is running — try /api/health.'
+    res.status(404).type('text/plain').send(
+      'This server hosts the API only — no page is served at this path.\n' +
+      'Try /api/health.'
     );
   });
 }
