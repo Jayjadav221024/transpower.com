@@ -91,8 +91,28 @@ html {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Sideways drift is stopped at the source (see the overflow-containment block
+   near the end of this file); this is the backstop.
+
+   `clip` rather than `hidden`, and on <html> as well as <body>:
+
+   - `overflow-x: hidden` on <body> alone propagates to the viewport and leaves
+     <body> itself scrollable, so a stray wide element could still be *swiped*
+     sideways on a touchscreen even though no scrollbar appeared.
+   - `hidden` forces the other axis to `auto`, turning the element into a scroll
+     container. `clip` does not, so vertical scrolling, `position: sticky` and
+     the fixed header keep behaving exactly as they do now.
+
+   `hidden` is declared first so Safari 15 and older — which drop the `clip`
+   declaration outright — are left with the guard this file already had. */
+html {
+  overflow-x: hidden;
+  overflow-x: clip;
+}
+
 body {
   overflow-x: hidden;
+  overflow-x: clip;
   min-height: 100vh;
   position: relative;
   background-color: var(--bg-primary);
@@ -2807,6 +2827,7 @@ main > section:not([id]):not(:first-of-type) {
 /* Long unbroken strings — part numbers, emails, URLs — are the other way a
    fixed-width box appears out of nowhere. */
 .hero-left-content h1,
+.hero-left-content p,
 .section-header h2,
 .product-body h3,
 .product-body p,
@@ -2868,6 +2889,18 @@ main > section:not([id]):not(:first-of-type) {
 
   .hero-left-content { gap: 1rem; }
   .hero-copy { gap: 0.85rem; }
+
+  /* The shared h1 clamp bottoms out at 1.75rem, which is 28px from 320px all
+     the way to 466px — so the longest hero title ("Pioneering Fiberglass
+     Composites & Transmission Solutions", 57 characters) filled three tall
+     lines and pushed everything under it off the first screen. These titles
+     come from the CMS and vary a lot in length, so the hero gets its own scale
+     with a real floor: ~21px at 360px, which fits the same title on two lines.
+     Nothing here applies from 768px up, so the desktop size is untouched. */
+  .hero-left-content h1 {
+    font-size: clamp(1.3rem, 5.6vw, 2.6rem);
+    line-height: 1.1;
+  }
 
   /* 0.98rem is under the 16px iOS reading floor once it is centred and
      hyphenated; body copy holds at 16px on every phone. */
