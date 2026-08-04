@@ -434,72 +434,357 @@ export default function AnalyticsPage() {
         .analytics-wrapper {
           --analytics-primary: #e1590b;
           --analytics-primary-hover: #ff6b1a;
-          --analytics-primary-alpha: rgba(225, 89, 11, 0.25);
-          --analytics-bg: #f1f5f9;
-          --analytics-card-bg: rgba(255, 255, 255, 0.75);
-          --analytics-border: rgba(226, 232, 240, 0.8);
+          --analytics-primary-alpha: rgba(225, 89, 11, 0.15);
+          --analytics-bg: #f8fafc;
+          --analytics-card-bg: #ffffff;
+          --analytics-card-hover: #f1f5f9;
+          --analytics-border: #e2e8f0;
           --analytics-text: #0f172a;
           --analytics-text-muted: #64748b;
-          --card-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.05), 0 8px 10px -6px rgba(15, 23, 42, 0.03), inset 0 1px 0 rgba(255,255,255,0.7);
-          --card-shadow-hover: 0 25px 35px -10px rgba(15, 23, 42, 0.12), 0 15px 15px -10px rgba(15, 23, 42, 0.06), inset 0 1px 0 rgba(255,255,255,0.9);
+          --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+          --card-shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
           
-          background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+          background: var(--analytics-bg);
           color: var(--analytics-text);
           min-height: 100vh;
           transition: background 0.3s ease, color 0.3s ease;
-          padding: 2.5rem;
+          padding: 2rem;
           font-family: 'Plus Jakarta Sans', var(--font-sans);
           overflow-x: hidden;
         }
 
         .analytics-wrapper.dark-theme {
-          --analytics-bg: #090e18;
-          --analytics-card-bg: rgba(15, 23, 42, 0.55);
-          --analytics-border: rgba(30, 41, 59, 0.5);
+          --analytics-bg: #08090d;
+          --analytics-card-bg: #13151b;
+          --analytics-card-hover: #191c24;
+          --analytics-border: #1d212c;
           --analytics-text: #f8fafc;
-          --analytics-text-muted: #94a3b8;
-          --card-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.4), 0 10px 15px -10px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255,255,255,0.05);
-          --card-shadow-hover: 0 35px 50px -15px rgba(0, 0, 0, 0.65), 0 20px 25px -15px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255,255,255,0.12);
+          --analytics-text-muted: #787f95;
+          --card-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255,255,255,0.02);
+          --card-shadow-hover: 0 30px 45px -15px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255,255,255,0.05);
 
-          background: radial-gradient(circle at 5% 5%, rgba(225, 89, 11, 0.08) 0%, transparent 40%),
-                      radial-gradient(circle at 95% 95%, rgba(20, 96, 122, 0.08) 0%, transparent 40%),
-                      #030712;
+          background: #08090d;
         }
 
+        /* Stakent layouts */
+        .stakent-top-row {
+          display: grid;
+          grid-template-columns: 2fr 1fr;
+          gap: 1.5rem;
+          margin-bottom: 1.5rem;
+        }
+
+        @media (max-width: 1024px) {
+          .stakent-top-row {
+            grid-template-columns: 1fr;
+          }
+        }
+
+        .stakent-assets-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+          gap: 1rem;
+        }
+
+        .stakent-asset-card {
+          background: var(--analytics-card-bg);
+          border: 1.5px solid var(--analytics-border);
+          border-radius: 24px;
+          padding: 1.5rem;
+          position: relative;
+          overflow: hidden;
+          box-shadow: var(--card-shadow);
+          transition: all 0.3s ease;
+          transform: perspective(1000px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateZ(0);
+          transform-style: preserve-3d;
+        }
+
+        .stakent-asset-card:hover {
+          background: var(--analytics-card-hover, var(--analytics-card-bg));
+          border-color: var(--analytics-primary);
+          transform: perspective(1000px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateZ(10px);
+          box-shadow: var(--card-shadow-hover);
+        }
+
+        .stakent-asset-card::before {
+          content: '';
+          position: absolute;
+          top: 0; left: 0; right: 0; bottom: 0;
+          background: radial-gradient(300px circle at var(--mx, 50%) var(--my, 50%), rgba(255, 255, 255, 0.08), transparent 60%);
+          z-index: 5;
+          pointer-events: none;
+        }
+
+        .analytics-wrapper.dark-theme .stakent-asset-card::before {
+          background: radial-gradient(300px circle at var(--mx, 50%) var(--my, 50%), rgba(139, 92, 246, 0.12), transparent 60%);
+        }
+
+        .stakent-asset-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 1.5rem;
+          transform: translateZ(20px);
+        }
+
+        .stakent-asset-icon {
+          width: 38px;
+          height: 38px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: 800;
+          font-size: 0.9rem;
+          box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+
+        .stakent-asset-arrow {
+          width: 28px;
+          height: 28px;
+          border-radius: 50%;
+          background: rgba(255, 255, 255, 0.08);
+          border: 1px solid var(--analytics-border);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: var(--analytics-text);
+          cursor: pointer;
+        }
+
+        .stakent-asset-body {
+          margin-bottom: 1rem;
+          transform: translateZ(20px);
+        }
+
+        .stakent-asset-label {
+          font-size: 0.8rem;
+          color: var(--analytics-text-muted);
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.03em;
+        }
+
+        .stakent-asset-value {
+          font-size: 2.1rem;
+          font-weight: 800;
+          margin: 0.25rem 0;
+          letter-spacing: -0.02em;
+          color: var(--analytics-text);
+        }
+
+        .stakent-asset-footer {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-end;
+          transform: translateZ(20px);
+        }
+
+        .stakent-asset-trend {
+          font-size: 0.82rem;
+          font-weight: 700;
+          display: flex;
+          align-items: center;
+          gap: 0.25rem;
+        }
+
+        /* Portfolio insight card style */
+        .stakent-portfolio-card {
+          border-radius: 24px;
+          padding: 1.75rem;
+          background: linear-gradient(135deg, #1b132c 0%, #0d061a 100%);
+          border: 1.5px solid #23183b;
+          color: #f8fafc;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          box-shadow: 0 20px 40px -10px rgba(15, 10, 30, 0.8), inset 0 1px 0 rgba(255,255,255,0.05);
+          position: relative;
+          overflow: hidden;
+          min-height: 250px;
+          transform: perspective(1000px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateZ(0);
+          transform-style: preserve-3d;
+          transition: all 0.3s ease;
+        }
+
+        .stakent-portfolio-card:hover {
+          transform: perspective(1000px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateZ(10px);
+          border-color: #5b21b6;
+          box-shadow: 0 25px 50px -12px rgba(124, 58, 237, 0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+        }
+
+        .stakent-portfolio-card::after {
+          content: '';
+          position: absolute;
+          top: -20%; right: -20%;
+          width: 150px; height: 150px;
+          background: radial-gradient(circle, rgba(139, 92, 246, 0.35) 0%, transparent 70%);
+          filter: blur(20px);
+        }
+
+        .stakent-portfolio-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          transform: translateZ(20px);
+        }
+
+        .stakent-portfolio-badge {
+          background: rgba(139, 92, 246, 0.2);
+          color: #a78bfa;
+          padding: 3px 10px;
+          border-radius: 99px;
+          font-size: 0.75rem;
+          font-weight: 700;
+          border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+
+        .stakent-portfolio-title {
+          font-size: 1.35rem;
+          font-weight: 800;
+          margin-top: 1rem;
+          letter-spacing: -0.01em;
+        }
+
+        .stakent-portfolio-desc {
+          font-size: 0.85rem;
+          color: #94a3b8;
+          margin: 0.5rem 0 1.25rem;
+          line-height: 1.5;
+        }
+
+        .stakent-portfolio-actions {
+          display: flex;
+          flex-direction: column;
+          gap: 0.6rem;
+          transform: translateZ(20px);
+        }
+
+        .stakent-btn-wallet {
+          background: #f8fafc;
+          color: #0f172a;
+          border: none;
+          padding: 0.65rem 1rem;
+          border-radius: 14px;
+          font-weight: 700;
+          font-size: 0.85rem;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.5rem;
+        }
+
+        .stakent-btn-wallet:hover {
+          background: #e2e8f0;
+          transform: translateY(-1px);
+        }
+
+        .stakent-btn-outline {
+          background: transparent;
+          color: #f8fafc;
+          border: 1px solid rgba(255,255,255,0.15);
+          padding: 0.65rem 1rem;
+          border-radius: 14px;
+          font-weight: 700;
+          font-size: 0.85rem;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.5rem;
+        }
+
+        .stakent-btn-outline:hover {
+          background: rgba(255,255,255,0.05);
+          border-color: rgba(255,255,255,0.3);
+        }
+
+        /* Your active stakings panel */
+        .stakent-panel {
+          background: var(--analytics-card-bg);
+          border: 1.5px solid var(--analytics-border);
+          border-radius: 28px;
+          padding: 1.75rem;
+          margin-bottom: 1.5rem;
+          box-shadow: var(--card-shadow);
+          transition: border-color 0.3s ease;
+        }
+
+        .stakent-panel-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 1.5rem;
+        }
+
+        .stakent-panel-title {
+          font-size: 1.1rem;
+          font-weight: 800;
+          color: var(--analytics-text);
+        }
+
+        .stakent-stats-strip {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+          gap: 1.25rem;
+        }
+
+        .stakent-strip-card {
+          border-right: 1px solid var(--analytics-border);
+          padding-right: 1rem;
+        }
+
+        .stakent-strip-card:last-child {
+          border-right: none;
+        }
+
+        .stakent-strip-label {
+          font-size: 0.72rem;
+          color: var(--analytics-text-muted);
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+          margin-bottom: 0.25rem;
+        }
+
+        .stakent-strip-value {
+          font-size: 1.35rem;
+          font-weight: 800;
+          color: var(--analytics-text);
+        }
+
+        /* Rest of the layout */
         .analytics-header {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          margin-bottom: 2.5rem;
+          margin-bottom: 2rem;
           flex-wrap: wrap;
           gap: 1.5rem;
         }
 
         .header-left h1 {
-          font-family: 'Plus Jakarta Sans', var(--font-sans);
           font-weight: 800;
-          font-size: 2.4rem;
+          font-size: 2.2rem;
           color: var(--analytics-text);
           display: flex;
           align-items: center;
           gap: 0.75rem;
           letter-spacing: -0.02em;
-          text-shadow: 0 4px 10px rgba(0,0,0,0.05);
-        }
-
-        .analytics-wrapper.dark-theme .header-left h1 {
-          text-shadow: 0 0 40px rgba(225, 89, 11, 0.15);
         }
 
         .header-left p {
           color: var(--analytics-text-muted);
-          font-size: 1rem;
+          font-size: 0.95rem;
           margin-top: 0.25rem;
         }
 
         .header-actions-new {
           display: flex;
-          gap: 0.85rem;
+          gap: 0.75rem;
           align-items: center;
           flex-wrap: wrap;
         }
@@ -515,7 +800,6 @@ export default function AnalyticsPage() {
           place-items: center;
           cursor: pointer;
           transition: 0.2s ease;
-          backdrop-filter: blur(8px);
           box-shadow: var(--card-shadow);
         }
 
@@ -530,20 +814,17 @@ export default function AnalyticsPage() {
           color: var(--analytics-text);
           border-radius: 12px;
           padding: 0.5rem 1.25rem;
-          font-family: var(--font-sans);
           font-weight: 700;
           font-size: 0.9rem;
           outline: none;
           cursor: pointer;
           min-height: 44px;
-          backdrop-filter: blur(8px);
           box-shadow: var(--card-shadow);
           transition: 0.2s ease;
         }
 
         .filter-select:focus {
           border-color: var(--analytics-primary);
-          box-shadow: 0 0 0 3px var(--analytics-primary-alpha);
         }
 
         .custom-date-container {
@@ -554,7 +835,6 @@ export default function AnalyticsPage() {
           border: 1.5px solid var(--analytics-border);
           border-radius: 12px;
           padding: 0.25rem 0.75rem;
-          backdrop-filter: blur(8px);
           box-shadow: var(--card-shadow);
           min-height: 44px;
         }
@@ -568,134 +848,39 @@ export default function AnalyticsPage() {
           font-weight: 600;
         }
 
-        .export-btn-group {
-          display: flex;
-          gap: 0.5rem;
-        }
-
-        .card-stats-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-          gap: 1.5rem;
-          margin-bottom: 2.5rem;
-        }
-
-        .stat-card-new, .chart-card, .table-card {
-          background: var(--analytics-card-bg);
-          border: 1.5px solid var(--analytics-border);
-          border-radius: 20px;
-          padding: 1.6rem;
-          box-shadow: var(--card-shadow);
-          position: relative;
-          overflow: hidden;
-          backdrop-filter: blur(16px);
-          -webkit-backdrop-filter: blur(16px);
-          transform: perspective(1000px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateZ(0);
-          transform-style: preserve-3d;
-          transition: transform 0.15s ease-out, box-shadow 0.3s ease, border-color 0.3s ease;
-        }
-
-        .stat-card-new::before, .chart-card::before, .table-card::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background: radial-gradient(
-            250px circle at var(--mx, 50%) var(--my, 50%),
-            rgba(255, 255, 255, 0.15),
-            transparent 60%
-          );
-          z-index: 5;
-          pointer-events: none;
-        }
-
-        .analytics-wrapper.dark-theme .stat-card-new::before,
-        .analytics-wrapper.dark-theme .chart-card::before,
-        .analytics-wrapper.dark-theme .table-card::before {
-          background: radial-gradient(
-            300px circle at var(--mx, 50%) var(--my, 50%),
-            rgba(225, 89, 11, 0.18),
-            transparent 60%
-          );
-        }
-
-        .stat-card-new:hover, .chart-card:hover, .table-card:hover {
-          transform: perspective(1000px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateZ(12px);
-          box-shadow: var(--card-shadow-hover);
-          border-color: var(--analytics-primary);
-        }
-
-        .stat-card-new.live-card {
-          border-left: 5px solid #10b981;
-        }
-
-        .stat-card-header, .stat-card-body, .stat-card-footer, .chart-card-header, .chart-container-new, .table-responsive-new, .table-card h3 {
-          transform: translateZ(20px);
-        }
-
-        .live-pulse {
-          width: 10px;
-          height: 10px;
-          background: #10b981;
-          border-radius: 50%;
-          display: inline-block;
-          animation: pulse 1.8s infinite;
-          margin-right: 0.5rem;
-          box-shadow: 0 0 10px #10b981;
-        }
-
-        @keyframes pulse {
-          0% { transform: scale(0.9); opacity: 1; box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-          70% { transform: scale(1.2); opacity: 0.3; box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
-          100% { transform: scale(0.9); opacity: 1; box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
-        }
-
-        .stat-card-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          color: var(--analytics-text-muted);
-          font-size: 0.8rem;
-          font-weight: 800;
-          text-transform: uppercase;
-          letter-spacing: 0.08em;
-          margin-bottom: 0.75rem;
-        }
-
-        .stat-card-body h2 {
-          font-size: 2.25rem;
-          font-family: var(--font-sans);
-          font-weight: 800;
-          margin: 0;
-          letter-spacing: -0.03em;
-          background: linear-gradient(135deg, var(--analytics-text) 50%, var(--analytics-text-muted) 100%);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-        }
-
-        .analytics-wrapper.dark-theme .stat-card-body h2 {
-          background: linear-gradient(135deg, #ffffff 50%, #94a3b8 100%);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-        }
-
-        .stat-card-footer {
-          margin-top: 0.75rem;
-          font-size: 0.8rem;
-          color: var(--analytics-text-muted);
-          display: flex;
-          align-items: center;
-          gap: 0.35rem;
-          font-weight: 500;
-        }
-
         .chart-box-grid {
           display: grid;
           grid-template-columns: repeat(12, 1fr);
           gap: 1.5rem;
-          margin-bottom: 2.5rem;
+          margin-bottom: 2rem;
+        }
+
+        .chart-card, .table-card {
+          background: var(--analytics-card-bg);
+          border: 1.5px solid var(--analytics-border);
+          border-radius: 28px;
+          padding: 1.6rem;
+          box-shadow: var(--card-shadow);
+          position: relative;
+          overflow: hidden;
+          transition: all 0.3s ease;
+          transform: perspective(1000px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateZ(0);
+          transform-style: preserve-3d;
+        }
+
+        .chart-card:hover, .table-card:hover {
+          border-color: var(--analytics-primary);
+          transform: perspective(1000px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateZ(8px);
+          box-shadow: var(--card-shadow-hover);
+        }
+
+        .chart-card::before, .table-card::before {
+          content: '';
+          position: absolute;
+          top: 0; left: 0; right: 0; bottom: 0;
+          background: radial-gradient(400px circle at var(--mx, 50%) var(--my, 50%), rgba(255, 255, 255, 0.05), transparent 60%);
+          z-index: 5;
+          pointer-events: none;
         }
 
         .chart-card-header {
@@ -703,6 +888,7 @@ export default function AnalyticsPage() {
           justify-content: space-between;
           align-items: center;
           margin-bottom: 1.5rem;
+          transform: translateZ(15px);
         }
 
         .chart-card-header h3 {
@@ -713,17 +899,13 @@ export default function AnalyticsPage() {
           display: flex;
           align-items: center;
           gap: 0.6rem;
-          letter-spacing: -0.01em;
         }
 
         .chart-container-new {
           position: relative;
           height: 280px;
           width: 100%;
-        }
-
-        .table-card {
-          margin-bottom: 2.5rem;
+          transform: translateZ(15px);
         }
 
         .table-card h3 {
@@ -738,7 +920,7 @@ export default function AnalyticsPage() {
         .table-responsive-new {
           overflow-x: auto;
           max-height: 380px;
-          border-radius: 12px;
+          border-radius: 16px;
           border: 1px solid var(--analytics-border);
         }
 
@@ -754,13 +936,13 @@ export default function AnalyticsPage() {
           text-transform: uppercase;
           letter-spacing: 0.06em;
           color: var(--analytics-text-muted);
-          background: rgba(226, 232, 240, 0.3);
+          background: rgba(226, 232, 240, 0.2);
           border-bottom: 2px solid var(--analytics-border);
           font-weight: 700;
         }
 
         .analytics-wrapper.dark-theme .analytics-table th {
-          background: rgba(15, 23, 42, 0.3);
+          background: rgba(25, 28, 36, 0.3);
         }
 
         .analytics-table td {
@@ -782,48 +964,22 @@ export default function AnalyticsPage() {
           border-radius: 99px;
           font-size: 0.75rem;
           font-weight: 700;
-          letter-spacing: 0.02em;
         }
 
-        /* Print styles */
-        @media print {
-          body * { visibility: hidden; }
-          .analytics-wrapper, .analytics-wrapper * { visibility: visible; }
-          .analytics-wrapper { position: absolute; left: 0; top: 0; width: 100%; }
-          .header-actions-new, .sidebar { display: none !important; }
+        .live-pulse {
+          width: 8px;
+          height: 8px;
+          background: #10b981;
+          border-radius: 50%;
+          display: inline-block;
+          animation: pulse 1.5s infinite;
+          margin-right: 0.5rem;
         }
 
-        /* Shown when GA4 cannot be reached — in place of numbers, never over them. */
-        .analytics-notice {
-          background: var(--analytics-card-bg);
-          border: 1.5px solid var(--analytics-border);
-          border-left: 5px solid #ef4444;
-          border-radius: 16px;
-          padding: 1.75rem;
-          margin-bottom: 2.5rem;
-          box-shadow: var(--card-shadow);
-        }
-
-        .analytics-notice h3 {
-          margin: 0 0 0.6rem;
-          font-size: 1.1rem;
-          font-weight: 800;
-          color: var(--analytics-text);
-        }
-
-        .analytics-notice p {
-          margin: 0 0 0.6rem;
-          font-size: 0.92rem;
-          color: var(--analytics-text-muted);
-          line-height: 1.6;
-        }
-
-        .analytics-notice code {
-          font-size: 0.8rem;
-          word-break: break-word;
-          background: rgba(239, 68, 68, 0.08);
-          padding: 3px 8px;
-          border-radius: 6px;
+        @keyframes pulse {
+          0% { transform: scale(0.9); opacity: 1; box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+          70% { transform: scale(1.1); opacity: 0.5; box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+          100% { transform: scale(0.9); opacity: 1; box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
         }
 
         /* Skeleton Loaders */
@@ -837,6 +993,11 @@ export default function AnalyticsPage() {
         @keyframes loading {
           0% { background-position: 200% 0; }
           100% { background-position: -200% 0; }
+        }
+
+        /* Sparkline visuals */
+        .sparkline {
+          filter: drop-shadow(0 2px 4px var(--glow-color, rgba(255,255,255,0.1)));
         }
       `}</style>
 
