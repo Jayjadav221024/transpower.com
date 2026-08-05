@@ -6,9 +6,15 @@
    photo is Admin ▸ Pages ▸ Edit Gallery ▸ click the image ▸ pick from Media.
    No code change, no redeploy.
 
-   The `src` values below are placeholders drawn from images already in the
-   build. Swapping one in the admin panel stores an override against its key;
-   the placeholder stays as the fallback if an override is ever removed.
+   The caption and detail under each photo are editable the same way. They hang
+   off the image key as `<key>_caption` and `<key>_detail`, so a photo and its
+   title are always overridden together — put a new image in a slot, click its
+   title, retype it, Save. Deriving the text keys from the image key (rather
+   than storing them here) is what keeps the pairing impossible to break.
+
+   The `src`/caption values below are placeholders drawn from what is already in
+   the build. Swapping one in the admin panel stores an override against its
+   key; the placeholder stays as the fallback if an override is ever removed.
 
    To add a slot, append an entry with a NEW key. Never renumber existing keys
    — an override is bound to its key, so renumbering would move photos around.

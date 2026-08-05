@@ -117,19 +117,22 @@ export const BRANDS = [
   { name: 'ROTOMOTIVE', logo: '/assets/images/brand_rotomotive.png' }
 ];
 
-// Reputed clients list (populates logo strip using local assets)
+// Reputed clients list (populates logo strip using local assets).
+// Logos are copied into public/assets/images rather than hot-linked, so a client
+// redesigning their site cannot break this section. Anything still on
+// makeTextLogoSvg is awaiting artwork we could not source.
 export const CLIENTS = [
-  { name: 'TBEA', logo: makeTextLogoSvg('TBEA') },
-  { name: 'Alembic', logo: makeTextLogoSvg('Alembic') },
-  { name: 'Aerzen', logo: makeTextLogoSvg('Aerzen') },
-  { name: 'R-K Bio', logo: makeTextLogoSvg('R-K Bio') },
+  { name: 'TBEA', logo: '/assets/images/client_tbea.png' },
+  { name: 'Alembic', logo: '/assets/images/client_alembic.png' },
+  { name: 'Aerzen', logo: '/assets/images/client_aerzen.svg' },
+  { name: 'R-K Bio', logo: '/assets/images/client_rk_bio.svg' },
   { name: 'Hi-Make', logo: makeTextLogoSvg('Hi-Make') },
-  { name: 'Nayra', logo: makeTextLogoSvg('Nayra') },
-  { name: 'Shiva Pharma', logo: makeTextLogoSvg('Shiva Pharma') },
-  { name: 'Anupam', logo: makeTextLogoSvg('Anupam') },
-  { name: 'GEA', logo: makeTextLogoSvg('GEA') },
-  { name: 'GSFC', logo: makeTextLogoSvg('GSFC') },
-  { name: 'GACL', logo: makeTextLogoSvg('GACL') },
-  { name: 'Hero', logo: makeTextLogoSvg('Hero') },
-  { name: 'PI Industries', logo: makeTextLogoSvg('PI Industries') }
+  { name: 'Nayara Energy', logo: '/assets/images/client_nayara.png' },
+  { name: 'Shiva Pharmachem', logo: '/assets/images/client_shiva_pharmachem.png' },
+  { name: 'Anupam Rasayan', logo: '/assets/images/client_anupam_rasayan.png' },
+  { name: 'GEA', logo: '/assets/images/client_gea.svg' },
+  { name: 'GSFC', logo: '/assets/images/client_gsfc.png' },
+  { name: 'GACL', logo: '/assets/images/client_gacl.png' },
+  { name: 'Hero MotoCorp', logo: '/assets/images/client_hero_motocorp.svg' },
+  { name: 'PI Industries', logo: '/assets/images/client_pi_industries.png' }
 ];

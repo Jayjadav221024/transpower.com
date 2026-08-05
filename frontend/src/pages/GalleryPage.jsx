@@ -5,11 +5,29 @@ import { SITE_ORIGIN } from '../config/site';
 import { assetUrl, publicApi } from '../api/client';
 import '../styles/gallery.css';
 
-/* The admin panel stores overrides against [data-edit-key="…"], so a photo
-   swapped in the customiser has to win over the placeholder in gallery.js. */
-function resolveSrc(item, overrides) {
-  const override = overrides?.[`[data-edit-key="${item.key}"]`];
-  return assetUrl(override || item.src);
+/* The admin panel stores overrides against [data-edit-key="…"], so anything
+   changed in the customiser has to win over the placeholder in gallery.js. */
+const overrideFor = (overrides, key) => overrides?.[`[data-edit-key="${key}"]`];
+
+const captionKey = (item) => `${item.key}_caption`;
+const detailKey  = (item) => `${item.key}_detail`;
+
+/* Caption and detail hang off the image key, so retitling a swapped photo is
+   the same click-and-type as replacing it. Resolving them here — rather than
+   letting App.jsx rewrite the DOM afterwards — means the lightbox and the
+   aria-labels read the new title too, not just the tile the editor clicked. */
+function resolveItem(item, overrides) {
+  const caption = overrideFor(overrides, captionKey(item)) || item.caption;
+  return {
+    ...item,
+    src: assetUrl(overrideFor(overrides, item.key) || item.src),
+    caption,
+    detail: overrideFor(overrides, detailKey(item)) ?? item.detail,
+    /* A swapped photo makes the hand-written alt text stale, and alt is not
+       something the customiser can reach. Falling back to the new title keeps
+       it describing the photo actually on screen. */
+    alt: overrideFor(overrides, captionKey(item)) ? caption : item.alt,
+  };
 }
 
 export default function GalleryPage() {
@@ -32,8 +50,9 @@ export default function GalleryPage() {
   }, []);
 
   const visible = useMemo(
-    () => (active === 'all' ? GALLERY_ITEMS : GALLERY_ITEMS.filter((i) => i.category === active)),
-    [active],
+    () => (active === 'all' ? GALLERY_ITEMS : GALLERY_ITEMS.filter((i) => i.category === active))
+      .map((i) => resolveItem(i, overrides)),
+    [active, overrides],
   );
 
   /* Only offer a filter chip if that category actually has photos, so removing
@@ -139,7 +158,7 @@ export default function GalleryPage() {
                 <img
                   data-edit-page="gallerypage"
                   data-edit-key={item.key}
-                  src={resolveSrc(item, overrides)}
+                  src={item.src}
                   alt={item.alt}
                   width="400"
                   height="300"
@@ -147,8 +166,22 @@ export default function GalleryPage() {
                   decoding="async"
                 />
                 <span className="gallery-tile-overlay">
-                  <span className="gallery-tile-caption">{item.caption}</span>
-                  {item.detail && <span className="gallery-tile-detail">{item.detail}</span>}
+                  <span
+                    className="gallery-tile-caption"
+                    data-edit-page="gallerypage"
+                    data-edit-key={captionKey(item)}
+                  >
+                    {item.caption}
+                  </span>
+                  {/* Rendered even when empty so a slot that starts without a
+                      detail line still has something to click in the editor. */}
+                  <span
+                    className="gallery-tile-detail"
+                    data-edit-page="gallerypage"
+                    data-edit-key={detailKey(item)}
+                  >
+                    {item.detail}
+                  </span>
                 </span>
                 <span className="gallery-tile-zoom" aria-hidden="true">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -189,7 +222,7 @@ export default function GalleryPage() {
 
           {/* Stop propagation so clicking the photo itself does not close. */}
           <figure className="gallery-lb-figure" onClick={(e) => e.stopPropagation()}>
-            <img src={resolveSrc(current, overrides)} alt={current.alt} decoding="async" />
+            <img src={current.src} alt={current.alt} decoding="async" />
             <figcaption>
               <strong>{current.caption}</strong>
               {current.detail && <span>{current.detail}</span>}
