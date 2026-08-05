@@ -3239,10 +3239,9 @@ main > section:not([id]):not(:first-of-type) {
 
 /* 3D Logo Card Rotation */
 .logo-3d-wrap {
-  width: 140px;
-  height: 140px;
+  width: 260px;
+  height: 260px;
   perspective: 1000px;
-  margin-bottom: 2.5rem;
 }
 
 .logo-3d {
