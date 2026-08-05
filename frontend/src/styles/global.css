@@ -3368,3 +3368,21 @@ main > section:not([id]):not(:first-of-type) {
     transform: scale(1);
   }
 }
+
+@media (max-width: 767px) {
+  .logo-3d-wrap {
+    width: 140px;
+    height: 140px;
+    margin-bottom: 0.8rem;
+  }
+  .splash-title {
+    font-size: 1.5rem;
+    letter-spacing: 0.3rem;
+    margin-bottom: 0.4rem;
+  }
+  .splash-subtitle {
+    font-size: 0.72rem;
+    letter-spacing: 0.4rem;
+    margin-left: 0.4rem;
+  }
+}
