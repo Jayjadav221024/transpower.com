@@ -198,13 +198,15 @@ export default function App() {
       {showSplash && (
         <div className={`splash-screen${fadeSplash ? ' fade-out' : ''}`}>
           <div className="splash-container">
-            <div className="cube-3d">
-              <div className="face front">T</div>
-              <div className="face back">T</div>
-              <div className="face left">T</div>
-              <div className="face right">T</div>
-              <div className="face top"></div>
-              <div className="face bottom"></div>
+            <div className="logo-3d-wrap">
+              <div className="logo-3d">
+                <div className="logo-3d-face logo-3d-front">
+                  <img src="/assets/images/logo_transpower.png" alt="Transpower Logo" />
+                </div>
+                <div className="logo-3d-face logo-3d-back">
+                  <img src="/assets/images/logo_transpower.png" alt="Transpower Logo" />
+                </div>
+              </div>
             </div>
             <div className="splash-title">
               <span className="letter">T</span>
