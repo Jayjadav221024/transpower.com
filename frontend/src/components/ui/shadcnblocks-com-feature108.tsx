@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@radix-ui/react-tabs";
 import { Layout, Pointer, Zap } from "lucide-react";
 
@@ -26,6 +27,11 @@ interface Feature108Props {
   description?: string;
   tabs?: Tab[];
 }
+
+/* How long each panel holds before the dot nav advances. Matches the CSS
+   breakpoint below — the cycle only runs where the dots are actually shown. */
+const AUTO_ADVANCE_MS = 5000;
+const COMPACT_QUERY = '(max-width: 767px)';
 
 const STYLE = `
 .f108-section {
@@ -99,6 +105,9 @@ const STYLE = `
   color: #ffffff;
   box-shadow: var(--shadow-glow);
 }
+.f108-tab-label {
+  white-space: nowrap;
+}
 .f108-content-card {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
@@ -146,31 +155,82 @@ const STYLE = `
   .f108-header {
     margin-bottom: 24px;
   }
+  /* A three-across pill strip does not fit a phone, and scrolling it hides the
+     tabs that are off-screen. Below 768px the triggers collapse to dots and
+     only the active one carries its name — the whole set stays visible in one
+     centred row, and the panel cycles itself (see AUTO_ADVANCE_MS). */
   .f108-tabs-list {
     flex-wrap: nowrap;
-    justify-content: flex-start;
-    overflow-x: auto;
-    overscroll-behavior-x: contain;
-    padding-bottom: 12px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    overflow: visible;
+    padding-bottom: 16px;
     margin-bottom: 20px;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    /* Bleeds to the screen edges by cancelling the grid's own padding. This was
-       width:100vw, which is measured including the scrollbar and so left the
-       strip overhanging its container to the right by that width. */
-    width: auto;
-    margin-inline: calc(var(--gutter) * -1);
-    padding-left: var(--gutter);
-    padding-right: var(--gutter);
-  }
-  .f108-tabs-list::-webkit-scrollbar {
-    display: none;
   }
   .f108-tab-trigger {
-    flex-shrink: 0;
-    min-height: 48px;
-    padding: 8px 16px;
-    font-size: 0.76rem;
+    position: relative;
+    flex: 0 0 auto;
+    height: 10px;
+    /* min-width rather than width: the label's max-width is what sizes the
+       active pill, so a fixed width would stop it growing. With the label
+       clipped to nothing, this is all that holds the dot open. */
+    min-width: 10px;
+    min-height: 0;
+    padding: 0;
+    gap: 0;
+    font-size: 0.72rem;
+    background: rgba(86, 103, 126, 0.35);
+    box-shadow: none;
+    transition:
+      height 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+      padding 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+      background 0.3s ease,
+      color 0.3s ease;
+  }
+  /* The dot itself is 10px, well under the 44px a touch target needs, so the
+     hit area is grown invisibly rather than by inflating the dot. */
+  .f108-tab-trigger::before {
+    content: '';
+    position: absolute;
+    inset: -17px -8px;
+  }
+  /* The icons are the first thing to go — at dot size there is no room, and the
+     label alone is what tells the visitor where they are. */
+  .f108-tab-trigger svg {
+    display: none;
+  }
+  .f108-tab-trigger:hover {
+    background: var(--text-muted);
+  }
+  .f108-tab-trigger[data-state="active"] {
+    height: 32px;
+    padding: 0 16px;
+    background: var(--accent-orange);
+    color: #ffffff;
+    box-shadow: var(--shadow-glow);
+  }
+  /* Width cannot animate to auto, so the label drives it: the pill grows as
+     max-width opens up, which is what makes the dot appear to unfurl. */
+  .f108-tab-label {
+    display: block;
+    max-width: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition:
+      max-width 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+      opacity 0.3s ease;
+  }
+  .f108-tab-trigger[data-state="active"] .f108-tab-label {
+    max-width: 14rem;
+    opacity: 1;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .f108-tab-trigger,
+    .f108-tab-label {
+      transition: none;
+    }
   }
   .f108-content-card {
     padding: 20px 15px;
@@ -309,6 +369,40 @@ const Feature108 = ({
     },
   ],
 }: Feature108Props) => {
+  const [active, setActive] = useState(tabs[0].value);
+  const [isCompact, setIsCompact] = useState(false);
+  /* One tap on a dot settles the question of which panel the visitor wants, so
+     the cycle stops for good rather than pulling the page out from under them. */
+  const [stopped, setStopped] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia(COMPACT_QUERY);
+    const sync = () => setIsCompact(mq.matches);
+    sync();
+    mq.addEventListener('change', sync);
+    return () => mq.removeEventListener('change', sync);
+  }, []);
+
+  /* Desktop shows every tab at once, so cycling there would only move content
+     nobody asked to move. Reduced-motion visitors opt out entirely. */
+  useEffect(() => {
+    if (!isCompact || stopped || tabs.length < 2) return undefined;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
+
+    const id = window.setInterval(() => {
+      setActive((current) => {
+        const i = tabs.findIndex((t) => t.value === current);
+        return tabs[(i + 1) % tabs.length].value;
+      });
+    }, AUTO_ADVANCE_MS);
+    return () => window.clearInterval(id);
+  }, [isCompact, stopped, tabs]);
+
+  /* A tab left showing after the tabs prop changes would point at nothing. */
+  useEffect(() => {
+    if (!tabs.some((t) => t.value === active)) setActive(tabs[0].value);
+  }, [tabs, active]);
+
   return (
     <>
       <style>{STYLE}</style>
@@ -321,7 +415,11 @@ const Feature108 = ({
             <h2>{heading}</h2>
             <p>{description}</p>
           </div>
-          <Tabs defaultValue={tabs[0].value} style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <Tabs
+            value={active}
+            onValueChange={(value) => { setActive(value); setStopped(true); }}
+            style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}
+          >
             <TabsList className="f108-tabs-list">
               {tabs.map((tab) => (
                 <TabsTrigger
@@ -329,7 +427,10 @@ const Feature108 = ({
                   value={tab.value}
                   className="f108-tab-trigger"
                 >
-                  {tab.icon} {tab.label}
+                  {tab.icon}
+                  {/* Kept in the DOM even when clipped to a dot, so the trigger
+                      still has an accessible name to announce. */}
+                  <span className="f108-tab-label">{tab.label}</span>
                 </TabsTrigger>
               ))}
             </TabsList>
