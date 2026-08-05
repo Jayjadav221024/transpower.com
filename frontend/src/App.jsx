@@ -38,6 +38,7 @@ const MediaPage      = lazy(() => import('./pages/admin/MediaPage'));
 const InquiriesPage  = lazy(() => import('./pages/admin/InquiriesPage'));
 const SettingsPage   = lazy(() => import('./pages/admin/SettingsPage'));
 const PagesPage      = lazy(() => import('./pages/admin/PagesPage'));
+const SEOKeywordPage = lazy(() => import('./pages/admin/SEOKeywordPage'));
 
 const getPageKey = (path) => {
   if (path === '/') return 'homepage';
@@ -210,6 +211,7 @@ export default function App() {
             <Route path="media" element={<MediaPage />} />
             <Route path="inquiries" element={<InquiriesPage />} />
             <Route path="pages" element={<PagesPage />} />
+            <Route path="seo-keywords" element={<SEOKeywordPage />} />
             <Route path="analytics" element={<AnalyticsPage />} />
             <Route path="settings" element={<SettingsPage />} />
           </Route>

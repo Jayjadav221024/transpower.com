@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { publicApi } from '../../api/client';
 
@@ -19,6 +19,17 @@ export default function SiteFooter() {
   const [sending, setSending] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
+  const [seoKeywords, setSeoKeywords] = useState(null);
+
+  useEffect(() => {
+    publicApi.getPageContent('keyword_stuffing')
+      .then((res) => {
+        if (res?.content?.enabled && res?.content?.generatedText) {
+          setSeoKeywords(res.content.generatedText);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const handleQuickSubmit = async (e) => {
     e.preventDefault();
@@ -184,6 +195,11 @@ export default function SiteFooter() {
             <Link to="/terms">Terms of Use</Link>
           </div>
         </div>
+        {seoKeywords && (
+          <div className="footer-seo-keywords" style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '1.2rem', marginTop: '1.5rem', fontSize: '0.72rem', color: '#64748b', lineHeight: '1.6', textAlign: 'justify' }}>
+            <strong>Regional Product Distribution &amp; Coverage:</strong> {seoKeywords}
+          </div>
+        )}
       </div>
     </footer>
   );
