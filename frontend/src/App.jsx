@@ -121,6 +121,30 @@ export default function App() {
 
   usePrefetchLikelyRoutes();
 
+  const [showSplash, setShowSplash] = useState(() => {
+    if (window.location.pathname.startsWith('/admin')) return false;
+    return !sessionStorage.getItem('splash_shown');
+  });
+  const [fadeSplash, setFadeSplash] = useState(false);
+
+  useEffect(() => {
+    if (showSplash) {
+      const fadeTimer = setTimeout(() => {
+        setFadeSplash(true);
+      }, 2500);
+
+      const removeTimer = setTimeout(() => {
+        setShowSplash(false);
+        sessionStorage.setItem('splash_shown', 'true');
+      }, 3300);
+
+      return () => {
+        clearTimeout(fadeTimer);
+        clearTimeout(removeTimer);
+      };
+    }
+  }, [showSplash]);
+
   useEffect(() => {
     const pageKey = getPageKey(pathname);
     let overrides = null;
@@ -171,6 +195,33 @@ export default function App() {
 
   return (
     <AuthProvider>
+      {showSplash && (
+        <div className={`splash-screen${fadeSplash ? ' fade-out' : ''}`}>
+          <div className="splash-container">
+            <div className="cube-3d">
+              <div className="face front">T</div>
+              <div className="face back">T</div>
+              <div className="face left">T</div>
+              <div className="face right">T</div>
+              <div className="face top"></div>
+              <div className="face bottom"></div>
+            </div>
+            <div className="splash-title">
+              <span className="letter">T</span>
+              <span className="letter">R</span>
+              <span className="letter">A</span>
+              <span className="letter">N</span>
+              <span className="letter">S</span>
+              <span className="letter">P</span>
+              <span className="letter">O</span>
+              <span className="letter">W</span>
+              <span className="letter">E</span>
+              <span className="letter">R</span>
+            </div>
+            <div className="splash-subtitle">TECHNOLOGY</div>
+          </div>
+        </div>
+      )}
       <ScrollToTop />
       <Suspense fallback={<div className="route-fallback" aria-busy="true" />}>
         <Routes>
