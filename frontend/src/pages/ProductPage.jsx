@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { publicApi } from '../api/client';
 import SEO from '../components/common/SEO';
+import SEOKeywordsBlock from '../components/common/SEOKeywordsBlock';
 
 const PRODUCT_DEFAULTS = {
   'cable-trays': {
@@ -1756,6 +1757,7 @@ export default function ProductPage() {
         </div>
 
       </div>
+      <SEOKeywordsBlock placement="products" />
     </>
   );
 }

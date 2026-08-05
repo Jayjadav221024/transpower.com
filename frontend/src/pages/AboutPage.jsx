@@ -3,6 +3,7 @@ import SEO from '../components/common/SEO';
 import { publicApi } from '../api/client';
 import { BRANDS } from '../data/company';
 import Testimonials from '../components/site/Testimonials';
+import SEOKeywordsBlock from '../components/common/SEOKeywordsBlock';
 import '../styles/about.css';
 
 const TIMELINE = [
@@ -205,6 +206,7 @@ export default function AboutPage() {
 
       {/* ── Testimonials (shared with the home page via data/company.js) ── */}
       <Testimonials />
+      <SEOKeywordsBlock placement="about" />
     </>
   );
 }

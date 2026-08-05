@@ -5,6 +5,7 @@ import { PRODUCT_CARDS } from '../data/products';
 import { SITE_NAME, absoluteUrl } from '../config/site';
 import { GROUP_OFFICES } from '../data/company';
 import { CITIES } from '../data/cities';
+import SEOKeywordsBlock from '../components/common/SEOKeywordsBlock';
 
 export default function LocationsPage() {
   const title = 'Where We Supply';
@@ -162,6 +163,7 @@ export default function LocationsPage() {
           </div>
         </div>
       </section>
+      <SEOKeywordsBlock placement="locations" />
     </>
   );
 }

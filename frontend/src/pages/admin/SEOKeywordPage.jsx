@@ -43,7 +43,13 @@ export default function SEOKeywordPage() {
   const [citiesText, setCitiesText] = useState(DEFAULT_CITIES.join(', '));
   const [connectorsText, setConnectorsText] = useState(DEFAULT_CONNECTORS.join(', '));
   
-  const [enabled, setEnabled] = useState(true);
+  const [placement, setPlacement] = useState({
+    footer: true,
+    homepage: false,
+    locations: false,
+    about: false,
+    products: false
+  });
   const [generatedText, setGeneratedText] = useState('');
   const [copied, setCopied] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -60,7 +66,11 @@ export default function SEOKeywordPage() {
           if (content.products) setProductsText(content.products);
           if (content.cities) setCitiesText(content.cities);
           if (content.connectors) setConnectorsText(content.connectors);
-          if (content.enabled !== undefined) setEnabled(content.enabled);
+          if (content.placement) {
+            setPlacement(prev => ({ ...prev, ...content.placement }));
+          } else if (content.enabled !== undefined) {
+            setPlacement(prev => ({ ...prev, footer: content.enabled }));
+          }
           if (content.generatedText) setGeneratedText(content.generatedText);
         }
         setLoading(false);
@@ -106,7 +116,7 @@ export default function SEOKeywordPage() {
         products: productsText,
         cities: citiesText,
         connectors: connectorsText,
-        enabled,
+        placement,
         generatedText
       });
       toast('SEO Keyword block saved and published successfully!');
@@ -232,15 +242,59 @@ export default function SEOKeywordPage() {
           <div className="panel">
             <h3>Publishing Options</h3>
             
-            <label style={{ display: 'flex', gap: '0.6rem', alignItems: 'center', cursor: 'pointer', marginBottom: '1.5rem', userSelect: 'none' }}>
-              <input
-                type="checkbox"
-                checked={enabled}
-                onChange={(e) => setEnabled(e.target.checked)}
-                style={{ width: '18px', height: '18px', accentColor: 'var(--accent-orange)' }}
-              />
-              <span style={{ fontSize: '0.9rem', fontWeight: 600 }}>Enable block in Website Footer</span>
-            </label>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem', marginBottom: '1.5rem' }}>
+              <span style={{ fontSize: '0.8rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Select Inject Locations:</span>
+              
+              <label style={{ display: 'flex', gap: '0.6rem', alignItems: 'center', cursor: 'pointer', userSelect: 'none' }}>
+                <input
+                  type="checkbox"
+                  checked={placement.footer}
+                  onChange={(e) => setPlacement(prev => ({ ...prev, footer: e.target.checked }))}
+                  style={{ width: '18px', height: '18px', accentColor: 'var(--accent-orange)' }}
+                />
+                <span style={{ fontSize: '0.85rem' }}>Website Footer (Global)</span>
+              </label>
+
+              <label style={{ display: 'flex', gap: '0.6rem', alignItems: 'center', cursor: 'pointer', userSelect: 'none' }}>
+                <input
+                  type="checkbox"
+                  checked={placement.homepage}
+                  onChange={(e) => setPlacement(prev => ({ ...prev, homepage: e.target.checked }))}
+                  style={{ width: '18px', height: '18px', accentColor: 'var(--accent-orange)' }}
+                />
+                <span style={{ fontSize: '0.85rem' }}>Homepage Bottom</span>
+              </label>
+
+              <label style={{ display: 'flex', gap: '0.6rem', alignItems: 'center', cursor: 'pointer', userSelect: 'none' }}>
+                <input
+                  type="checkbox"
+                  checked={placement.locations}
+                  onChange={(e) => setPlacement(prev => ({ ...prev, locations: e.target.checked }))}
+                  style={{ width: '18px', height: '18px', accentColor: 'var(--accent-orange)' }}
+                />
+                <span style={{ fontSize: '0.85rem' }}>Locations Page Bottom</span>
+              </label>
+
+              <label style={{ display: 'flex', gap: '0.6rem', alignItems: 'center', cursor: 'pointer', userSelect: 'none' }}>
+                <input
+                  type="checkbox"
+                  checked={placement.about}
+                  onChange={(e) => setPlacement(prev => ({ ...prev, about: e.target.checked }))}
+                  style={{ width: '18px', height: '18px', accentColor: 'var(--accent-orange)' }}
+                />
+                <span style={{ fontSize: '0.85rem' }}>About Page Bottom</span>
+              </label>
+
+              <label style={{ display: 'flex', gap: '0.6rem', alignItems: 'center', cursor: 'pointer', userSelect: 'none' }}>
+                <input
+                  type="checkbox"
+                  checked={placement.products}
+                  onChange={(e) => setPlacement(prev => ({ ...prev, products: e.target.checked }))}
+                  style={{ width: '18px', height: '18px', accentColor: 'var(--accent-orange)' }}
+                />
+                <span style={{ fontSize: '0.85rem' }}>Product Pages Bottom</span>
+              </label>
+            </div>
 
             <button
               type="button"
@@ -248,7 +302,7 @@ export default function SEOKeywordPage() {
               disabled={saving || !generatedText}
               onClick={handleSave}
             >
-              {saving ? 'Publishing…' : '💾 Publish to Footer'}
+              {saving ? 'Publishing…' : '💾 Publish SEO Settings'}
             </button>
           </div>
 

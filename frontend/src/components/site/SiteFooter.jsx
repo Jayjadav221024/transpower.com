@@ -24,8 +24,13 @@ export default function SiteFooter() {
   useEffect(() => {
     publicApi.getPageContent('keyword_stuffing')
       .then((res) => {
-        if (res?.content?.enabled && res?.content?.generatedText) {
-          setSeoKeywords(res.content.generatedText);
+        if (res?.content?.generatedText) {
+          const isEnabled = res.content.placement 
+            ? res.content.placement.footer 
+            : res.content.enabled !== false;
+          if (isEnabled) {
+            setSeoKeywords(res.content.generatedText);
+          }
         }
       })
       .catch(() => {});

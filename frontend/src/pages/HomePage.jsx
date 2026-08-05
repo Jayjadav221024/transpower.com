@@ -11,6 +11,7 @@ import Feature108Demo from '../components/ui/demo-feature108';
 import HomeBlog from '../components/site/HomeBlog';
 import SEO from '../components/common/SEO';
 import BrochureDownloadSection from '../components/site/BrochureDownloadSection';
+import SEOKeywordsBlock from '../components/common/SEOKeywordsBlock';
 
 import { useState, useEffect } from 'react';
 import { publicApi } from '../api/client';
@@ -50,6 +51,7 @@ export default function HomePage() {
       <Testimonials />
       <HomeBlog />
       <RfqForm />
+      <SEOKeywordsBlock placement="homepage" />
     </>
   );
 }
