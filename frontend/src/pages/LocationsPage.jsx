@@ -4,10 +4,11 @@ import '../styles/locations.css';
 import { PRODUCT_CARDS } from '../data/products';
 import { SITE_NAME, absoluteUrl } from '../config/site';
 import { GROUP_OFFICES } from '../data/company';
+import { CITIES } from '../data/cities';
 
 export default function LocationsPage() {
   const title = 'Where We Supply';
-  const description = 'Transpower Technologies Pvt. Ltd. supplies high-performance FRP molded gratings, cable trays, industrial gearboxes, and electrical switchgears through our offices in Vadodara, Ahmedabad, and Ankleshwar.';
+  const description = 'Transpower Technologies Pvt. Ltd. supplies high-performance FRP molded gratings, cable trays, industrial gearboxes, and electrical switchgears through our offices and extensive supply network in Vadodara, Ahmedabad, Anand, Ankleshwar, Bharuch, Surat, Rajkot, Godhra, Navsari, Vapi, Bhuj, Amreli, and Dahod.';
 
   const jsonLd = [
     {
@@ -87,6 +88,54 @@ export default function LocationsPage() {
                   </div>
                 )}
               </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="section locations-cities" style={{ padding: '4rem 1.5rem', background: '#fff', borderTop: '1px solid var(--border)' }}>
+        <div className="container">
+          <div className="section-header" style={{ marginBottom: '2.5rem', textAlign: 'center' }}>
+            <h2 style={{ fontSize: '2rem', fontWeight: 800 }}>Service Locations We Cover</h2>
+            <p style={{ color: 'var(--text-muted)', marginTop: '0.5rem', maxWidth: '600px', margin: '0.5rem auto 0' }}>
+              We supply and support our entire industrial product line across major industrial estates and cities in Gujarat. Click on any city to view local details, industries served, and nearby areas.
+            </p>
+          </div>
+          <div className="locations-cities-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '1.5rem' }}>
+            {CITIES.map((city) => (
+              <Link
+                to={`/locations/${city.slug}`}
+                key={city.slug}
+                className="city-card-link"
+                style={{
+                  background: '#f8fafc',
+                  border: '1px solid var(--border)',
+                  borderRadius: '12px',
+                  padding: '1.5rem',
+                  textDecoration: 'none',
+                  color: 'var(--text-main)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '0.5rem',
+                  transition: 'all 0.2s ease-in-out',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.borderColor = 'var(--accent-orange)';
+                  e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.05)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'none';
+                  e.currentTarget.style.borderColor = 'var(--border)';
+                  e.currentTarget.style.boxShadow = 'none';
+                }}
+              >
+                <strong style={{ fontSize: '1.1rem', fontWeight: 800 }}>{city.name}</strong>
+                <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{city.district} District</span>
+                <span style={{ fontSize: '0.8rem', color: 'var(--accent-orange)', fontWeight: 700, marginTop: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                  View details <span aria-hidden="true">→</span>
+                </span>
+              </Link>
             ))}
           </div>
         </div>
