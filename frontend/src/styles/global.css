@@ -1075,20 +1075,81 @@ img { max-width: 100%; height: auto; }
   pointer-events: auto;
 }
 
-/* Carousel Dot Controls */
-.carousel-dots { display: flex; gap: 0.5rem; margin-top: 1.2rem; }
-
-.dot {
-  width: 28px; height: 4px;
-  border-radius: 2px;
-  background: var(--border-strong);
-  cursor: pointer;
-  transition: background 0.3s ease, width 0.3s ease;
-  border: none;
-  display: inline-block;
+/* Carousel Dot Controls
+   The row doubles as a progress read-out: the active dot stretches into a track
+   that fills across one auto-advance interval, so it shows both which slide is
+   up and how much longer it has. --hero-dot-ms comes off the element, set from
+   AUTO_MS in HeroCarousel.jsx, so the timing is stated once and not copied. */
+.carousel-dots {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin: 1.4rem 0 1.2rem;
 }
 
-.dot.active { width: 48px; background: var(--accent-orange); }
+.dot {
+  position: relative;
+  width: 10px;
+  height: 10px;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-pill);
+  background: var(--border-strong);
+  cursor: pointer;
+  overflow: hidden;
+  transition:
+    width 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+    background 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+/* The button keeps its aria-label, so the product name costs nothing to hide. */
+.dot-text { display: none; }
+
+/* Held to the desktop side of the breakpoint: below it the dot is drawn on
+   ::after inside a 44px touch target (see the max-width: 767px block), and an
+   absolutely-positioned fill would cover that button whole. */
+@media (min-width: 768px) {
+  .dot:hover { background: var(--text-muted); }
+
+  .dot:focus-visible {
+    outline: 2px solid var(--accent-orange);
+    outline-offset: 3px;
+  }
+
+  /* Empty track — the ::after fill is what carries the brand colour across it. */
+  .dot.active {
+    width: 56px;
+    background: var(--accent-orange-tint);
+    box-shadow: inset 0 0 0 1px rgba(217, 101, 59, 0.22);
+  }
+
+  .dot.active::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--accent-orange), var(--accent-orange-bright));
+    transform-origin: left center;
+    animation: heroDotFill var(--hero-dot-ms, 6.5s) linear forwards;
+  }
+
+  /* Hovering the hero stops the auto-advance, so the fill stops with it — a bar
+     that kept running while the slide did not would be reporting a lie. */
+  .carousel-dots[data-paused='true'] .dot.active::after {
+    animation-play-state: paused;
+  }
+}
+
+@keyframes heroDotFill {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dot { transition: none; }
+  .dot.active::after { animation: none; transform: scaleX(1); }
+}
 
 .hero-right-content { position: relative; z-index: 10; display: flex; flex-direction: column; gap: 1.2rem; opacity: 1; }
 
@@ -2582,42 +2643,15 @@ p {
   }
 }
 
-/* Mobile carousel dot chip row styling */
-.carousel-dots {
-  display: flex;
-  gap: 0.5rem;
-  margin-top: 1.5rem;
-  margin-bottom: 1.5rem;
-  width: 100%;
-}
+/* Phones get a dot indicator, not a strip of labelled chips. The chip strip
+   could never fit four product names on a phone, so it always rendered clipped
+   at both edges and had to be scrolled to be read.
 
-.dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: var(--border-strong);
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  transition: all 0.25s ease;
-}
-
-.dot.active {
-  background: var(--accent-orange);
-  transform: scale(1.2);
-}
-
-.dot-text {
-  display: none;
-}
-
-/* Phones get the same dot indicator the desktop uses, not a strip of labelled
-   chips. The chip strip could never fit four product names on a phone, so it
-   always rendered clipped at both edges and had to be scrolled to be read —
-   and the active chip was broken outright: `.dot.active { width: 48px }` up at
-   line 1091 is specificity (0,2,0) with no media query, so it beat the chip
-   rule's `.dot { width: auto }` at (0,1,0). The active chip was pinned to a
-   48px square while its label spilled out over its neighbour.
+   A second, unscoped copy of these rules used to sit here. Having no media
+   query, it applied on desktop too and beat the real desktop rules on source
+   order — but not on width, which `.dot.active` still won at (0,2,0). The
+   desktop indicator was drawn as a 48px-wide, 12px-tall, 50%-radius ellipse as
+   a result. Keep the mobile look inside the query below.
 
    The dot is drawn on ::after so the button itself can stay a 44px touch
    target — the same construction .testimonial-dot already uses. Each button

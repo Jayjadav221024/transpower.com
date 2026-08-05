@@ -154,10 +154,16 @@ export default function HeroCarousel({ pageData }) {
           </div>
 
           {/* Chip Row slide selector */}
-          <div 
-            className="carousel-dots" 
-            ref={dotsContainerRef} 
+          {/* The active dot fills as a progress bar, so it has to know both how
+              long a slide lasts and when the auto-advance is paused. The fill
+              starts the moment the class lands, which is a crossfade ahead of
+              the timer actually restarting — hence the TEXT_SWAP offset. */}
+          <div
+            className="carousel-dots"
+            ref={dotsContainerRef}
             role="tablist"
+            data-paused={paused}
+            style={{ '--hero-dot-ms': `${AUTO_MS + 500}ms` }}
           >
             {HERO_PRODUCTS.map((p, i) => (
               <button
