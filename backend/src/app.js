@@ -85,6 +85,18 @@ app.use(
 /* ─── API ────────────────────────────────────────────────────────────────── */
 app.use('/api', routes);
 
+/* ─── Cron Job ───────────────────────────────────────────────────────────── */
+app.get('/cron/subscription-check', async (req, res) => {
+  if (!process.env.CRON_SECRET || req.query.secret !== process.env.CRON_SECRET) {
+    return res.status(401).send("Unauthorized");
+  }
+
+  // Your cron logic here
+
+  res.send("Cron executed");
+});
+
+
 /* ─── Built React app (production) ───────────────────────────────────────── */
 
 /* Content types for the pre-compressed files below. Needed because the file on
