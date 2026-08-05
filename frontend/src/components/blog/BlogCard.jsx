@@ -12,6 +12,26 @@ const BLOB_PAIRS = [
   ['var(--accent-orange-deep)', 'var(--accent-orange-bright)'],
 ];
 
+function getFallbackImage(title = '', tags = []) {
+  const t = `${title} ${tags.join(' ')}`.toLowerCase();
+  if (t.includes('motor') || t.includes('crompton') || t.includes('greaves')) {
+    return '/assets/images/motor_crompton_3d.jpg';
+  }
+  if (t.includes('gear') || t.includes('rotomotive')) {
+    return '/assets/images/gearbox_rotomotive_3d.jpg';
+  }
+  if (t.includes('tray') || t.includes('cable')) {
+    return '/assets/images/cable_tray_product.webp';
+  }
+  if (t.includes('grating') || t.includes('molded')) {
+    return '/assets/images/grating_grit_3d.jpg';
+  }
+  if (t.includes('switchgear') || t.includes('panel')) {
+    return '/assets/images/switchgear_control_3d.png';
+  }
+  return '/assets/images/hero_frp_grating.webp';
+}
+
 export default function BlogCard({ post, index = 0 }) {
   const [blobA, blobB] = BLOB_PAIRS[index % BLOB_PAIRS.length];
   const cleanSlug = post.slug ? post.slug.replace(/^https-www-transpower-net-in-/, '') : '';
@@ -19,16 +39,18 @@ export default function BlogCard({ post, index = 0 }) {
   const decodedExcerpt = decodeHtmlEntities(post.excerpt);
   const authorName = post.authorName || (typeof post.author === 'object' ? post.author?.name : post.author) || 'Kajal Zakhariya';
 
+  const fallback = getFallbackImage(decodedTitle, post.tags || []);
+
   return (
     <Link className="blog-card" to={`/blog/${cleanSlug}`}>
       <div className="blog-card-media">
         <img 
-          src={post.coverImage ? assetUrl(post.coverImage) : '/assets/images/hero_frp_grating.webp'} 
+          src={post.coverImage ? assetUrl(post.coverImage) : fallback} 
           alt={post.coverAlt ? decodeHtmlEntities(post.coverAlt) : decodedTitle} 
           loading="lazy"
           onError={(e) => {
             e.target.onerror = null;
-            e.target.src = '/assets/images/hero_frp_grating.webp';
+            e.target.src = fallback;
           }}
         />
         <span className="blog-blob blog-blob-a" style={{ background: blobA }} />
