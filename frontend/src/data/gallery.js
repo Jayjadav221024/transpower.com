@@ -12,9 +12,13 @@
    title, retype it, Save. Deriving the text keys from the image key (rather
    than storing them here) is what keeps the pairing impossible to break.
 
-   The `src`/caption values below are placeholders drawn from what is already in
-   the build. Swapping one in the admin panel stores an override against its
-   key; the placeholder stays as the fallback if an override is ever removed.
+   Swapping a photo in the admin panel stores an override against its key; the
+   `src` below stays as the fallback if an override is ever removed.
+
+   The captions describe the photographs currently sitting in each slot — the
+   office, team and stores shots uploaded through the panel — not the product
+   renders still named in `src`. Replace a photo and its caption together, or
+   the two drift apart again.
 
    To add a slot, append an entry with a NEW key. Never renumber existing keys
    — an override is bound to its key, so renumbering would move photos around.
@@ -33,81 +37,81 @@ export const GALLERY_ITEMS = [
     key: 'galleryImage_1',
     category: 'facility',
     src: '/assets/images/industrial_walkway.webp',
-    alt: 'Transpower manufacturing facility walkway in Makarpura, Vadodara',
-    caption: 'Manufacturing Facility',
+    alt: 'Transpower head office cabin in Makarpura GIDC, Vadodara',
+    caption: 'Head Office',
     detail: 'Makarpura GIDC, Vadodara',
   },
   {
     key: 'galleryImage_2',
-    category: 'products',
+    category: 'facility',
     src: '/assets/images/hero_frp_grating.webp',
-    alt: 'Molded FRP gratings produced at the Transpower plant',
-    caption: 'Molded FRP Gratings',
-    detail: 'Anti-slip grit top, ASTM E84 rated',
+    alt: 'Transpower sales and support staff at their desks in the Vadodara office',
+    caption: 'Sales & Support Desk',
+    detail: 'Where enquiries and orders are handled',
   },
   {
     key: 'galleryImage_3',
-    category: 'products',
+    category: 'team',
     src: '/assets/images/cable_tray_product.webp',
-    alt: 'FRP cable trays ready for dispatch',
-    caption: 'FRP Cable Trays',
-    detail: 'Ladder and perforated types',
+    alt: 'Transpower engineers reviewing a customer requirement in the meeting room',
+    caption: 'Technical Discussion',
+    detail: 'Sizing an application with the team',
   },
   {
     key: 'galleryImage_4',
-    category: 'projects',
+    category: 'team',
     src: '/assets/images/cabletray_ladder_3d.jpg',
-    alt: 'Ladder type cable tray installed on a client site',
-    caption: 'Cable Tray Installation',
-    detail: 'Client site commissioning',
+    alt: 'Transpower team gathered around a laptop during a working session',
+    caption: 'Team Huddle',
+    detail: 'Working an enquiry together',
   },
   {
     key: 'galleryImage_5',
-    category: 'products',
+    category: 'team',
     src: '/assets/images/gearboxes_product.webp',
-    alt: 'Industrial gear boxes in the Transpower inventory',
-    caption: 'Industrial Gear Boxes',
-    detail: 'Helical and worm series',
+    alt: 'Transpower staff holding awards at a recognition ceremony',
+    caption: 'Rewards & Recognition',
+    detail: 'Celebrating the team’s milestones',
   },
   {
     key: 'galleryImage_6',
-    category: 'products',
+    category: 'team',
     src: '/assets/images/switchgears_product.webp',
-    alt: 'Siemens switchgear panels supplied by Transpower',
-    caption: 'Switchgear Panels',
-    detail: 'Authorised Siemens distributor',
+    alt: 'Group photograph of the Transpower team',
+    caption: 'The Transpower Team',
+    detail: 'The people behind every order',
   },
   {
     key: 'galleryImage_7',
     category: 'facility',
     src: '/assets/images/grating_meniscus_3d.jpg',
-    alt: 'Meniscus top FRP grating panels stacked in the warehouse',
-    caption: 'Warehouse Stock',
+    alt: 'Transpower spares counter with stock shelved behind it',
+    caption: 'Spares Counter',
     detail: '10,000+ SKUs held ready',
   },
   {
     key: 'galleryImage_8',
-    category: 'projects',
+    category: 'team',
     src: '/assets/images/grating_grit_3d.jpg',
-    alt: 'Grit top FRP grating walkway on an industrial site',
-    caption: 'Walkway Project',
-    detail: 'Chemical plant platform',
+    alt: 'Transpower knowledge session with a speaker addressing a seated audience',
+    caption: 'Knowledge Session',
+    detail: 'Product briefing for the team',
   },
   {
     key: 'galleryImage_9',
-    category: 'products',
+    category: 'facility',
     src: '/assets/images/motor_siemens_3d.png',
-    alt: 'Siemens industrial electric motor',
-    caption: 'Siemens Motors',
-    detail: 'Innomotics range',
+    alt: 'Transpower storekeeper picking stock from the warehouse racking',
+    caption: 'Stores & Dispatch',
+    detail: 'Picking stock against an order',
   },
   {
     key: 'galleryImage_10',
     category: 'facility',
     src: '/assets/images/switchgear_distribution_3d.png',
-    alt: 'Low voltage power distribution assembly area',
-    caption: 'Panel Assembly',
-    detail: 'LV distribution build area',
+    alt: 'Warehouse racking stacked with boxed motors and switchgear',
+    caption: 'Warehouse Racking',
+    detail: 'Fast-moving lines kept on the shelf',
   },
   {
     key: 'galleryImage_11',
